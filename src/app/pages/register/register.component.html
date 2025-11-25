@@ -1,0 +1,24 @@
+<div class="left-image-container">
+  <img src="assets/Image-Parkolo-felulnezet.png" style="width: 650px; height: 750px; filter: brightness(50%);">
+  <div class="text-container">
+    <h2 class="ParkEasy-logo">ParkEasy</h2>
+    <h1>Üdvözöljük vissza!</h1>
+    <p>A kapcsolat fenntartásához kérjük,</p>
+    <p>jelentkezzen be személyes</p>
+    <p>adataival</p>
+    <button class="Register-button">REGISZTRÁCIÓ</button>
+  </div>
+</div>
+
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <div class="right-container">
+    <h2 style="color: #2CB8D7;">Bejelntkzés</h2>
+    <p style="color: #9CA3AF">Vagy használja az e-mail fiókját:</p>
+
+    <input type="email"  id="name"formControlName="email" placeholder="E-mail">
+    <input type="password"  id="password" formControlName="password" placeholder="Jelszó">
+
+    <a class="Forgot-password" style="color: #6B7280">Elfelejtette a jelszavát?</a>
+    <button class="Sign-in-button" type="submit">BEJELENTKEZÉS</button>
+  </div>
+</form>

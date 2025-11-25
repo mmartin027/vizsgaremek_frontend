@@ -5,7 +5,15 @@
   "projects": {
     "vizsgaremek": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {"@schematics/angular:component": {
+    "inlineStyle": false,
+    "inlineTemplate": false,
+    "skipTests": false,
+    "style": "css",
+    "displayBlock": false,
+    "prefix": "",
+    "type": "component"
+  }},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -19,6 +27,7 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/assets",
               {
                 "glob": "**/*",
                 "input": "public"
