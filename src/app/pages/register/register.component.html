@@ -6,19 +6,21 @@
     <p>A kapcsolat fenntartásához kérjük,</p>
     <p>jelentkezzen be személyes</p>
     <p>adataival</p>
-    <button class="Register-button">REGISZTRÁCIÓ</button>
+    <button class="Register-button">Bejelntkezés</button>
   </div>
 </div>
 
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
   <div class="right-container">
-    <h2 style="color: #2CB8D7;">Bejelntkzés</h2>
+    <h2 style="color: #2CB8D7;">Regisztrácio</h2>
     <p style="color: #9CA3AF">Vagy használja az e-mail fiókját:</p>
 
-    <input type="email"  id="name"formControlName="email" placeholder="E-mail">
+
+    <input type="text"  id="name"formControlName="name" placeholder="Név">
+    <input type="email"  id="email"formControlName="email" placeholder="E-mail">
     <input type="password"  id="password" formControlName="password" placeholder="Jelszó">
 
-    <a class="Forgot-password" style="color: #6B7280">Elfelejtette a jelszavát?</a>
-    <button class="Sign-in-button" type="submit">BEJELENTKEZÉS</button>
+    <button class="Sign-in-button" type="submit">Regisztácio</button>
   </div>
 </form>
+ 
