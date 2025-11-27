@@ -18,13 +18,15 @@ export class RegisterComponent {
     private fb: FormBuilder,
     private authService: AuthService   
   ) {
-    this.registerForm = this.fb.group({
-      firstName: [''],
-      lastName: [''],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      phone: ['']
-    });
+  this.registerForm = this.fb.group({
+  firstName: [''],
+  lastName: [''],
+  email: [''],
+  password: [''],
+  phone: ['']
+});
+
+
   }
 
   onSubmit() {
