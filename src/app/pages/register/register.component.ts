@@ -18,6 +18,7 @@ export class RegisterComponent {
     private fb: FormBuilder,
     private authService: AuthService   
   ) {
+
     this.registerForm = this.fb.group({
       firstName: [''],
       lastName: [''],
@@ -25,6 +26,7 @@ export class RegisterComponent {
       password: ['', Validators.required],
       phone: ['']
     });
+
   }
 
   onSubmit() {
