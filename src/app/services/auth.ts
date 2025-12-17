@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class AuthService {
 
 
-   private apiUrl = "http://localhost:8080/vizsgaremek-1.0-SNAPSHOT/webresources";
+   private apiUrl = "http://localhost:8080/";
 
    constructor(private http: HttpClient) {}
 
