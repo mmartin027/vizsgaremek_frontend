@@ -1,43 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../../core/services/auth';
+import { Router, RouterLink } from '@angular/router'; 
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink], 
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-
   registerForm: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService   
-  ) {
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
+  constructor() {
     this.registerForm = this.fb.group({
-      firstName: [''],
-      lastName: [''],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       phone: ['']
     });
-
   }
 
   onSubmit() {
     if (this.registerForm.valid) {
       const data = {
-        firstName: this.registerForm.value.firstName,
-        lastName: this.registerForm.value.lastName,
-        email: this.registerForm.value.email,
-        password: this.registerForm.value.password,
-        phone: this.registerForm.value.phone,
-
+        ...this.registerForm.value, // Minden form adatot beletesz (firstName, lastName, stb.)
         img: "",
         authSecret: "defaultSecret",
         createdAt: new Date(),
@@ -47,17 +41,16 @@ export class RegisterComponent {
 
       this.authService.register(data).subscribe({
         next: (response) => {
-          console.log("Backend response received:", response);
+          console.log("Sikeres regisztráció:", response);
           alert("Sikeres regisztráció!");
+          this.router.navigate(['/login']); // Automatikus átirányítás siker esetén
         },
         error: (err) => {
-          console.error("Backend error:", err);
+          console.error("Hiba:", err);
           alert("Hiba történt a regisztráció során!");
         }
       });
-
     } else {
-      console.log("Form invalid!");
       this.registerForm.markAllAsTouched();
     }
   }
