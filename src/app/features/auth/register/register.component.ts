@@ -7,7 +7,7 @@ import { Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink], 
+  imports: [CommonModule, ReactiveFormsModule], 
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -31,7 +31,7 @@ export class RegisterComponent {
   onSubmit() {
     if (this.registerForm.valid) {
       const data = {
-        ...this.registerForm.value, // Minden form adatot beletesz (firstName, lastName, stb.)
+        ...this.registerForm.value, 
         img: "",
         authSecret: "defaultSecret",
         createdAt: new Date(),
@@ -43,7 +43,7 @@ export class RegisterComponent {
         next: (response) => {
           console.log("Sikeres regisztráció:", response);
           alert("Sikeres regisztráció!");
-          this.router.navigate(['/login']); // Automatikus átirányítás siker esetén
+          this.router.navigate(['/login']); 
         },
         error: (err) => {
           console.error("Hiba:", err);

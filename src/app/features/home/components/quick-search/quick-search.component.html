@@ -1,1 +1,46 @@
-<p>quick-search works!</p>
+<div class="foglalotomb">
+
+  <h2>Foglaljon parkolóhelyet!</h2>
+    <p>Adja meg az adatokat a foglaláshoz</p>
+
+<form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+    <div class="input-group">
+      <label>Város</label>
+      <input type="text" formControlName="city" placeholder="Hová utazik?" (focus)="showCities = true">
+
+<li>Budapest</li>
+<li>Debrecen</li>
+<li>Szeged</li>
+<li>Miskolc</li>
+<li>Pécs</li>
+
+  </div>
+
+<label>Kezdő dátum</label>
+
+  <div class="kezdodatum">
+    <input type="date" formControlName="startDate">
+  </div>
+
+  <label>Kezdő időpont</label>
+
+  <div class="kezdoido">
+    <input type="time" formControlName="startTime">
+  </div>
+
+<label>Befejező dátum</label>
+
+  <div class="befejezodatum">
+    <input type="date" formControlName="endDate">
+  </div>
+
+<label>Befejező időpont</label>
+
+  <div class="befejezoido">
+    <input type="time" formControlName="endTime">
+  </div>
+
+<button type="submit" class="search-btn">Parkolókeresés</button>
+
+</form>
+</div>  
