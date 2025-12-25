@@ -8,11 +8,11 @@ import { Observable } from 'rxjs';
 export class AuthService {
 
 
-   private apiUrl = "http://localhost:8080/";
+   private apiUrl = "http://localhost:8080";
 
    constructor(private http: HttpClient) {}
 
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/user/registerUser`, userData);
+    return this.http.post(`${this.apiUrl}/register`, userData);
   }
 }

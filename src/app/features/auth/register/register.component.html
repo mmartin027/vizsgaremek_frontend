@@ -1,5 +1,5 @@
 <div class="left-image-container">
-  <img src="assets/Image-Parkolo-felulnezet.png" style="width: 650px; height: 750px; filter: brightness(50%);">
+  <img src="assets/Image-Parkolo-felulnezet.png" >
   <div class="text-container">
     <h2 class="ParkEasy-logo">ParkEasy</h2>
     <h1>Csatlakozzon hozzánk</h1>
@@ -10,14 +10,17 @@
   </div>
 </div>
 
-<button class="google-button"></button>
 
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
   <div class="right-container">
+    <button class="google-button"></button>
+    
     <h2 style="color: #2CB8D7;">REGISZTRÁCIÓ</h2>
+    <br>
+    <br>
     <p style="color: #9CA3AF">Vagy használja az e-mail fiókját:</p>
 
-    
+    <input type="text" formControlName="username" placeholder="felhasznalonev">
     <input type="text" formControlName="firstName" placeholder="Keresztnév">
     <input type="text" formControlName="lastName" placeholder="Vezetéknév">
     <input type="text" formControlName="phone" placeholder="Telefon">

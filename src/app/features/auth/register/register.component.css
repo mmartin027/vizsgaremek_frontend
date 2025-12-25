@@ -14,6 +14,18 @@ p{
     margin: 3px;
 }
 
+
+.left-image-container{
+    display:flex;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    height: 100%;
+    background-position: center;
+}
+
 .Register-button{
     font-family: Arial, Helvetica, sans-serif;
     color: white;
@@ -28,7 +40,7 @@ p{
 .right-container{
     position: absolute;
     right: 22%;
-    top: 50%;
+    top: 43%;
     bottom: 50%;
     display: flex;
     align-items: center;
@@ -62,7 +74,7 @@ input{
 .google-button{
     position:absolute;
     right: 22%;
-    top: 40%;
+    top: 70%;
     border-radius: 50%;
     width: 50px;
     height: 42px;
