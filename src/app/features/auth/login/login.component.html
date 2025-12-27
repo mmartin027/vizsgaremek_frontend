@@ -1,1 +1,33 @@
-<p>login works!</p>
+<div class="left-image-container">
+  <img src="assets/Image-Parkolo-felulnezet.png" >
+  <div class="text-container">
+    <h2 class="ParkEasy-logo">ParkEasy</h2>
+    <h1>Csatlakozzon hozzánk</h1>
+    <p>A kapcsolat fenntartásához kérjük,</p>
+    <p>jelentkezzen be személyes</p>
+    <p>adataival</p>
+    <button routerLink="/register" class="ghost-btn">Regisztráció</button>
+  </div>
+</div>
+
+
+<form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+  <div class="right-container">
+
+<div class="google-button">
+  <button (click)="continueWithGoogle()" class="google-btn">
+    <img src="assets/google-icon-logo-symbol-free-png.png" >
+  </button>
+</div>    
+
+    <h2 style="color: #2CB8D7;">REGISZTRÁCIÓ</h2>
+    <br>
+    <br>
+    <p style="color: #9CA3AF">Vagy használja az e-mail fiókját:</p>
+
+    <input type="text" formControlName="username" placeholder="felhasznalonev">
+    <input type="password"  id="password" formControlName="password" placeholder="Jelszó">
+
+    <button class="Sign-in-button" type="submit">Bejelentkezés</button>
+  </div>
+</form>

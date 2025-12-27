@@ -1,0 +1,84 @@
+.text-container{
+    position: absolute;
+    top: 35%;
+    bottom: 65%;
+    left: 14%;
+    color: white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+p{
+    margin: 3px;
+}
+
+
+.left-image-container{
+    display:flex;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    height: 100%;
+    background-position: center;
+}
+
+.Register-button{
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    border-radius: 20px;
+    border-color: white;
+    background-color: rgb(255, 255, 255, 0.3);
+    width: 170px;
+    padding: 10px;
+    margin: 15px;
+}
+
+.right-container{
+    position: absolute;
+    right: 22%;
+    top: 43%;
+    bottom: 50%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.Sign-in-button{
+    font-family: Arial, Helvetica, sans-serif;
+    width: 300px;
+    border-radius: 20px;
+    background-color: #2CB8D7;
+    border: 0px;
+    padding: 11px;
+    color: white;
+    margin: 20px;
+}
+
+input{
+    background-color: #F9FAFB;
+    border: 0px;
+    border-radius: 5px;
+    width: 300px;
+    margin: 5px;
+    padding: 8px;
+}
+
+.Forgot-password{
+    padding-left: 150px;
+}
+
+.google-btn {
+    display: flex;
+    position: absolute;
+    top:48px;
+    left:190px;
+    width: 55px;
+    height: 55px;
+    padding:0%,white;
+    border-radius: 50%;
+
+}

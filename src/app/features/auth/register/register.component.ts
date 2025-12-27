@@ -7,7 +7,7 @@ import { Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], 
+  imports: [CommonModule, ReactiveFormsModule, RouterLink], 
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -28,6 +28,11 @@ export class RegisterComponent {
       phone: ['']
     });
   }
+
+  continueWithGoogle() {
+  // Mindig a backend OAuth kezdőpontjára irányítunk
+  window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+}
 
   onSubmit() {
     if (this.registerForm.valid) {

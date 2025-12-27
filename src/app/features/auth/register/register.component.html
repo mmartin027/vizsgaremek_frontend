@@ -6,15 +6,20 @@
     <p>A kapcsolat fenntartásához kérjük,</p>
     <p>jelentkezzen be személyes</p>
     <p>adataival</p>
-    <button class="Register-button">REGISZTRÁCIÓ</button>
+    <button routerLink="/login" class="ghost-btn">Bejelentkezés</button>
   </div>
 </div>
 
 
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
   <div class="right-container">
-    <button class="google-button"></button>
-    
+
+<div class="google-button">
+  <button (click)="continueWithGoogle()" class="google-btn">
+    <img src="assets/google-icon-logo-symbol-free-png.png" >
+  </button>
+</div>    
+
     <h2 style="color: #2CB8D7;">REGISZTRÁCIÓ</h2>
     <br>
     <br>

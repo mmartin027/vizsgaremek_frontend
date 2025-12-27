@@ -71,16 +71,14 @@ input{
     padding-left: 150px;
 }
 
-.google-button{
-    position:absolute;
-    right: 22%;
-    top: 70%;
+.google-btn {
+    display: flex;
+    position: absolute;
+    top:48px;
+    left:190px;
+    width: 55px;
+    height: 55px;
+    padding:0%,white;
     border-radius: 50%;
-    width: 50px;
-    height: 42px;
-    background-image: url("/assets/google-icon-logo-symbol-free-png.png");
-    background-size: cover;
-    border: none;
-    margin-bottom: 15px;
-    cursor: pointer;
+
 }
