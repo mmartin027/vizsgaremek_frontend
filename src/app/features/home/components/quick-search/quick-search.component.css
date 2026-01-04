@@ -1,7 +1,9 @@
 .foglalotomb {
   display: flex;
+  background-color: white;
   flex-direction: column;
   gap: 10px;
+  border-radius: 10px;
 }
 
 .foglalotomb button {
