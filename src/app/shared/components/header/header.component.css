@@ -1,5 +1,5 @@
 .header {
-  background-color: #345; 
+  background-color: #26B9D1; 
   color: #fff; 
   padding: 20px;
   display: flex;
@@ -9,6 +9,12 @@
 
 .logo {
   font-size: 24px; 
+}
+
+.nav-links {
+  position: absolute;
+  left: 50px;
+  
 }
 
 .nav-links a {

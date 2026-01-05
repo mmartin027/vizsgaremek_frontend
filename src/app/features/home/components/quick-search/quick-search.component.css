@@ -1,28 +1,66 @@
 .foglalotomb {
   display: flex;
-  background-color: white;
   flex-direction: column;
-  gap: 10px;
-  border-radius: 10px;
+  background-color: white;
+  gap: 15px;
+  padding: 30px; /* Nagyobb belső tér */
+  border-radius: 15px; /* Kicsit kerekebb sarkok */
+  
+  /* Ez az árnyék adja meg a lebegő hatást */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); 
+  
+  width: 100%;
+  max-width: 500px;
 }
+
+
+/* Ezt az osztályt add rá a HTML-ben a dátum+idő párosok konténerére */
+.idopont-sor {
+  display: flex;
+  gap: 15px; /* Távolság a dátum és az idő között */
+  width: 100%;
+}
+
+.idopont-sor > div {
+  flex: 1; /* Hogy egyforma szélesek legyenek */
+}
+
+
+.foglalotomb label {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.foglalotomb input, .foglalotomb select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-size: 14px;
+}
+
 
 .foglalotomb button {
-  padding: 10px 15px;
-  background-color: #007bff;
+  padding: 15px;
+  background-color: #26B9D1; /* A Figma türkiz */
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-}   
-
-
+  font-weight: bold;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
 
 .foglalotomb button:hover {
-  background-color: #0056b3;
+  background-color: #1fa4ba; /* Sötétebb türkiz hoverre */
 }
-
-.foglalotomb button:active {
-  background-color: #004080;
-}
-
