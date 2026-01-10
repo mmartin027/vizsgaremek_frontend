@@ -1,38 +1,68 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // Ez kell az ngModel-hez
+  import { Component, inject } from '@angular/core';
+  import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+  import { CommonModule } from '@angular/common';
+  import { AuthService } from './../core/services/auth';
+  import { Router } from '@angular/router';
 
-@Component({
-  selector: 'forgot-password',
-  standalone: true, 
-  imports: [FormsModule], // HttpClient ide NEM kell, csak a modulok/komponensek
-  templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.css',
-})
-export class ForgotPasswordComponent {
-  emailInput: string = '';
-  message: string = ''; // Visszajelzés a felhasználónak
-  isError: boolean = false;
+  @Component({
+    selector: 'app-forgot-password',
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './forgot-password.component.html'
+  })
+  export class ForgotPasswordComponent {
+    step = 1; 
+    emailForm: FormGroup;
+    otpForm: FormGroup;
+    passwordForm: FormGroup;
+    emailForReset = '';
 
-  private http = inject(HttpClient);
+    private fb = inject(FormBuilder);
+    private authService = inject(AuthService);
+    private router = inject(Router);
 
-  onSubmit() {
-    if (!this.emailInput) return;
+    constructor() {
+      this.emailForm = this.fb.group({ email: ['', [Validators.required, Validators.email]] });
+      this.otpForm = this.fb.group({ otp: ['', Validators.required] });
+      this.passwordForm = this.fb.group({
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        repeatPassword: ['', Validators.required]
+      });
+    }
 
-    const apiUrl = 'http://localhost:8080/api/auth/forgot-password';
+   
+    sendEmail() {
+      const email = this.emailForm.value.email;
+      this.authService.verifyEmail(email).subscribe({
+        next: () => {
+          this.emailForReset = email;
+          this.step = 2;
+        },
+        error: () => alert("Hiba: Nincs ilyen email a rendszerben!")
+      });
+    }
+
     
-    // Itt küldjük el a kérést
-    this.http.post(apiUrl, { email: this.emailInput }, { responseType: 'text' }).subscribe({
-      next: (response) => {
-        console.log('Siker:', response);
-        this.message = 'Ha a cím létezik, elküldtük a jelszó-visszaállítási linket!';
-        this.isError = false;
-      },
-      error: (error) => {
-        console.error('Hiba:', error);
-        this.message = 'Hiba történt a küldés során. Kérjük próbálja újra!';
-        this.isError = true;
+    verifyOtp() {
+      const otp = this.otpForm.value.otp;
+      this.authService.verifyOtp(otp, this.emailForReset).subscribe({
+        next: () => this.step = 3,
+        error: () => alert("Hibás vagy lejárt kód!")
+      });
+    }
+
+    
+    changePassword() {
+      if (this.passwordForm.value.password !== this.passwordForm.value.repeatPassword) {
+        alert("A két jelszó nem egyezik!");
+        return;
       }
-    });
+      this.authService.changePassword(this.emailForReset, this.passwordForm.value).subscribe({
+        next: () => {
+          alert("Sikeres jelszómódosítás!");
+          this.router.navigate(['/login']);
+        },
+        error: () => alert("Hiba történt a mentés során!")
+      });
+    }
   }
-}
