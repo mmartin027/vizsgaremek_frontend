@@ -1,37 +1,28 @@
-<div class="parking-card">
-  <div class="card-image">
-    <img [src]="spot.mainImageUrl || 'assets/placeholder.jpg'" alt="Parkoló képe">
+<div class="parking-card" *ngIf="spot">
+  <!-- Kép -->
+  <div class="card-image-container">
+    <img [src]="spot.mainImageUrl" 
+         [alt]="spot.name" 
+         class="card-image"
+         onerror="this.src='https://via.placeholder.com/300x200?text=Parkoló'">
   </div>
 
+  <!-- Adatok -->
   <div class="card-content">
-    <div class="card-header">
-      <div class="title-group">
-        <h3>{{ spot.name }}</h3>
-        <p class="address">{{ spot.address }}</p>
-      </div>
-      <div class="price-tag">
-        <span class="price">{{ spot.hourlyRate }} Ft</span>
-        <small>/ óra</small>
-      </div>
-    </div>
+    <h3 class="parking-name">{{ spot.name }}</h3>
+    
+    <p class="price">{{ spot.hourlyRate }} Ft<span class="unit">/óra</span></p>
 
-    <div class="card-stats">
-      <span class="distance">📍 {{ spot.distanceFromCenter }} m</span>
-      <span class="availability" [class.low]="spot.availableSpaces < 5">
-        {{ spot.availableSpaces }} hely elérhető
-      </span>
-    </div>
-
-    <div class="card-features">
-      <span *ngFor="let feature of featureList" class="tag">
+    <!-- Szolgáltatások -->
+    <div class="features" *ngIf="featureList.length > 0">
+      <span *ngFor="let feature of featureList" class="feature-badge">
         {{ feature }}
       </span>
     </div>
 
-    <div class="card-footer">
-      <button class="details-button" (click)="onBtnClick()">
-        Részletek megtekintése
-      </button>
-    </div>
+    <!-- Gomb -->
+    <button class="booking-btn" (click)="onBtnClick()">
+      Foglalás
+    </button>
   </div>
 </div>
