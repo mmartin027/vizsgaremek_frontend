@@ -1,1 +1,37 @@
-<p>card works!</p>
+<div class="parking-card">
+  <div class="card-image">
+    <img [src]="spot.mainImageUrl || 'assets/placeholder.jpg'" alt="Parkoló képe">
+  </div>
+
+  <div class="card-content">
+    <div class="card-header">
+      <div class="title-group">
+        <h3>{{ spot.name }}</h3>
+        <p class="address">{{ spot.address }}</p>
+      </div>
+      <div class="price-tag">
+        <span class="price">{{ spot.hourlyRate }} Ft</span>
+        <small>/ óra</small>
+      </div>
+    </div>
+
+    <div class="card-stats">
+      <span class="distance">📍 {{ spot.distanceFromCenter }} m</span>
+      <span class="availability" [class.low]="spot.availableSpaces < 5">
+        {{ spot.availableSpaces }} hely elérhető
+      </span>
+    </div>
+
+    <div class="card-features">
+      <span *ngFor="let feature of featureList" class="tag">
+        {{ feature }}
+      </span>
+    </div>
+
+    <div class="card-footer">
+      <button class="details-button" (click)="onBtnClick()">
+        Részletek megtekintése
+      </button>
+    </div>
+  </div>
+</div>

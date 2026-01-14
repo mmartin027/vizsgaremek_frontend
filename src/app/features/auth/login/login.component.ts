@@ -38,7 +38,7 @@ export class LoginComponent {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (token: string) => {
-        console.log('Sikeres login! Token:', token);
+       // console.log('Sikeres login! Token:', token);
         localStorage.setItem('token', token);
         this.isLoading = false;
         this.router.navigate(['/home']);

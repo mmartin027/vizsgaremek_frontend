@@ -1,0 +1,51 @@
+.search-page {
+  background-color: #fafbfc; /* Halvány szürke háttér a Figma alapján */
+  min-height: 100vh;
+  padding-top: 40px;
+}
+
+.content-wrapper {
+  max-width: 900px; /* Vagy amilyen széles a Figma terveden a lista */
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.search-header h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.search-header span {
+  font-weight: bold;
+}
+
+.filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.left-filters {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.parking-list {
+  display: flex;
+  flex-direction: column; /* Egymás alá rakja a kártyákat */
+  gap: 16px; /* Megfelelő távolság a kártyák között */
+  padding-bottom: 50px;
+}
+
+.btn-filter, .btn-map {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}

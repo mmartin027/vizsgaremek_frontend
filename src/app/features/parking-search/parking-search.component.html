@@ -1,0 +1,17 @@
+<div class="search-results-page">
+  <header>
+  <app-header></app-header>
+    <div class="filters">
+       <button>Szűrők</button>
+       <span>Rendezés: Ajánlott</span>
+    </div>
+  </header>
+
+  <div class="cards-container">
+    <app-parking-card>
+      *ngFor="let spot of parkingSpots" 
+      [spot]="spot"
+      (viewDetails)="goToDetails($event)">
+    </app-parking-card>
+  </div>
+</div>
