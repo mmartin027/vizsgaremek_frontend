@@ -18,7 +18,6 @@ export class ParkingSearchComponent implements OnInit {
   constructor(private parkingService: ParkingService) {}
 
   ngOnInit() {
-    // Itt hívod meg a backendet a város ID alapján
     this.parkingService.searchByCity(1).subscribe(data => {
       this.parkingSpots = data;
     });
@@ -26,6 +25,5 @@ export class ParkingSearchComponent implements OnInit {
 
   handleViewDetails(id: number) {
     console.log('Részletek megtekintése a következőhöz:', id);
-    // Itt navigálhatsz tovább a részletek oldalra: this.router.navigate(['/details', id]);
   }
 }
