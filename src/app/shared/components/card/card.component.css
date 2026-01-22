@@ -47,7 +47,7 @@
 
 .price {
   font-size: 1.3rem;
-  color: #00bcd4; /* Figma türkiz szín */
+  color: #00bcd4; 
   font-weight: bold;
   margin: 5px 0;
 }
@@ -59,7 +59,6 @@
   margin-left: 4px;
 }
 
-/* Szolgáltatás badge-ek */
 .features {
   display: flex;
   flex-wrap: wrap;
