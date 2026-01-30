@@ -10,6 +10,9 @@ export interface ParkingSpotDto {
   mainImageUrl: string;
 }
 
+
+
+
 @Component({
   selector: 'app-parking-card',
   standalone: true,
@@ -21,7 +24,10 @@ export class CardComponent {
   @Input() spot!: ParkingSpotDto;
   @Output() viewDetails = new EventEmitter<number>();
 
-  
+
+
+  readonly IMAGE_URL = 'http://localhost:8080/static.images/';
+
 
   get featureList(): string[] {
     if (!this.spot?.features) return [];

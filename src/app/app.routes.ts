@@ -11,6 +11,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'register', pathMatch: 'full' },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'fooldal', component: HomeComponent },
   { path: 'parkolo-kereses', component: ParkingSearchComponent },
   { path: 'forgot-password',  component: ForgotPasswordComponent },
   { path: 'login-success', component: LoginSuccessComponent },

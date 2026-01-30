@@ -1,4 +1,4 @@
-.search-page {
+ng g c features/booking.search-page {
   background-color: #fafbfc; /* Halvány szürke háttér a Figma alapján */
   min-height: 100vh;
   padding-top: 40px;
