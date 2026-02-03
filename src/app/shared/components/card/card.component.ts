@@ -7,7 +7,7 @@ export interface ParkingSpotDto {
   address: string;
   hourlyRate: number;
   features: string;
-  mainImageUrl: string;
+  main_Image_Url: string;
 }
 
 
@@ -26,8 +26,7 @@ export class CardComponent {
 
 
 
-  readonly IMAGE_URL = 'http://localhost:8080/static.images/';
-
+  readonly IMAGE_URL = 'http://localhost:8080/images';
 
   get featureList(): string[] {
     if (!this.spot?.features) return [];

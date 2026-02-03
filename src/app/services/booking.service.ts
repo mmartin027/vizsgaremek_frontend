@@ -10,6 +10,10 @@ export class BookingService {
   constructor(private http: HttpClient) {}
 
   create(spotId: number, data: any): Observable<string> {
-    return this.http.post(`${this.API_URL}/${spotId}`, data, { responseType: 'text' });
+    return this.http.post(`${this.API_URL}/parkingspot/${spotId}`, data, { responseType: 'text' });
   }
+
+
+
+  
 }

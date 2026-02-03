@@ -16,4 +16,9 @@
     searchByCity(cityId: number): Observable<ParkingSpotDto[]> {
       return this.http.get<ParkingSpotDto[]>(`${this.apiUrl}/search?cityId=${cityId}`);
     }
+
+getById(id: number): Observable<ParkingSpotDto> {
+    return this.http.get<ParkingSpotDto>(`${this.apiUrl}/${id}`);
+  }
+
   }

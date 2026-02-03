@@ -5,6 +5,7 @@ import { HomeComponent } from './features/home/home.component';
 import { LoginSuccessComponent } from './core/components/login-success/login-success.component';
 import{ ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ParkingSearchComponent } from './features/parking-search/parking-search.component';
+import { BookingComponent } from './features/booking/booking.component';
 
 
 export const routes: Routes = [
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'parkolo-kereses', component: ParkingSearchComponent },
   { path: 'forgot-password',  component: ForgotPasswordComponent },
   { path: 'login-success', component: LoginSuccessComponent },
+  {path:'booking/:id',component:BookingComponent },
   {path: 'home', component: HomeComponent}
 ];

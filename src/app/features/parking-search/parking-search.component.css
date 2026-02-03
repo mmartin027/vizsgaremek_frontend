@@ -1,11 +1,12 @@
-ng g c features/booking.search-page {
-  background-color: #fafbfc; /* Halvány szürke háttér a Figma alapján */
+ng g c booking.search-page {
+  background-color: #686868; 
   min-height: 100vh;
+  
   padding-top: 40px;
 }
 
 .content-wrapper {
-  max-width: 900px; /* Vagy amilyen széles a Figma terveden a lista */
+  max-width: 900px; 
   margin: 0 auto;
   padding: 0 20px;
 }
@@ -15,6 +16,8 @@ ng g c features/booking.search-page {
   color: #333;
   margin-bottom: 5px;
 }
+
+
 
 .search-header span {
   font-weight: bold;
@@ -36,10 +39,13 @@ ng g c features/booking.search-page {
 }
 
 .parking-list {
-  display: flex;
-  flex-direction: column; /* Egymás alá rakja a kártyákat */
-  gap: 16px; /* Megfelelő távolság a kártyák között */
-  padding-bottom: 50px;
+ display: flex;
+  flex-direction: row; 
+  flex-wrap: wrap;    
+  justify-content: center; 
+  gap: 25px;          
+  padding: 20px 0;
+  width: 100%;
 }
 
 .btn-filter, .btn-map {

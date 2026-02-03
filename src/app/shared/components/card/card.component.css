@@ -2,6 +2,9 @@
   display: flex;
   background-color: #ffffff;
   border-radius: 12px;
+  width:50%;
+  max-width:800px;
+  margin: 0 auto 20px auto;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   margin-bottom: 20px;
