@@ -1,27 +1,26 @@
-<div class="parking-card" *ngIf="spot">
-  <div class="card-image-container">
-    <img [src]=" spot.main_Image_Url" [alt]="spot.name" class="card-image">
-  </div>
-
-  <div class="card-content">
-    <h3 class="parking-name">{{ spot.name }}</h3>
-    
-
-
-    <div class="location-container">
-      <span class="address-text">{{ spot.address }}</span>
+@if (spot) {
+  <div class="parking-card">
+    <div class="card-image-container">
+      <img [src]=" spot.main_Image_Url" [alt]="spot.name" class="card-image">
     </div>
-    
-    <p class="price">{{ spot.hourlyRate }} Ft<span class="unit">/óra</span></p>
-
-    <div class="features" *ngIf="featureList.length > 0">
-      <span *ngFor="let feature of featureList" class="feature-badge">
-        {{ feature }}
-      </span>
+    <div class="card-content">
+      <h3 class="parking-name">{{ spot.name }}</h3>
+      <div class="location-container">
+        <span class="address-text">{{ spot.address }}</span>
+      </div>
+      <p class="price">{{ spot.hourlyRate }} Ft<span class="unit">/óra</span></p>
+      @if (featureList.length > 0) {
+        <div class="features">
+          @for (feature of featureList; track feature) {
+            <span class="feature-badge">
+              {{ feature }}
+            </span>
+          }
+        </div>
+      }
+      <button class="booking-btn" (click)="onBtnClick()">
+        Foglalás
+      </button>
     </div>
-
-    <button class="booking-btn" (click)="onBtnClick()">
-      Foglalás
-    </button>
   </div>
-</div>
+}

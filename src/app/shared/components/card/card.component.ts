@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 export interface ParkingSpotDto {
   id: number;
@@ -16,7 +16,7 @@ export interface ParkingSpotDto {
 @Component({
   selector: 'app-parking-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: 'card.component.html',
   styleUrls: ['card.component.css']
 })

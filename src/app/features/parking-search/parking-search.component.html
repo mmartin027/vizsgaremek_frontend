@@ -1,17 +1,18 @@
 <div class="search-results-page">
   <header>
-  <app-header></app-header>
+    <app-header></app-header>
     <div class="filters">
-       <button>Szűrők</button>
-       <span>Rendezés: Ajánlott</span>
+      <button>Szűrők</button>
+      <span>Rendezés: Ajánlott</span>
     </div>
   </header>
 
   <div class="cards-container">
-    <app-parking-card
-   *ngFor="let spot of parkingSpots" 
-    [spot]="spot"
-    (viewDetails)="handleViewDetails($event)">
-    </app-parking-card>
+    @for (spot of parkingSpots; track spot) {
+      <app-parking-card
+        [spot]="spot"
+        (viewDetails)="handleViewDetails($event)">
+      </app-parking-card>
+    }
   </div>
 </div>

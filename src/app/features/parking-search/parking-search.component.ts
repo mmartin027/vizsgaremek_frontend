@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router'; 
 import { CardComponent, ParkingSpotDto } from '../../shared/components/card/card.component';
 import { ParkingService } from '../../services/parking';
@@ -8,7 +8,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [CommonModule, CardComponent, HeaderComponent], 
+  imports: [CardComponent, HeaderComponent], 
   templateUrl: 'parking-search.component.html',
   styleUrls: ['parking-search.component.css']
 })
