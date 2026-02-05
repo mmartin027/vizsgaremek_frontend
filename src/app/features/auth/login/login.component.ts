@@ -19,6 +19,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -38,7 +39,6 @@ export class LoginComponent {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (token: string) => {
-       // console.log('Sikeres login! Token:', token);
         localStorage.setItem('token', token);
         this.isLoading = false;
         this.router.navigate(['/home']);
