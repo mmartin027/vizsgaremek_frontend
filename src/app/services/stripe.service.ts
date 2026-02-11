@@ -15,7 +15,7 @@ export class StripeService {
 
   private publishableKey = 'pk_test_51...'; // A Stripe Dashboard-ról
 
-  private apiUrl = 'http://localhost:8080/api/payments'; // Backend URL
+  private apiUrl = 'http://localhost:8080/api/checkout'; // Backend URL
 
   constructor(private http: HttpClient) {
     this.stripePromise = loadStripe(this.publishableKey);

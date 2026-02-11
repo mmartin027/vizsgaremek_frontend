@@ -47,11 +47,7 @@ export class AuthService {
       .pipe(catchError(this.handleError));
   }
 
-  // --- JWT TOKEN KEZELÉS (ÚJ) ---
   
-  /**
-   * JWT token dekódolása
-   */
   private decodeToken(token: string): any {
     try {
       const payload = token.split('.')[1];
@@ -63,9 +59,7 @@ export class AuthService {
     }
   }
 
-  /**
-   * Bejelentkezett felhasználó ID-ja
-   */
+ 
   getCurrentUserId(): number | null {
     const token = localStorage.getItem('token');
     if (!token) return null;

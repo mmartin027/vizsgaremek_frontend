@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 // Szervizek és komponensek importálása
 import { BookingService } from '../../services/booking.service'; 
 import { ParkingService } from '../../services/parking';
-import { AuthService } from '../../core/services/auth';
+import { AuthService } from '../../services/auth';
 import { ParkingSpotDto } from '../../shared/components/card/card.component';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
