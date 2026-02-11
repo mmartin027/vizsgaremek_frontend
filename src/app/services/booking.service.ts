@@ -14,6 +14,12 @@ export class BookingService {
   }
 
 
-
+confirmBooking(sessionId: string) {
+  return this.http.post<any>(
+    `${this.API_URL}/booking/confirm-booking`,
+    null,
+    { params: { sessionId } }
+  );
+}
   
 }

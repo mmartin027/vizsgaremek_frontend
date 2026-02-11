@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StripeService } from 'src\app\services\stripe.ts';
+import { StripeService } from '../../../services/stripe.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -46,19 +46,19 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.successMessage = '';
 
     try {
-      console.log('💳 Fizetés indítása:', this.amount);
+      console.log(' Fizetés indítása:', this.amount);
 
       // 1. Payment Intent létrehozása a backend-en
       const response = await this.stripeService
         .createPaymentIntent(this.amount, 'huf')
         .toPromise();
 
-      console.log('✅ Payment Intent létrehozva:', response.clientSecret);
+      console.log(' Payment Intent létrehozva:', response.clientSecret);
 
       const result = await this.stripeService.confirmCardPayment(response.clientSecret);
 
       if (result.error) {
-        console.error('❌ Fizetési hiba:', result.error.message);
+        console.error(' Fizetési hiba:', result.error.message);
         this.errorMessage = result.error.message || 'Fizetési hiba történt';
         this.isProcessing = false;
       } else if (result.paymentIntent?.status === 'succeeded') {

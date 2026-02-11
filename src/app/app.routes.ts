@@ -6,6 +6,8 @@ import { LoginSuccessComponent } from './core/components/login-success/login-suc
 import{ ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ParkingSearchComponent } from './features/parking-search/parking-search.component';
 import { BookingComponent } from './features/booking/booking.component';
+import { BookingSuccessComponent } from './core/components/booking-success/booking-success.component';
+import { PaymentComponent } from './core/components/payment/payment.component'; 
 
 
 export const routes: Routes = [
@@ -17,5 +19,8 @@ export const routes: Routes = [
   { path: 'forgot-password',  component: ForgotPasswordComponent },
   { path: 'login-success', component: LoginSuccessComponent },
   {path:'booking/:id',component:BookingComponent },
-  {path: 'home', component: HomeComponent}
+  {path: 'home', component: HomeComponent},
+  { path: 'checkout/:bookingId/:amount', component: PaymentComponent }, 
+  
 ];
+

@@ -12,7 +12,7 @@ export class StripeService {
   private elements: StripeElements | null = null;
   private cardElement: StripeCardElement | null = null;
 
-  // ⚠️ FONTOS: Cseréld ki a saját Stripe Publishable Key-edre!
+
   private publishableKey = 'pk_test_51...'; // A Stripe Dashboard-ról
 
   private apiUrl = 'http://localhost:8080/api/payments'; // Backend URL

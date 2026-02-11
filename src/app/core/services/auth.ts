@@ -24,7 +24,7 @@ export class AuthService {
         tap(token => {
           if (token) {
             localStorage.setItem('token', token);
-            console.log('✅ Token saved');
+            console.log(' Token saved');
           }
         }),
         catchError(this.handleError)
