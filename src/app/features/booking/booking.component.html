@@ -7,45 +7,53 @@
     <div class="left-column">
       <div class="spot-header-card">
         <div class="image-box">
-          <img [src]="selectedSpot.main_Image_Url" [alt]="selectedSpot.name">
+          <img [src]="selectedSpot.main_image_url || selectedSpot.main_Image_Url" [alt]="selectedSpot.name">
         </div>
         <div class="info-box">
           <div class="badge-row">
-            <span class="badge">Kültéri Parkoló</span>
-            <span class="distance-tag">A 300 m távolságra</span>
+            <span class="badge">{{ selectedSpot.parkingType || 'Kültéri Parkoló' }}</span>
+            <span class="distance-tag">300 m távolságra</span>
           </div>
           <h2>{{ selectedSpot.name }}</h2>
           <p class="address">📍 {{ selectedSpot.address }}</p>
         </div>
       </div>
+      
       <div class="zone-alert">
         <div class="alert-icon">🅿️</div>
         <div class="alert-text">
           <p><strong>Zónás parkolás - Jegyvásárlás</strong></p>
-          <p>A zónás parkolásnál nincs szükség konkrét hely kiválasztására. A jegyvásárlás után a kiválasztott zónában bárhol parkolhat.</p>
-          <p class="validity">Érvényes: {{ selectedSpot.name }}</p>
+          <p>A jegyvásárlás után a kiválasztott zónában bárhol parkolhat.</p>
+          <p class="validity">Érvényes: {{ selectedSpot.zoneName || selectedSpot.name }}</p>
         </div>
       </div>
+      
       <div class="booking-details-section">
         <h3>Foglalási részletek</h3>
         <div class="date-inputs">
           <div class="input-group">
             <label>Kezdő dátum és időpont</label>
-            <input [(ngModel)]="bookingData.startTime" type="datetime-local" class="form-control">
+            <input [(ngModel)]="bookingData.startTime" type="datetime-local" class="form-control" required>
           </div>
           <div class="input-group">
             <label>Befejező dátum és időpont</label>
-            <input [(ngModel)]="bookingData.endTime" type="datetime-local" class="form-control">
+            <input [(ngModel)]="bookingData.endTime" type="datetime-local" class="form-control" required>
           </div>
         </div>
+        
         <div class="car-inputs">
           <h3>Gépjármű adatai</h3>
           <div class="input-row">
-            <input [(ngModel)]="bookingData.licensePlate" placeholder="Rendszám" class="form-control">
-            <input [(ngModel)]="bookingData.carBrand" placeholder="Autó márka" class="form-control">
+            <input [(ngModel)]="bookingData.licensePlate" placeholder="Rendszám (pl: ABC-123)" class="form-control" required>
+            <input [(ngModel)]="bookingData.carBrand" placeholder="Autó márka (pl: Toyota)" class="form-control" required>
+          </div>
+          <div class="input-row">
+            <input [(ngModel)]="bookingData.carModel" placeholder="Autó típus (pl: Corolla)" class="form-control" required>
+            <input [(ngModel)]="bookingData.carColor" placeholder="Szín (pl: Fekete)" class="form-control" required>
           </div>
         </div>
       </div>
+
       <div class="info-section-card">
         <h3>Szolgáltatások & Kényelem</h3>
         <div class="features-grid">
@@ -65,43 +73,42 @@
           </div>
         </div>
       </div>
-      <div class="info-section-card">
-        <h3>Kapcsolati információk</h3>
-        <div class="contact-info">
-          <p>📞 +36 1 555 0123</p>
-          <p>✉️ kozponti.garazs@parkeasy.hu</p>
-        </div>
-      </div>
     </div>
+    
     <div class="right-column">
       <div class="price-summary-card">
         <h3>Ár összesítő</h3>
         <div class="price-row">
           <span>Óradíj</span>
-          <span>{{ selectedSpot.hourlyRate }} Ft/óra</span>
+          <span>{{ selectedSpot.hourlyRate | number }} Ft/óra</span>
         </div>
         <div class="price-row">
           <span>Időtartam</span>
           <span>{{ durationInHours }} óra</span>
         </div>
         <div class="price-row">
-          <span>Szervizdíj</span>
-          <span>80 000 Ft</span>
+          <span>Parkolási díj</span>
+          <span>{{ totalPrice | number }} Ft</span>
         </div>
         <hr>
-          <div class="price-row total">
-            <span>Végösszeg</span>
-            <span class="total-amount">{{ totalPrice | number }} Ft</span>
-          </div>
-          <button (click)="confirmBooking()" class="btn-pay">Fizetéshez</button>
-          <p class="cancel-policy">Ingyenes lemondás a kezdés előtt 1 órával</p>
-          <ul class="benefit-list">
-            <li>Azonnali foglalás visszaigazolás</li>
-            <li>0-24 ügyfélszolgálat</li>
-            <li>Biztonságos fizetési folyamat</li>
-            <li>Digitális parkolójegy</li>
-          </ul>
+        <div class="price-row total">
+          <span>Végösszeg</span>
+          <span class="total-amount">{{ totalPrice | number }} Ft</span>
         </div>
+        
+        <button 
+          (click)="confirmBooking()" 
+          class="btn-pay"
+          [disabled]="!isFormValid()">
+          Fizetéshez
+        </button>
+        
+        <p class="cancel-policy">Ingyenes lemondás a kezdés előtt 1 órával</p>
       </div>
     </div>
-  }
+  </div>
+} @else {
+  <div class="loading-container">
+    <p>Parkoló betöltése...</p>
+  </div>
+}

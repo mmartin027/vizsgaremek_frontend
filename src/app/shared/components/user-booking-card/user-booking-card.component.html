@@ -1,0 +1,27 @@
+<div class="booking-card" [ngClass]="booking.status.toLowerCase()">
+  <div class="card-header">
+    <span class="parking-name">{{ booking.parkingSpotName }}</span>
+    <span class="status-badge">{{ getStatusLabel(booking.status) }}</span>
+  </div>
+
+  <div class="card-body">
+    <div class="car-info">
+      <strong>🚗 {{ booking.carBrand }} {{ booking.carModel }}</strong>
+      <span class="plate">{{ booking.licensePlate }}</span>
+    </div>
+
+    <div class="time-info">
+      <p>📅 {{ booking.startTime | date:'yyyy.MM.dd' }}</p>
+      <p>⏰ {{ booking.startTime | date:'HH:mm' }} - {{ booking.endTime | date:'HH:mm' }}</p>
+    </div>
+
+    <div class="price-tag">
+      {{ booking.totalPrice }} Ft
+    </div>
+  </div>
+
+  <div class="card-footer" *ngIf="booking.accessCode">
+    <span class="code-label">Belépési kód:</span>
+    <span class="code-value">{{ booking.accessCode }}</span>
+  </div>
+</div>

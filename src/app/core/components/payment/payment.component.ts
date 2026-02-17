@@ -1,9 +1,7 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StripeService } from '../../../services/stripe.service';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-
 
 @Component({
   selector: 'app-payment',
@@ -12,32 +10,20 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.css']
 })
-export class PaymentComponent implements OnInit, OnDestroy {
-  @Input() amount: number = 0; 
-  @Input() bookingId?: number; 
+export class PaymentComponent implements OnInit {
+  @Input() bookingDto: any; 
+  @Input() parkingSpotId!: number;
 
   isProcessing = false;
   errorMessage = '';
-  successMessage = '';
 
   constructor(
     private stripeService: StripeService,
     private router: Router
   ) {}
 
-  async ngOnInit() {
-    try {
-      // Stripe card element létrehozása
-      await this.stripeService.createCardElement('card-element');
-    } catch (error) {
-      console.error('Stripe inicializálási hiba:', error);
-      this.errorMessage = 'Nem sikerült betölteni a fizetési felületet';
-    }
-  }
-
-  ngOnDestroy() {
-    // Cleanup
-    this.stripeService.destroyCardElement();
+  ngOnInit() {
+    
   }
 
   async handlePayment() {
@@ -45,35 +31,22 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
     this.isProcessing = true;
     this.errorMessage = '';
-    this.successMessage = '';
 
     try {
-      console.log(' Fizetés indítása:', this.amount);
+      console.log('Fizetés indítása...');
 
-      // 1. Payment Intent létrehozása a backend-en
-      const response = await this.stripeService
-        .createPaymentIntent(this.amount, 'huf')
+      
+      const response: any = await this.stripeService
+        .createSession(this.parkingSpotId, this.bookingDto)
         .toPromise();
 
-      console.log(' Payment Intent létrehozva:', response.clientSecret);
+      console.log('Session ID:', response.sessionId);
 
-      const result = await this.stripeService.confirmCardPayment(response.clientSecret);
+      
+      await this.stripeService.redirectToCheckout(response.sessionId);
 
-      if (result.error) {
-        console.error(' Fizetési hiba:', result.error.message);
-        this.errorMessage = result.error.message || 'Fizetési hiba történt';
-        this.isProcessing = false;
-      } else if (result.paymentIntent?.status === 'succeeded') {
-        console.log(' Fizetés sikeres!', result.paymentIntent);
-        this.successMessage = 'Fizetés sikeres!';
-        
-        
-        setTimeout(() => {
-          this.router.navigate(['/booking-confirmation', this.bookingId]);
-        }, 2000);
-      }
     } catch (error: any) {
-      console.error(' Fizetési hiba:', error);
+      console.error('Fizetési hiba:', error);
       this.errorMessage = error.message || 'Hiba történt a fizetés során';
       this.isProcessing = false;
     }

@@ -1,0 +1,16 @@
+<div class="container">
+  <h1>Foglalásaim</h1>
+
+  <div *ngIf="isLoading" class="loader">Betöltés...</div>
+
+  <div *ngIf="!isLoading && bookings.length === 0" class="no-bookings">
+    <p>Nincsenek még foglalásaid.</p>
+  </div>
+
+  <div class="booking-grid" *ngIf="!isLoading && bookings.length > 0">
+    <app-user-booking-card 
+      *ngFor="let item of bookings" 
+      [booking]="item">
+    </app-user-booking-card>
+  </div>
+</div>

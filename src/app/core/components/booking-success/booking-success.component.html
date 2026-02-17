@@ -1,1 +1,35 @@
-<p>booking-success works!</p>
+<!-- booking-success.component.html -->
+<div class="success-container">
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <h2>⏳ Foglalás létrehozása...</h2>
+    <p>Kérjük várjon, a fizetés feldolgozása folyamatban van...</p>
+  </div>
+  
+  <div *ngIf="!isLoading && accessCode" class="success">
+    <div class="success-icon">✅</div>
+    <h2>Sikeres foglalás!</h2>
+    <div class="access-code-container">
+      <p>Hozzáférési kód:</p>
+      <h3 class="access-code">{{ accessCode }}</h3>
+    </div>
+    <p class="info-text">
+      A fizetés rendben lezajlott, a foglalást sikeresen rögzítettük az adatbázisban.
+    </p>
+    <p class="info-text">
+      Kérjük, mentse el a hozzáférési kódot, mert erre szüksége lesz a parkolóba való belépéshez!
+    </p>
+    <button class="btn-primary" (click)="goHome()">Vissza a főoldalra</button>
+  </div>
+  
+  <div *ngIf="error" class="error">
+    <div class="error-icon">❌</div>
+    <h2>Hiba történt</h2>
+    <p class="error-message">{{ error }}</p>
+    <p class="info-text">
+      Ha a fizetés megtörtént, de ez az üzenet jelenik meg, kérjük vegye fel a kapcsolatot 
+      ügyfélszolgálatunkkal a session_id megadásával.
+    </p>
+    <button class="btn-secondary" (click)="goHome()">Vissza a főoldalra</button>
+  </div>
+</div>

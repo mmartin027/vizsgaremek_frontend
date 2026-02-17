@@ -8,6 +8,7 @@ import { ParkingSearchComponent } from './features/parking-search/parking-search
 import { BookingComponent } from './features/booking/booking.component';
 import { BookingSuccessComponent } from './core/components/booking-success/booking-success.component';
 import { PaymentComponent } from './core/components/payment/payment.component'; 
+import { MyBookingsComponent } from './core/components/user-parkings/user-parkings.component';
 
 
 export const routes: Routes = [
@@ -15,12 +16,13 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'fooldal', component: HomeComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'parkolo-kereses', component: ParkingSearchComponent },
-  { path: 'forgot-password',  component: ForgotPasswordComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'login-success', component: LoginSuccessComponent },
-  {path:'booking/:id',component:BookingComponent },
-  {path: 'home', component: HomeComponent},
-  { path: 'checkout/:bookingId/:amount', component: PaymentComponent }, 
-  
+  { path: 'booking/:id', component: BookingComponent },
+  { path: 'checkout/:bookingId/:amount', component: PaymentComponent },
+  { path: 'payment-success', component: BookingSuccessComponent }, 
+  {path:'user-bookings',component:MyBookingsComponent}
 ];
 
