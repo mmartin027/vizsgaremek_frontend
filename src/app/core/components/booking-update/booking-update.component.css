@@ -1,0 +1,354 @@
+.update-container {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.update-card {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 40px;
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Bal oldal */
+.left-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.booking-info-card {
+  background: rgb(5, 111, 51);
+  color: white;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+}
+
+.location-badge {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 28px;
+}
+
+.booking-info-card h2 {
+  font-size: 24px;
+  margin: 0 0 8px 0;
+}
+
+.address, .zone {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 4px 0;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  font-size: 12px;
+  margin-top: 16px;
+}
+
+.current-booking-details {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 12px;
+}
+
+.current-booking-details h3 {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+}
+
+.time-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.remaining-time {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #d1fae5;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.remaining-time .time-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.remaining-time .label {
+  font-size: 12px;
+  color: #065f46;
+}
+
+.remaining-time .value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #059669;
+}
+
+/* Jobb oldal */
+.right-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.right-section h2 {
+  font-size: 24px;
+  color: #1f2937;
+  margin: 0;
+}
+
+/* Óraszám választó */
+.hour-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  margin: 32px 0;
+}
+
+.btn-decrease, .btn-increase {
+  width: 56px;
+  height: 56px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  border-radius: 50%;
+  font-size: 32px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.btn-decrease:hover:not(:disabled), 
+.btn-increase:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.btn-decrease:disabled, 
+.btn-increase:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.hour-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hour-display .number {
+  font-size: 72px;
+  font-weight: 800;
+  color: #3b82f6;
+  line-height: 1;
+}
+
+.hour-display .label {
+  font-size: 18px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+/* Gyors választás */
+.quick-select {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.quick-btn {
+  padding: 12px 24px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #6b7280;
+}
+
+.quick-btn:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.quick-btn.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+/* Összesítő */
+.summary-card {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 12px;
+}
+
+.summary-card h3 {
+  font-size: 18px;
+  margin: 0 0 16px 0;
+  color: #1f2937;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 16px;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row.highlight {
+  background: white;
+  margin: 16px -12px -12px;
+  padding: 16px 12px;
+  border-radius: 8px;
+}
+
+.summary-row .price {
+  color: #3b82f6;
+  font-size: 28px;
+}
+
+/* Fizetési mód */
+.payment-method h4 {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0 0 12px 0;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+}
+
+.payment-option.selected {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.payment-option .icon {
+  font-size: 24px;
+}
+
+/* Akció gombok */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-confirm {
+  padding: 18px;
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.btn-cancel {
+  padding: 18px;
+  background: white;
+  color: #6b7280;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f4f6;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 968px) {
+  .update-card {
+    grid-template-columns: 1fr;
+  }
+  
+  .left-section {
+    order: 2;
+  }
+  
+  .right-section {
+    order: 1;
+  }
+}

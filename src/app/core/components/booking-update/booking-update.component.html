@@ -1,0 +1,119 @@
+<header>
+  <app-header></app-header>
+</header>
+
+<div class="update-container" *ngIf="!isLoading && booking">
+  <div class="update-card">
+    <div class="left-section">
+      <div class="booking-info-card">
+        <div class="location-badge">
+          <span class="icon">📍</span>
+        </div>
+        
+        <h2>{{ booking.parkingSpotName }}</h2>
+        <p class="address">{{ booking.parkingSpotAddress || 'Fő utca 123, Budapest' }}</p>
+        <p class="zone">Parkolóhely: {{ booking.parkingSpotId }}</p>
+        
+        <div class="status-info">
+          <span class="status-badge active">Aktív</span>
+        </div>
+      </div>
+
+      <div class="current-booking-details">
+        <h3>Jelenlegi befejezés</h3>
+        <div class="time-box">
+          <span class="icon">📅</span>
+          <span>{{ booking.endTime | date:'yyyy. okt. dd' }}</span>
+        </div>
+        <div class="time-box">
+          <span class="icon">🕐</span>
+          <span>{{ booking.endTime | date:'HH:mm' }}</span>
+        </div>
+        
+        <div class="remaining-time">
+          <span class="icon">⏱️</span>
+          <div class="time-info">
+            <span class="label">Hátralévő idő</span>
+            <span class="value">{{ remainingTime }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jobb oldal - Hosszabbítás -->
+    <div class="right-section">
+      <h2>Hány órával szeretnéd meghosszabbítani?</h2>
+      
+      <!-- Óraszám választó -->
+      <div class="hour-selector">
+        <button class="btn-decrease" (click)="decreaseHours()" [disabled]="additionalHours <= 1">
+          −
+        </button>
+        
+        <div class="hour-display">
+          <span class="number">{{ additionalHours }}</span>
+          <span class="label">óra</span>
+        </div>
+        
+        <button class="btn-increase" (click)="increaseHours()" [disabled]="additionalHours >= 24">
+          +
+        </button>
+      </div>
+
+      <!-- Gyors választás gombok -->
+      <div class="quick-select">
+        <button 
+          *ngFor="let hours of quickSelectHours"
+          class="quick-btn"
+          [class.active]="additionalHours === hours"
+          (click)="selectQuickHours(hours)">
+          {{ hours }} óra
+        </button>
+      </div>
+
+      <!-- Összesítő -->
+      <div class="summary-card">
+        <h3>Összesítő</h3>
+        
+        <div class="summary-row">
+          <span>Óradíj</span>
+          <span>{{ booking.totalPrice / booking.hours | number:'1.0-0' }} Ft</span>
+        </div>
+        
+        <div class="summary-row">
+          <span>Extra órák</span>
+          <span>{{ additionalHours }} óra</span>
+        </div>
+        
+        <div class="summary-row highlight">
+          <span><strong>Végösszeg</strong></span>
+          <span class="price"><strong>{{ newTotalPrice | number:'1.0-0' }} Ft</strong></span>
+        </div>
+      </div>
+
+      <!-- Fizetési mód -->
+      <div class="payment-method">
+        <h4>Fizetési mód</h4>
+        <div class="payment-option selected">
+          <span class="icon">💳</span>
+          <span>Bankkártya •••• 4532</span>
+        </div>
+      </div>
+
+      <!-- Akció gombok -->
+      <div class="action-buttons">
+        <button class="btn-confirm" (click)="confirmExtension()">
+          Fizetés és megerősítés
+        </button>
+        <button class="btn-cancel" (click)="cancel()">
+          Mégse
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-container" *ngIf="isLoading">
+  <div class="spinner"></div>
+  <p>Foglalás betöltése...</p>
+</div>

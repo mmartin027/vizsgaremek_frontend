@@ -1,27 +1,91 @@
 <div class="booking-card" [ngClass]="booking.status.toLowerCase()">
-  <div class="card-header">
-    <span class="parking-name">{{ booking.parkingSpotName }}</span>
-    <span class="status-badge">{{ getStatusLabel(booking.status) }}</span>
+  <div class="card-left">
+    <div class="location-icon">
+      <span class="icon">📍</span>
+    </div>
+    <div class="status-indicator"></div>
   </div>
 
-  <div class="card-body">
-    <div class="car-info">
-      <strong>🚗 {{ booking.carBrand }} {{ booking.carModel }}</strong>
-      <span class="plate">{{ booking.licensePlate }}</span>
+  <div class="card-main">
+    <div class="card-header">
+      <div class="header-left">
+        <h3 class="parking-name">{{ booking.parkingSpotName }}</h3>
+        <p class="parking-address">{{ booking.parkingSpotAddress }}</p>
+      </div>
+      <span class="status-badge" [ngClass]="booking.status.toLowerCase()">
+        {{ getStatusLabel(booking.status) }}
+      </span>
     </div>
 
-    <div class="time-info">
-      <p>📅 {{ booking.startTime | date:'yyyy.MM.dd' }}</p>
-      <p>⏰ {{ booking.startTime | date:'HH:mm' }} - {{ booking.endTime | date:'HH:mm' }}</p>
-    </div>
+    <div class="card-body">
+      <div class="info-row">
+        <div class="car-info">
+          <span class="label">Gépjármű</span>
+          <strong>{{ booking.carBrand }} {{ booking.carModel }}</strong>
+          <span class="plate">{{ booking.licensePlate }}</span>
+        </div>
 
-    <div class="price-tag">
-      {{ booking.totalPrice }} Ft
-    </div>
-  </div>
+        <div class="time-info">
+          <span class="label">Időpont</span>
+          <div class="time-details">
+            <div class="time-item">
+              <span class="time-label">Kezdés</span>
+              <p class="time-value">
+                📅 {{ booking.startTime | date:'yyyy. MM. dd.' }}
+                 {{ booking.startTime | date:'HH:mm' }}
+              </p>
+            </div>
+            <div class="time-separator">→</div>
+            <div class="time-item">
+              <span class="time-label">Befejezés</span>
+              <p class="time-value">
+                📅 {{ booking.endTime | date:'yyyy. MM. dd.' }}
+                 {{ booking.endTime | date:'HH:mm' }}
+              </p>
+            </div>
+          </div>
+        </div>
 
-  <div class="card-footer" *ngIf="booking.accessCode">
-    <span class="code-label">Belépési kód:</span>
-    <span class="code-value">{{ booking.accessCode }}</span>
+        <div class="duration-info">
+          <span class="label">Időtartam</span>
+          <strong>{{ booking.hours }} óra</strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="price-section">
+          <span class="price-label">Fizetendő összeg</span>
+          <span class="price-value">{{ booking.totalPrice | number }} Ft</span>
+        </div>
+        
+        <div class="access-code" *ngIf="booking.accessCode">
+          <span class="code-label">Belépési kód</span>
+          <span class="code-value">{{ booking.accessCode }}</span>
+        </div>
+        
+        <div class="card-actions">
+          <button 
+            class="btn-extend" 
+            (click)="extendBooking(booking)"
+            *ngIf="booking.status === 'ACTIVE'"
+            [disabled]="isExtending">
+            ⏱️ Időpont hosszabbítás
+          </button>
+          
+          <button 
+            class="btn-details" 
+            (click)="viewDetails(booking)">
+            Részletek
+          </button>
+          
+          <button 
+            class="btn-cancel" 
+            (click)="cancelBooking(booking)"
+            *ngIf="booking.status === 'ACTIVE' && canCancel(booking)">
+            🗑️ Törlés
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

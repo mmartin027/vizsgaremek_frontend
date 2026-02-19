@@ -9,7 +9,6 @@ export class StripeService {
 
   constructor(private http: HttpClient) {}
 
-  // A session létrehozása marad
   createSession(spotId: number, payload: any): Observable<any> {
     return this.http.post(`http://localhost:8080/api/checkout/create-session?parkingSpotId=${spotId}`, payload);
   }

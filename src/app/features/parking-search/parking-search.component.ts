@@ -26,8 +26,14 @@ export class ParkingSearchComponent implements OnInit {
     });
   }
 
+ 
+
+openMapView() {
+    this.router.navigate(['/map']);
+  }
+
   handleViewDetails(id: number) {
-    console.log('Navigálás a foglaláshoz:', id);
     this.router.navigate(['/booking', id]); 
   }
+
 }

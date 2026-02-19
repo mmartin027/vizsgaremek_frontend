@@ -47,6 +47,6 @@ export class BookingSuccessComponent implements OnInit {
   }
 
   goHome() {
-    this.router.navigate(['/']);  // 👈 Főoldalra navigálás
+    this.router.navigate(['/']);  
   }
 }

@@ -91,7 +91,7 @@ export class BookingComponent implements OnInit {
 
   const payload = {
     ...this.bookingData,
-    startTime: formattedStartTime, // Most már: "2026-02-16T22:30:00.000Z"
+    startTime: formattedStartTime, 
     endTime: formattedEndTime,
     licensePlate: this.bookingData.licensePlate.toUpperCase(),
     userId: this.authService.getCurrentUserId()

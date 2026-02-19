@@ -1,7 +1,320 @@
-.card{
-    margin: 10px;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+.booking-card {
+  display: flex;
+  background-color: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto 24px auto;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.booking-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-left {
+  width: 8px;
+  background: linear-gradient(180deg, #3b82f6 0%, #1e40af 100%);
+  position: relative;
+}
+
+.booking-card.active .card-left {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+}
+
+.booking-card.completed .card-left {
+  background: linear-gradient(180deg, #6b7280 0%, #4b5563 100%);
+}
+
+.booking-card.cancelled .card-left {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+}
+
+.location-icon {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 48px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.location-icon .icon {
+  font-size: 24px;
+}
+
+.card-main {
+  flex: 1;
+  padding: 24px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.header-left h3.parking-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.parking-address {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+}
+
+.status-badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.active {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.completed {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.status-badge.cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Információs sorok */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 0.8fr;
+  gap: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+/* Autó info */
+.car-info strong {
+  display: block;
+  font-size: 18px;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.plate {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  border: 2px solid #fcd34d;
+}
+
+/* Időpont info */
+.time-details {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.time-item {
+  flex: 1;
+}
+
+.time-label {
+  display: block;
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.time-value {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.time-separator {
+  font-size: 20px;
+  color: #d1d5db;
+  font-weight: bold;
+}
+
+/* Időtartam */
+.duration-info strong {
+  display: block;
+  font-size: 20px;
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+/* Lábléc */
+.card-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Ár szekció */
+.price-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.price-label {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.price-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+/* Belépési kód */
+/*
+.access-code {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+*/
+.code-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.code-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 3px;
+}
+
+/* Gombok */
+.card-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.card-actions button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-extend {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.btn-extend:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-extend:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-details {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btn-details:hover {
+  background: #e5e7eb;
+}
+
+.btn-cancel {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-cancel:hover {
+  background: #fecaca;
+}
+
+@media (max-width: 968px) {
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .card-footer {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .card-actions button {
+    width: 100%;
+    justify-content: center;
+  }
 }
