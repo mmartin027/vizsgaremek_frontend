@@ -52,7 +52,7 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.addMarkersToMap();
       });
 
-      // ✅ Ha a térkép üres részére kattintunk, zárja be a sidebart
+      //  Ha a térkép üres részére kattintunk, zárja be a sidebart
       this.map.on('click', () => {
         this.closeSidebar();
       });

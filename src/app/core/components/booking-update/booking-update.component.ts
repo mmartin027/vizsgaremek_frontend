@@ -120,9 +120,6 @@ export class BookingUpdateComponent implements OnInit {
     this.additionalHours = hours;
   }
 
-deletepastbooking(){
-  if(this.)
-}
 
   /**
    * Fizetés és hosszabbítás
@@ -134,12 +131,12 @@ deletepastbooking(){
   
   if (!confirm(confirmMsg)) return;
 
-  console.log('✅ Hosszabbítás indítása...');
+  console.log(' Hosszabbítás indítása...');
 
   //  Stripe Session létrehozása
   this.bookingService.createExtensionSession(this.bookingId, this.additionalMinutes).subscribe({
     next: (response: any) => {
-      console.log('✅ Extension session:', response);
+      console.log(' Extension session:', response);
       
       if (response.url) {
         console.log('🔄 Átirányítás Stripe-ra');
