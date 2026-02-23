@@ -1,0 +1,66 @@
+/* map-component.component.css */
+
+.map-layout-wrapper {
+  position: relative;
+  width: 100%;
+  /* A 100vh a teljes képernyő, a 64px a headered becsült magassága */
+  height: calc(100vh - 64px); 
+  overflow: hidden; /* Megakadályozza az elcsúszást és görgetést */
+  display: block;
+}
+
+.map-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Ez legyen legalul */
+}
+
+/* A betöltő réteg, ami teljesen lefedi a térképet */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10; /* A térkép felett */
+}
+
+/* A lebegő kártya konténere */
+.zone-card-container {
+  position: absolute;
+  top: 20px; 
+  left: 20px; 
+  z-index: 20; 
+  width: 350px;
+  pointer-events: none; 
+}
+
+.floating-card {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 320px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.action-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

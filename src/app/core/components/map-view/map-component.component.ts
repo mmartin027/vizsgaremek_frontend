@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import * as maplibregl from 'maplibre-gl';
 import { MapService } from '../../../services/map';
+import { ZoneService } from '../../../services/zone-service';
 
 @Component({
   selector: 'app-map-view',
@@ -17,22 +18,29 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
   parkingZones: any[] = [];
   isLoading = true;
   
-  // ✅ Ez hiányzott: Ebbe mentjük a kattintott parkoló adatait
   selectedZone: any = null;
 
   constructor(
     private mapService: MapService, 
+    private zoneService: ZoneService,
     private router: Router,
-    private cdr: ChangeDetectorRef // ✅ Segít, hogy a HTML azonnal észrevegye a kattintást
+    private cdr: ChangeDetectorRef 
   ) {}
 
   ngOnInit() {
     this.loadParkingZones();
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => this.initMap(), 100);
-  }
+ngAfterViewInit() {
+  setTimeout(() => {
+    const container = document.getElementById('map');
+    if (container) {
+      this.initMap();
+    } else {
+      console.error("Hiba: A 'map' id-jú elem nem található a HTML-ben!");
+    }
+  }, 300); // 300ms biztosabb
+}
 
   ngOnDestroy() {
     if (this.map) this.map.remove();
@@ -46,6 +54,44 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
         center: [19.0402, 47.4979],
         zoom: 12
       });
+
+this.mapService.setMap(this.map);
+
+
+
+this.map.on('click', (e) => {
+  const features = this.map.queryRenderedFeatures(e.point);
+  
+  if (features.length > 0) {
+    console.log('Minden réteg a kattintás alatt:', features.map(f => f.layer.id));
+    
+    const zoneFeature = features.find(f => f.properties && (f.properties['Zone'] || f.properties['zone']));
+
+    if (zoneFeature) {
+      const mapId = zoneFeature.properties['Zone'] || zoneFeature.properties['zone'];
+      console.log('Talált zóna kód:', mapId);
+
+      this.zoneService.getZoneByMapId(mapId).subscribe({
+        next: (data) => {
+          this.selectedZone = data;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('SQL hiba:', err)
+      });
+    }
+  } else {
+    console.log('Üres területre kattintottál');
+    this.closeSidebar();
+  }
+});
+
+this.map.on('mouseenter', 'zones-layer', () => {
+  this.map.getCanvas().style.cursor = 'pointer';
+});
+
+this.map.on('mouseleave', 'zones-layer', () => {
+  this.map.getCanvas().style.cursor = '';
+});
 
       this.map.on('load', () => {
         this.map.addControl(new maplibregl.NavigationControl(), 'top-right');
@@ -99,11 +145,10 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
       el.style.backgroundColor = color;
       el.innerHTML = `<span>${props.zoneName?.charAt(0) || 'P'}</span>`;
 
-      // ✅ KATTINTÁS ESEMÉNY A MARKERRE
       el.addEventListener('click', (e) => {
-        e.stopPropagation(); // Fontos, hogy ne kattintsunk át a térképre alatta
-        this.selectedZone = props; // Betöltjük az adatokat a sidebarba
-        this.cdr.detectChanges();   // Frissítjük a HTML-t
+        e.stopPropagation(); 
+        this.selectedZone = props; 
+        this.cdr.detectChanges();   
         
         this.map.flyTo({ center: coords as [number, number], zoom: 14 });
       });
@@ -116,7 +161,6 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // ✅ SIDEBAR KEZELŐ FÜGGVÉNYEK
   closeSidebar() {
     this.selectedZone = null;
     this.cdr.detectChanges();
@@ -124,6 +168,13 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   bookZone(id: number) {
     this.router.navigate(['/booking', id]);
+  }
+
+onBook(zoneId: number) {
+    if (zoneId) {
+      // Átirányítás a foglalási oldalra az ID-val
+      this.router.navigate(['/booking', zoneId]);
+    }
   }
 
   getProgressBarColor(): string {

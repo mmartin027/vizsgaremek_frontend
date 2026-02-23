@@ -1,0 +1,11 @@
+<div class="map-container">
+  <div id="map"></div>
+
+  <div *ngIf="selectedZone" class="zone-card">
+    <button (click)="selectedZone = null">X</button>
+    <img [src]="'assets/img/zone-' + selectedZone.zoneCode + '.jpg'" alt="Zone image">
+    <h2>{{ selectedZone.name }}</h2>
+    <p>Óradíj: {{ selectedZone.hourlyRate }} Ft</p>
+    <button class="details-btn">Részletek és Foglalás</button>
+  </div>
+</div>

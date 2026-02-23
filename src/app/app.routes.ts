@@ -11,7 +11,7 @@ import { PaymentComponent } from './core/components/payment/payment.component';
 import { MyBookingsComponent } from './core/components/user-parkings/user-parkings.component';
 import { BookingUpdateComponent } from './core/components/booking-update/booking-update.component';
 import { ExtensionSuccessComponent } from './core/components/extension-success/extension-success.component';
-import { MapViewComponent } from './core/components/map-component/map-component.component';
+import { MapViewComponent } from './core/components/map-view/map-component.component';
 
 
 export const routes: Routes = [
