@@ -103,13 +103,13 @@ export class UserBookingCardComponent {
   }
 
   if (!this.canExtend(booking)) {
-    console.warn('⚠️ Nem hosszabbítható');
+    console.warn(' Nem hosszabbítható');
     alert('Ez a foglalás már nem hosszabbítható.');
     return;
   }
 
   // Navigáció
-  console.log('✅ Navigálás indítása:', `/extend-booking/${booking.id}`);
+  console.log(' Navigálás indítása:', `/extend-booking/${booking.id}`);
   
   this.router.navigate(['/extend-booking', booking.id])
     .then(result => {

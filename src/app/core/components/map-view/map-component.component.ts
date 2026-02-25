@@ -4,16 +4,21 @@ import { Router } from '@angular/router';
 import * as maplibregl from 'maplibre-gl';
 import { MapService } from '../../../services/map';
 import { ZoneService } from '../../../services/zone-service';
+import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { BookingService } from '../../../services/booking.service';
+import { CardComponent,ParkingSpotDto } from '../../../shared/components/card/card.component';
+import { ParkingService } from '../../../services/parking';
 
 @Component({
   selector: 'app-map-view',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HeaderComponent,CardComponent],
   templateUrl: './map-component.component.html',
   styleUrls: ['./map-component.component.css']
 })
 export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
   map!: maplibregl.Map;
+    parkingSpots: ParkingSpotDto[] = [];
   markers: maplibregl.Marker[] = [];
   parkingZones: any[] = [];
   isLoading = true;
@@ -24,12 +29,24 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private mapService: MapService, 
     private zoneService: ZoneService,
     private router: Router,
-    private cdr: ChangeDetectorRef 
+    private bookingService: BookingService,
+    private cdr: ChangeDetectorRef,
+    private parkingService: ParkingService,
   ) {}
 
   ngOnInit() {
     this.loadParkingZones();
+     this.parkingService.searchByCity(1).subscribe(data => {
+        this.parkingSpots = data;
   }
+
+      
+)  }
+  
+  handleViewDetails(id: number) {
+    this.router.navigate(['/booking', id]); 
+  }
+
 
 ngAfterViewInit() {
   setTimeout(() => {
@@ -39,7 +56,7 @@ ngAfterViewInit() {
     } else {
       console.error("Hiba: A 'map' id-jú elem nem található a HTML-ben!");
     }
-  }, 300); // 300ms biztosabb
+  }, 300); 
 }
 
   ngOnDestroy() {
@@ -172,7 +189,7 @@ this.map.on('mouseleave', 'zones-layer', () => {
 
 onBook(zoneId: number) {
     if (zoneId) {
-      // Átirányítás a foglalási oldalra az ID-val
+      
       this.router.navigate(['/booking', zoneId]);
     }
   }

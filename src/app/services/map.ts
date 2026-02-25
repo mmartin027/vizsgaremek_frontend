@@ -9,13 +9,11 @@ export class MapService {
   private readonly apiKey = '7Mo9PlVhPKdZGr1FvyYI'; 
   private readonly API_URL = 'http://localhost:8080/api/parking-spots';
 
-  // Itt tároljuk a térképet, alapértelmezetten null
   private mapInstance = new BehaviorSubject<any>(null);
   map$ = this.mapInstance.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  // Ezt hívod meg a fő komponensben, amikor a térkép létrejött
   setMap(map: any) {
     this.mapInstance.next(map);
   }
