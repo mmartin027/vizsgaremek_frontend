@@ -70,6 +70,7 @@ ngAfterViewInit() {
         style: this.mapService.getMapStyleUrl(),
         center: [19.0402, 47.4979],
         zoom: 12
+        
       });
 
 this.mapService.setMap(this.map);
@@ -140,44 +141,50 @@ this.map.on('mouseleave', 'zones-layer', () => {
     });
   }
 
-  addMarkersToMap() {
-    if (!this.parkingZones.length) return;
-    this.markers.forEach(m => m.remove());
-    this.markers = [];
+ addMarkersToMap() {
+  if (!this.parkingZones.length) return;
+  this.markers.forEach(m => m.remove());
+  this.markers = [];
 
-    this.parkingZones.forEach((zone) => {
-      const coords = zone.geometry.coordinates;
-      const props = zone.properties;
+  this.parkingZones.forEach((zone) => {
+    let lat: number, lng: number;
 
-      const free = props.availableSpaces;
-      const total = props.capacity;
-      const percent = total > 0 ? (free / total) * 100 : 0;
-      
-      let color = '#10b981'; 
-      if (percent < 20) color = '#ef4444'; 
-      else if (percent < 50) color = '#f59e0b'; 
+    if (zone.geometry.type === 'Point') {
+      // Ha pont, egyszerű a dolgunk
+      lng = zone.geometry.coordinates[0];
+      lat = zone.geometry.coordinates[1];
+    } else if (zone.geometry.type === 'Polygon') {
+      // Ha poligon, kiszámoljuk a középpontját (egyszerű átlagolással)
+      const coords = zone.geometry.coordinates[0];
+      lng = coords.reduce((acc: number, curr: any) => acc + curr[0], 0) / coords.length;
+      lat = coords.reduce((acc: number, curr: any) => acc + curr[1], 0) / coords.length;
+    } else {
+      return; // Egyéb típusokat (pl. LineString) kihagyunk
+    }
 
-      const el = document.createElement('div');
-      el.className = 'custom-marker';
-      el.style.backgroundColor = color;
-      el.innerHTML = `<span>${props.zoneName?.charAt(0) || 'P'}</span>`;
+    const props = zone.properties;
+    const el = document.createElement('div');
+    el.className = 'custom-marker';
+    
+    // Szín meghatározása (ha van adatbázis infó, használd azt, itt most fix vörös/zöld)
+    const color = props.Type === 'Zone' ? '#3b82f6' : '#10b981'; 
+    el.style.backgroundColor = color;
+    el.innerHTML = `<span>${props.Zone || 'P'}</span>`;
 
-      el.addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        this.selectedZone = props; 
-        this.cdr.detectChanges();   
-        
-        this.map.flyTo({ center: coords as [number, number], zoom: 14 });
-      });
-
-      const marker = new maplibregl.Marker({ element: el })
-        .setLngLat(coords as [number, number])
-        .addTo(this.map);
-
-      this.markers.push(marker);
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.selectedZone = props;
+      this.cdr.detectChanges();
+      this.map.flyTo({ center: [lng, lat], zoom: 15 });
     });
-  }
 
+    const marker = new maplibregl.Marker({ element: el })
+      .setLngLat([lng, lat])
+      .addTo(this.map);
+
+    this.markers.push(marker);
+  });
+}
   closeSidebar() {
     this.selectedZone = null;
     this.cdr.detectChanges();

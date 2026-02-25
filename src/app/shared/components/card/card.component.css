@@ -96,3 +96,46 @@
 .booking-btn:hover {
   background-color: #00acc1;
 }
+
+
+/* Ha a kártya a sidebar-ba kerül, kényszerítsük rá ezeket a stílusokat */
+.cards-container .parking-card {
+  width: 100%;       /* Töltse ki a 400px-es sávot */
+  max-width: none;
+  min-height: 120px; /* Sokkal alacsonyabb legyen */
+  margin: 0 0 12px 0;
+  display: flex;
+  flex-direction: row; /* Kép balra, szöveg jobbra */
+}
+
+.cards-container .card-image-container {
+  width: 100px;      /* Kicsi, négyzetes kép */
+  min-width: 100px;
+  height: 120px;
+}
+
+.cards-container .card-content {
+  padding: 10px;     /* Kevesebb padding */
+  gap: 4px;
+}
+
+.cards-container .parking-name {
+  font-size: 1rem;   
+  margin-bottom: 2px;
+}
+
+.cards-container .price {
+  font-size: 1.1rem;
+}
+
+.cards-container .features, 
+.cards-container .booking-btn {
+  display: none; 
+}
+
+.cards-container .card-content::after {
+  content: 'Kattintson a részletekért';
+  font-size: 0.7rem;
+  color: #00bcd4;
+  text-align: right;
+}

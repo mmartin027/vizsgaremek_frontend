@@ -1,76 +1,110 @@
-/* map-component.component.css */
 
 .map-layout-wrapper {
-  position: relative;
+  display: flex; 
   width: 100%;
-  /* A 100vh a teljes képernyő, a 64px a headered becsült magassága */
   height: calc(100vh - 64px); 
-  overflow: hidden; /* Megakadályozza az elcsúszást és görgetést */
-  display: block;
+  overflow: hidden;
+}
+
+
+.cards-container {
+  width: 400px;
+  min-width: 400px;
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px; 
+  display: flex;
+  flex-direction: column;
+  gap: 12px; 
+  box-sizing: border-box;
+  background-color: #f8fafc;
+}
+
+.map-container-relative {
+  flex: 1; 
+  position: relative;
+  height: 100%;
 }
 
 .map-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1; /* Ez legyen legalul */
 }
 
-/* A betöltő réteg, ami teljesen lefedi a térképet */
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10; /* A térkép felett */
-}
-
-/* A lebegő kártya konténere */
 .zone-card-container {
   position: absolute;
-  top: 20px; 
-  left: 20px; 
-  z-index: 20; 
-  width: 350px;
-  pointer-events: none; 
+  top: 20px;
+  right: 20px; 
+  z-index: 10;
+  width: 370px;
 }
 
 .floating-card {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 320px;
   background: white;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  z-index: 1000;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   overflow: hidden;
-  animation: slideIn 0.3s ease-out;
+  pointer-events: auto; 
 }
 
-@keyframes slideIn {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+.action-button{
+  border :2px,solid,black;
+  background-color: rgb(10, 194, 194);
+  color:white;
+  
 }
 
-.action-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+/* map-component.component.css */
+
+.cards-container {
+    width: 400px;
+    min-width: 400px;
+    height: 100%;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #f8fafc;
+    box-sizing: border-box;
 }
 
-.parking-list {
- display: flex;
-  flex-direction: row; 
-  flex-wrap: wrap;    
-  justify-content: center; 
-  gap: 25px;          
-  padding: 20px 0;
-  width: 100%;
+.cards-container app-parking-card {
+    width: 100% !important;   
+    max-width: 100% !important;
+    display: block !important;
+}
+
+.cards-container ::ng-deep .parking-card {
+    width: 100% !important;
+    margin: 0 !important;      
+    min-height: 120px !important; 
+    flex-direction: row !important; 
+}
+
+.cards-container ::ng-deep .booking-btn,
+.cards-container ::ng-deep .features {
+    display: none !important;
+}
+
+.cards-container ::ng-deep .card-image-container {
+    width: 100px !important;
+    min-width: 100px !important;
+    height: 120px !important;
+}
+
+::ng-deep .custom-marker {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid white;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  z-index: 999; /* Legyen felül */
 }

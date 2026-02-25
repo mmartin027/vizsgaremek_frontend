@@ -1,69 +1,60 @@
-
 <app-header></app-header>
-
+<link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
 <div class="map-layout-wrapper">
   
-  <div id="map" class="map-canvas"></div>
+  <div class="cards-container">
+  @for (spot of parkingSpots; track spot.id) {
+    <app-parking-card
+      [spot]="spot"
+      (viewDetails)="handleViewDetails($event)">
+    </app-parking-card>
+  }
+</div>
+  <div class="map-container-relative">
+    <div id="map" class="map-canvas"></div>
 
-  <div class="loading-overlay" *ngIf="isLoading">
-    <div class="spinner-container">
-      <div class="spinner"></div>
-      <p>Parkolóhelyek keresése...</p>
-    </div>
-  </div>
-
-
-   <div class="cards-container">
-    @for (spot of parkingSpots; track spot) {
-      <app-parking-card
-        [spot]="spot"
-        (viewDetails)="handleViewDetails($event)">
-      </app-parking-card>
-    }
-  </div>
-
-  <div class="zone-card-container" *ngIf="selectedZone">
-    <div class="floating-card">
-      
-      <button class="close-x" (click)="closeSidebar()" title="Bezárás">✕</button>
-
-      <div class="image-wrapper">
-        <img [src]="selectedZone.imageUrl || 'assets/no-image-parking.jpg'" 
-             class="card-img" 
-             alt="Parkoló képe">
-        <div class="status-badge" [ngClass]="selectedZone.availableSpaces > 0 ? 'available' : 'full'">
-          {{ selectedZone.availableSpaces > 0 ? 'Elérhető' : 'Tele' }}
-        </div>
+    <div class="loading-overlay" *ngIf="isLoading">
+      <div class="spinner-container">
+        <div class="spinner"></div>
+        <p>Betöltés...</p>
       </div>
+    </div>
 
-      <div class="card-content">
-        <div class="header-row">
-          <h2>{{ selectedZone.name }}</h2>
-          <span class="price-tag">{{ selectedZone.hourlyRate | number }} Ft/óra</span>
-        </div>
+    <div class="zone-card-container" *ngIf="selectedZone">
+      <div class="floating-card">
+        <button class="close-x" (click)="closeSidebar()">✕</button>
         
-        <p class="address">📍 {{ selectedZone.address || 'Cím nem elérhető' }}</p>
-
-        <div class="capacity-info">
-          <div class="capacity-text">
-            <span>Szabad hely: <b>{{ selectedZone.availableSpaces }}</b> / {{ selectedZone.capacity }}</span>
+        <div class="image-wrapper">
+          <img [src]="selectedZone.imageUrl || 'assets/no-image-parking.jpg'" class="card-img">
+          <div class="status-badge" [ngClass]="selectedZone.availableSpaces > 0 ? 'available' : 'full'">
+            {{ selectedZone.availableSpaces > 0 ? 'Elérhető' : 'Tele' }}
           </div>
-          <div class="progress-bg">
-            <div class="progress-fill" 
-                 [style.width.%]="(selectedZone.availableSpaces / selectedZone.capacity) * 100"
-                 [style.background-color]="getProgressBarColor()">
+        </div>
+
+        <div class="card-content">
+          <div class="header-row">
+            <h2>{{ selectedZone.name }}</h2>
+            <span class="price-tag">{{ selectedZone.hourlyRate | number }} Ft/ó</span>
+          </div>
+          <p class="address">📍 {{ selectedZone.address || 'Cím nem elérhető' }}</p>
+          
+          <div class="capacity-info">
+            <div class="capacity-text">
+              <span>Szabad: <b>{{ selectedZone.availableSpaces }}</b> / {{ selectedZone.capacity }}</span>
             </div>
+            <div class="progress-bg">
+              <div class="progress-fill" 
+                   [style.width.%]="(selectedZone.availableSpaces / selectedZone.capacity) * 100"
+                   [style.background-color]="getProgressBarColor()">
+              </div>
+            </div>
+
           </div>
+
+          <button class="action-button" [disabled]="selectedZone.availableSpaces <= 0" (click)="onBook(selectedZone.id)">
+            {{ selectedZone.availableSpaces > 0 ? 'Részletek & Foglalás' : 'Sajnos megtelt' }}
+          </button>
         </div>
-
-        
-
-        <button class="action-button" 
-                [disabled]="selectedZone.availableSpaces <= 0"
-                (click)="onBook(selectedZone.id)">
-          <span *ngIf="selectedZone.availableSpaces > 0">Részletek & Foglalás</span>
-          <span *ngIf="selectedZone.availableSpaces <= 0">Sajnos megtelt</span>
-        </button>
       </div>
     </div>
   </div>

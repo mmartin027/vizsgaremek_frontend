@@ -19,7 +19,7 @@ export class MapService {
   }
 
   getMapStyleUrl(): string {
-    return `https://api.maptiler.com/maps/019c869e-0278-7241-83fb-fe4c10f27310/style.json?key=${this.apiKey}`;
+    return `https://api.maptiler.com/maps/019c869e-0278-7241-83fb-fe4c10f27310/style.json?key=7Mo9PlVhPKdZGr1FvyYI`;
   }
 
   getParkingZones(): Observable<any> {

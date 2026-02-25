@@ -106,9 +106,7 @@ export class BookingUpdateComponent implements OnInit {
     }
   }
 
-  /**
-   * Óra értékének növelése
-   */
+ 
   increaseHours() {
     if (this.additionalHours < 24) {
       this.additionalHours++;
@@ -121,9 +119,7 @@ export class BookingUpdateComponent implements OnInit {
   }
 
 
-  /**
-   * Fizetés és hosszabbítás
-   */
+  
  async confirmExtension() {
   if (!this.booking) return;
 
