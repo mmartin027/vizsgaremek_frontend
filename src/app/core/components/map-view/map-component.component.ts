@@ -77,31 +77,6 @@ this.mapService.setMap(this.map);
 
 
 
-this.map.on('click', (e) => {
-  const features = this.map.queryRenderedFeatures(e.point);
-  
-  if (features.length > 0) {
-    console.log('Minden réteg a kattintás alatt:', features.map(f => f.layer.id));
-    
-    const zoneFeature = features.find(f => f.properties && (f.properties['Zone'] || f.properties['zone']));
-
-    if (zoneFeature) {
-      const mapId = zoneFeature.properties['Zone'] || zoneFeature.properties['zone'];
-      console.log('Talált zóna kód:', mapId);
-
-      this.zoneService.getZoneByMapId(mapId).subscribe({
-        next: (data) => {
-          this.selectedZone = data;
-          this.cdr.detectChanges();
-        },
-        error: (err) => console.error('SQL hiba:', err)
-      });
-    }
-  } else {
-    console.log('Üres területre kattintottál');
-    this.closeSidebar();
-  }
-});
 
 this.map.on('mouseenter', 'zones-layer', () => {
   this.map.getCanvas().style.cursor = 'pointer';

@@ -9,9 +9,9 @@ export class BookingService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Stripe Checkout Session létrehozása foglaláshoz
-   */
+  
+   //Stripe Checkout Session létrehozása foglaláshoz
+   
   createCheckoutSession(spotId: number, bookingData: any): Observable<any> {
     return this.http.post<any>(
       `${this.CHECKOUT_URL}/create-session`, 
@@ -20,9 +20,8 @@ export class BookingService {
     );
   }
 
-  /**
-   *  ÚJ: Stripe Checkout Session létrehozása HOSSZABBÍTÁSHOZ
-   */
+     //ÚJ: Stripe Checkout Session létrehozása HOSSZABBÍTÁSHOZ
+  
   createExtensionSession(bookingId: number, additionalMinutes: number): Observable<any> {
     return this.http.post<any>(
       `${this.CHECKOUT_URL}/create-extension-session`,

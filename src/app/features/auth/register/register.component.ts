@@ -29,7 +29,6 @@ export class RegisterComponent {
   }
 
   continueWithGoogle() {
-  // Mindig a backend OAuth kezdőpontjára irányítunk
   window.location.href = 'http://localhost:8080/oauth2/authorization/google';
 }
 

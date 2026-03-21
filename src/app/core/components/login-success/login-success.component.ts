@@ -1,29 +1,33 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-success',
-  standalone: true,
-  template: `<p>Bejelentkezés feldolgozása... kérlek várj.</p>` 
+  templateUrl: './login-success.component.html'
 })
 export class LoginSuccessComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
 
-  ngOnInit() {
-    
-    this.route.queryParams.subscribe(params => {
-      const token = params['token'];
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
-      if (token) {
-        localStorage.setItem('token', token);
-        console.log('Google token sikeresen elmentve!');
+  ngOnInit(): void {
+    // Feliratkozunk a URL "hash" (#) részére
+    this.route.fragment.subscribe(fragment => {
+      
+      if (fragment) {
+       
+        const urlParams = new URLSearchParams(fragment);
+        const token = urlParams.get('token');
 
-        
-        this.router.navigate(['/home']);
-      } else {
-        
-        this.router.navigate(['/login']);
+        if (token) {
+          console.log(' Sikeresen elkapva a token a hash-ből!');
+          
+          localStorage.setItem('token', token);
+          
+          this.router.navigate(['/home']); 
+        } else {
+          console.error('Nincs token a hash-ben!');
+          this.router.navigate(['/login']);
+        }
       }
     });
   }

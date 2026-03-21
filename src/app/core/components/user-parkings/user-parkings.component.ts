@@ -23,7 +23,7 @@ export class MyBookingsComponent implements OnInit {
     private bookingService: BookingService,
     private authService: AuthService,
     private userBookingsService: UserBookingsService,
-    private router: Router // ← ÚJ DEPENDENCY
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -47,10 +47,10 @@ export class MyBookingsComponent implements OnInit {
       next: (data) => {
         this.bookings = data;
         this.isLoading = false;
-        console.log('✅ Foglalások betöltve:', data);
+        console.log(' Foglalások betöltve:', data);
       },
       error: (err) => {
-        console.error('❌ Hiba a foglalások betöltésekor:', err);
+        console.error(' Hiba a foglalások betöltésekor:', err);
         this.errorMessage = 'Nem sikerült betölteni a foglalásokat.';
         this.isLoading = false;
       }
@@ -79,11 +79,11 @@ export class MyBookingsComponent implements OnInit {
     if (confirm(confirmMsg)) {
       this.bookingService.cancelBooking(booking.id).subscribe({
         next: () => {
-          alert('✅ Foglalás sikeresen lemondva!');
+          alert(' Foglalás sikeresen lemondva!');
           this.loadBookings(); // Újratöltés
         },
         error: (err) => {
-          console.error('❌ Lemondási hiba:', err);
+          console.error(' Lemondási hiba:', err);
           alert('Hiba történt: ' + (err.error?.error || err.message));
         }
       });

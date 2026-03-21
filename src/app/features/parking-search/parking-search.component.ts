@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-import { Router } from '@angular/router'; 
+import { Router, ActivatedRoute } from '@angular/router'; // <-- ActivatedRoute hozzáadva!
 import { CardComponent, ParkingSpotDto } from '../../shared/components/card/card.component';
 import { ParkingService } from '../../services/parking';
 import { HeaderComponent } from '../../shared/components/header/header.component';
@@ -14,26 +13,41 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 })
 export class ParkingSearchComponent implements OnInit {
   parkingSpots: ParkingSpotDto[] = [];
+  searchCity: string = ''; // Eltároljuk a nevet a HTML számára
+
+  // Szótár: Város neve -> Adatbázis ID (Kérlek ellenőrizd, hogy a te adatbázisodban mik az ID-k!)
+  cityToIdMap: { [key: string]: number } = {
+    'Budapest': 1,
+    'Debrecen': 2,
+    'Szeged': 3,
+    'Miskolc': 4,
+    'Pécs': 5
+  };
 
   constructor(
     private parkingService: ParkingService,
-    private router: Router 
+    private router: Router,
+    private route: ActivatedRoute 
   ) {}
 
   ngOnInit() {
-    this.parkingService.searchByCity(1).subscribe(data => {
-      this.parkingSpots = data;
+    this.route.queryParams.subscribe(params => {
+      this.searchCity = params['city'] || '';
+
+     
+      const cityId = this.cityToIdMap[this.searchCity] || 1;
+
+      this.parkingService.searchByCity(cityId).subscribe(data => {
+        this.parkingSpots = data;
+      });
     });
   }
 
- 
-
-openMapView() {
+  openMapView() {
     this.router.navigate(['/map']);
   }
 
   handleViewDetails(id: number) {
     this.router.navigate(['/booking', id]); 
   }
-
 }

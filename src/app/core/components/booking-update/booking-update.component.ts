@@ -37,9 +37,19 @@ export class BookingUpdateComponent implements OnInit {
     return this.booking.hours + this.additionalHours;
   }
   
-  get additionalPrice(): number {
+get additionalPrice(): number {
     if (!this.booking) return 0;
-    return this.additionalHours * (this.booking.totalPrice / this.booking.hours); 
+
+    // 1. LEHETŐSÉG: Ha a backend átküldi a parkoló adatait (pl. hourlyRate)
+    if (this.booking.parkingSpot && this.booking.parkingSpot.hourlyRate) {
+        return this.additionalHours * this.booking.parkingSpot.hourlyRate;
+    }
+    
+    
+    const validHours = this.booking.hours > 0 ? this.booking.hours : 1; 
+    const calculatedHourlyRate = this.booking.totalPrice / validHours;
+    
+    return this.additionalHours * calculatedHourlyRate;
   }
   
   get newTotalPrice(): number {
@@ -135,7 +145,7 @@ export class BookingUpdateComponent implements OnInit {
       console.log(' Extension session:', response);
       
       if (response.url) {
-        console.log('🔄 Átirányítás Stripe-ra');
+        console.log(' Átirányítás Stripe-ra');
         window.location.href = response.url;
       } else {
         alert('Hiba: Nincs fizetési URL');

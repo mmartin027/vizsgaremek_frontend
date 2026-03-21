@@ -17,7 +17,7 @@
     align-self: flex-start;
 }
 
-/* Kártya stílusok */
+
 .spot-header-card, .booking-details-section, .info-section-card, .price-summary-card {
     background: white;
     border-radius: 12px;

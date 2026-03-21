@@ -89,12 +89,14 @@ export class BookingComponent implements OnInit {
   const formattedStartTime = new Date(this.bookingData.startTime).toISOString();
   const formattedEndTime = new Date(this.bookingData.endTime).toISOString();
 
-  const payload = {
+const payload = {
     ...this.bookingData,
     startTime: formattedStartTime, 
     endTime: formattedEndTime,
     licensePlate: this.bookingData.licensePlate.toUpperCase(),
-    userId: this.authService.getCurrentUserId()
+    
+    // JAVÍTVA: Szöveggé (String) alakítjuk, hogy a Stripe megegye!
+    userId: this.authService.getCurrentUserId() ? String(this.authService.getCurrentUserId()) : ''
   };
 
   console.log('Küldött adatok (Instant formátumban):', payload);

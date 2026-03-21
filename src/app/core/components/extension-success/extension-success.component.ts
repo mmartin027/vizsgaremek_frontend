@@ -24,7 +24,7 @@ import { HttpClient } from '@angular/common/http';
       </div>
       
       <div *ngIf="error">
-        <div class="icon">❌</div>
+        <div class="icon"></div>
         <h2>Hiba</h2>
         <p>{{ error }}</p>
         <button (click)="goToBookings()">Vissza</button>

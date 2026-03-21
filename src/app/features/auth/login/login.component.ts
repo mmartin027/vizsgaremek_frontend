@@ -33,26 +33,29 @@ export class LoginComponent {
   }
 
  onLogin() {
-  if (this.loginForm.valid) {
-    this.errorMessage = '';
-    this.isLoading = true;
+    if (this.loginForm.valid) {
+      this.errorMessage = '';
+      this.isLoading = true;
 
-    this.authService.login(this.loginForm.value).subscribe({
-      next: (token: string) => {
-        localStorage.setItem('token', token);
-        this.isLoading = false;
-        this.router.navigate(['/home']);
-      },
-      error: (err) => {
-        console.error("Login hiba:", err);
-        this.isLoading = false;
-        this.errorMessage = err.message || "Hibás felhasználónév vagy jelszó!";
-       
-      }
-    });
-  } else {
-    this.errorMessage = "Kérlek töltsd ki az összes mezőt!";
+      this.authService.login(this.loginForm.value).subscribe({
+        next: (response: any) => { 
+          
+          // Kiszedjük a valódi tokent a válaszból
+          if (response && response.token) {
+            localStorage.setItem('token', response.token); 
+          }
+          
+          this.isLoading = false;
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          console.error("Login hiba:", err);
+          this.isLoading = false;
+          this.errorMessage = err.message || "Hibás felhasználónév vagy jelszó!";
+        }
+      });
+    } else {
+      this.errorMessage = "Kérlek töltsd ki az összes mezőt!";
+    }
   }
-
- }
 }

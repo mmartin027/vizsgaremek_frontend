@@ -12,7 +12,8 @@ import { MyBookingsComponent } from './core/components/user-parkings/user-parkin
 import { BookingUpdateComponent } from './core/components/booking-update/booking-update.component';
 import { ExtensionSuccessComponent } from './core/components/extension-success/extension-success.component';
 import { MapViewComponent } from './core/components/map-view/map-component.component';
-
+import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
+import { adminGuard } from './core/guards/admin-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'register', pathMatch: 'full' },
@@ -32,6 +33,9 @@ export const routes: Routes = [
   { path: 'map', component: MapViewComponent },
   { path: 'extension-success', component: ExtensionSuccessComponent }, 
   { path: 'extend-booking/:id', component: BookingUpdateComponent }, 
+
+{path: 'admin',component: AdminDashboardComponent,canActivate: [adminGuard] },
+
   
   { path: '**', redirectTo: 'home' }
 ];

@@ -1,7 +1,13 @@
 <div class="search-results-page">
   <header>
     <app-header></app-header>
-    <div class="filters">
+    
+    <div class="filters" style="display: flex; align-items: center; gap: 15px; padding: 10px 20px;">
+      
+      <h2 style="margin: 0; margin-right: auto; color: #333; font-size: 20px;">
+        Találatok: <span style="color: #26b1cc;">{{ searchCity || 'Összes' }}</span>
+      </h2>
+
       <button>Szűrők</button>
       
       <button class="map-view-btn" (click)="openMapView()">
@@ -12,8 +18,15 @@
     </div>
   </header>
 
+  @if (parkingSpots.length === 0) {
+    <div style="padding: 50px; text-align: center; color: #666;">
+      <h3>Sajnos jelenleg nem találtunk elérhető parkolót itt: {{ searchCity }}</h3>
+      <p>Próbálj meg egy másik várost keresni a főoldalon!</p>
+    </div>
+  }
+
   <div class="cards-container">
-    @for (spot of parkingSpots; track spot) {
+    @for (spot of parkingSpots; track spot.id) {
       <app-parking-card
         [spot]="spot"
         (viewDetails)="handleViewDetails($event)">

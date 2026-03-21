@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Map } from 'maplibre-gl';
+import { AdminService } from './admin-service';
 
-describe('Map', () => {
-  let service: Map;
+describe('AdminService', () => {
+  let service: AdminService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Map);
+    service = TestBed.inject(AdminService);
   });
 
   it('should be created', () => {

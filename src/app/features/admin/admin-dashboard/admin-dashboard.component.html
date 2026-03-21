@@ -1,0 +1,199 @@
+<div style="display: flex; min-height: 100vh; background-color: #f4f7f6; font-family: sans-serif;">
+
+  <div style="width: 260px; background-color: #26b1cc; color: white; display: flex; flex-direction: column; padding: 20px;">
+    
+    <div style="text-align: center; margin-bottom: 40px; margin-top: 10px;">
+      <h2 style="margin: 0; font-size: 24px;"> ParkEasy</h2>
+      <span style="font-size: 14px; opacity: 0.8;">Admin Panel</span>
+    </div>
+
+    <ul style="list-style: none; padding: 0; margin: 0; flex-grow: 1;">
+      <li (click)="switchTab('bookings')" [ngStyle]="{'background-color': activeTab === 'bookings' ? 'rgba(255,255,255,0.2)' : 'transparent'}" style="padding: 15px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; transition: 0.2s;">
+         Foglalások
+      </li>
+      
+      <li (click)="switchTab('zones')" [ngStyle]="{'background-color': activeTab === 'zones' ? 'rgba(255,255,255,0.2)' : 'transparent'}" style="padding: 15px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; transition: 0.2s;">
+         Zónák (Területek)
+      </li>
+      
+      <li (click)="switchTab('parkingSpots')" [ngStyle]="{'background-color': activeTab === 'parkingSpots' ? 'rgba(255,255,255,0.2)' : 'transparent'}" style="padding: 15px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; transition: 0.2s;">
+         Parkolóhelyek
+      </li>
+      
+      <li (click)="switchTab('users')" [ngStyle]="{'background-color': activeTab === 'users' ? 'rgba(255,255,255,0.2)' : 'transparent'}" style="padding: 15px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; transition: 0.2s;">
+         Felhasználók
+      </li>
+    </ul>
+
+    <div style="margin-top: auto;">
+      <button (click)="goToFrontend()" style="width: 100%; background-color: white; color: #26b1cc; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">
+        Vissza a főoldalra
+      </button>
+      <button (click)="logout()" style="width: 100%; background-color: transparent; border: 1px solid white; color: white; padding: 12px; border-radius: 8px; cursor: pointer;">
+         Kijelentkezés
+      </button>
+    </div>
+  </div>
+
+  <div style="flex: 1; padding: 40px; overflow-y: auto;">
+
+    <div *ngIf="activeTab === 'bookings'">
+      <h2 style="margin-top: 0; color: #333;">Foglalások kezelése</h2>
+      <p style="color: #666; margin-bottom: 20px;">Itt láthatod a rendszerben lévő összes foglalást.</p>
+      
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <p *ngIf="bookings.length === 0">Nincsenek megjeleníthető foglalások...</p>
+        <table *ngIf="bookings.length > 0" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 2px solid #eee; text-align: left;">
+              <th style="padding: 12px;">ID</th>
+              <th style="padding: 12px;">Felhasználó</th>
+              <th style="padding: 12px;">Parkolóhely</th>
+              <th style="padding: 12px;">Kezdés</th>
+              <th style="padding: 12px;">Befejezés</th>
+              <th style="padding: 12px;">Művelet</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let booking of bookings" style="border-bottom: 1px solid #eee;">
+              <td style="padding: 12px;">{{ booking.id }}</td>
+              <td style="padding: 12px; font-weight: bold;">{{ booking.user?.username || 'Ismeretlen' }}</td>
+              <td style="padding: 12px; color: #26b1cc;">{{ booking.parkingSpot?.name || 'Ismeretlen' }}</td>
+              <td style="padding: 12px;">{{ booking.startTime | date:'short' }}</td>
+              <td style="padding: 12px;">{{ booking.endTime | date:'short' }}</td>
+              <td style="padding: 12px;">
+                <button (click)="cancelBooking(booking.id)" style="background-color: #ff4d4f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Lemondás</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'zones'">
+      <h2 style="margin-top: 0; color: #333;">Zónák (Területek) kezelése</h2>
+      <p style="color: #666; margin-bottom: 20px;">Rajzolj új parkolási övezeteket a térképen!</p>
+
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+        <h3 style="margin-top: 0;">🟦 Új Zóna Hozzáadása</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+          <input type="text" [(ngModel)]="newZone.name" placeholder="Zóna neve (pl. Belváros)" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; flex-grow: 1;">
+          <input type="text" [(ngModel)]="newZone.zoneCode" placeholder="Zónakód (pl. Z01)" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          <input type="number" [(ngModel)]="newZone.hourlyRate" placeholder="Óradíj (Ft)" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        
+        <label style="font-weight: bold; display: block; margin-bottom: 5px;">🗺️ Kattints a térképre a Zóna határvonalainak megrajzolásához!</label>
+        <div id="admin-map-zones" style="width: 100%; height: 350px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px;"></div>
+        
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <span style="padding: 8px; background: #e9ecef; border-radius: 4px; border: 1px solid #ccc;">📍 Pontok: <strong>{{ polygonCoords.length }} db</strong></span>
+          <button (click)="clearPolygon()" style="background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer;">🧹 Rajz Törlése</button>
+          <button (click)="addZone()" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: auto;">💾 Zóna Mentése</button>
+        </div>
+      </div>
+
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <p *ngIf="zones.length === 0">Nincsenek megjeleníthető zónák...</p>
+        <table *ngIf="zones.length > 0" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 2px solid #eee; text-align: left;">
+              <th style="padding: 12px;">ID</th><th style="padding: 12px;">Név</th><th style="padding: 12px;">Kód</th><th style="padding: 12px;">Óradíj</th><th style="padding: 12px;">Művelet</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let zone of zones" style="border-bottom: 1px solid #eee;">
+              <td style="padding: 12px;">{{ zone.id }}</td>
+              <td style="padding: 12px; font-weight: bold;">{{ zone.name }}</td>
+              <td style="padding: 12px;">{{ zone.zoneCode }}</td>
+              <td style="padding: 12px;">{{ zone.hourlyRate }} Ft</td>
+              <td style="padding: 12px;"><button (click)="deleteZone(zone.id)" style="background-color: #ff4d4f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Törlés</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'parkingSpots'">
+      <h2 style="margin-top: 0; color: #333;">Parkolóhelyek kezelése</h2>
+      <p style="color: #666; margin-bottom: 20px;">Konkrét parkolók/garázsok hozzárendelése zónákhoz.</p>
+
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+        <h3 style="margin-top: 0;"> Új Parkolóhely Hozzáadása</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+          <input type="text" [(ngModel)]="newSpot.name" placeholder="Parkoló neve" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          <input type="text" [(ngModel)]="newSpot.address" placeholder="Cím" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; flex-grow: 1;">
+          
+          <select [(ngModel)]="newSpot.zoneId" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <option [value]="null" disabled selected>Válassz Zónát...</option>
+            <option *ngFor="let z of zones" [value]="z.id">{{ z.name }}</option>
+          </select>
+          
+          <input type="number" [(ngModel)]="newSpot.capacity" placeholder="Férőhely" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100px;">
+        </div>
+        
+        <label style="font-weight: bold; display: block; margin-bottom: 5px;"> Kattints a térképre a pontos hely (gombostű) megadásához!</label>
+        <div id="admin-map-spots" style="width: 100%; height: 300px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px;"></div>
+        
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" [(ngModel)]="newSpot.latitude" placeholder="Lat" disabled style="padding: 8px; border: 1px solid #eee; background: #f9f9f9; width: 100px;">
+          <input type="text" [(ngModel)]="newSpot.longitude" placeholder="Lng" disabled style="padding: 8px; border: 1px solid #eee; background: #f9f9f9; width: 100px;">
+          <button (click)="addSpot()" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: auto;">💾 Parkoló Mentése</button>
+        </div>
+      </div>
+
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <p *ngIf="parkingSpots.length === 0">Nincsenek megjeleníthető parkolók...</p>
+        <table *ngIf="parkingSpots.length > 0" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 2px solid #eee; text-align: left;">
+              <th style="padding: 12px;">ID</th>
+              <th style="padding: 12px;">Név</th>
+              <th style="padding: 12px;">Cím</th>
+              <th style="padding: 12px;">Óradíj</th>
+              <th style="padding: 12px;">Művelet</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let spot of parkingSpots" style="border-bottom: 1px solid #eee;">
+              <td style="padding: 12px;">{{ spot.id }}</td>
+              <td style="padding: 12px; font-weight: bold;">{{ spot.name }}</td>
+              <td style="padding: 12px;">{{ spot.address }}</td>
+              <td style="padding: 12px;">{{ spot.hourlyRate }} Ft</td>
+              <td style="padding: 12px;">
+                <button (click)="deleteSpot(spot.id)" style="background-color: #ff4d4f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Törlés</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'users'">
+      <h2 style="margin-top: 0; color: #333;">Regisztrált Felhasználók</h2>
+      <p style="color: #666; margin-bottom: 20px;">Az alkalmazásba eddig regisztrált ügyfelek listája.</p>
+
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <p *ngIf="users.length === 0">Nincsenek megjeleníthető felhasználók...</p>
+        <table *ngIf="users.length > 0" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 2px solid #eee; text-align: left;">
+              <th style="padding: 12px;">ID</th>
+              <th style="padding: 12px;">Felhasználónév</th>
+              <th style="padding: 12px;">Email</th>
+              <th style="padding: 12px;">Regisztráció ideje</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users" style="border-bottom: 1px solid #eee;">
+              <td style="padding: 12px;">{{ user.id }}</td>
+              <td style="padding: 12px; font-weight: bold;">{{ user.username }}</td>
+              <td style="padding: 12px;">{{ user.email }}</td>
+              <td style="padding: 12px;">{{ user.createdAt | date:'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -6,6 +6,21 @@
     <a routerLink="/parkolo-kereses" routerLinkActive="active">Parkolókeresés</a>
     <a routerLink="/user-bookings" routerLinkActive="active">Foglalásaim</a>
 
-
+<a *ngIf="authService.isAdmin()" 
+     routerLink="/admin" 
+     style="background-color: #26B9D1; color: #f4f4f4; font-weight: bold; padding: 8px 15px; border-radius: 5px; text-decoration: none; margin-left: 15px;">
+     Admin Panel
+  </a>
   </nav>
+<ng-container *ngIf="!authService.isLoggedIn()">
+    <a routerLink="/login" style="margin-left: 15px; text-decoration: none; color: white;">Bejelentkezés</a>
+    <a routerLink="/register" style="margin-left: 15px; text-decoration: none; color: white;">Regisztráció</a>
+  </ng-container>
+
+  <button *ngIf="authService.isLoggedIn()" 
+          (click)="logout()" 
+          style="margin-left: 15px; background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+     Kijelentkezés
+  </button>
+  
 </header>

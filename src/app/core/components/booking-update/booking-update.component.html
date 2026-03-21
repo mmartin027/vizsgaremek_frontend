@@ -7,7 +7,7 @@
     <div class="left-section">
       <div class="booking-info-card">
         <div class="location-badge">
-          <span class="icon">📍</span>
+          <span class="icon"></span>
         </div>
         
         <h2>{{ booking.parkingSpotName }}</h2>
@@ -44,7 +44,6 @@
     <div class="right-section">
       <h2>Hány órával szeretnéd meghosszabbítani?</h2>
       
-      <!-- Óraszám választó -->
       <div class="hour-selector">
         <button class="btn-decrease" (click)="decreaseHours()" [disabled]="additionalHours <= 1">
           −
