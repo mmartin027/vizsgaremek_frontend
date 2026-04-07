@@ -15,7 +15,7 @@
             <span class="distance-tag">300 m távolságra</span>
           </div>
           <h2>{{ selectedSpot.name }}</h2>
-          <p class="address">📍 {{ selectedSpot.address }}</p>
+          <p class="address"> {{ selectedSpot.address }}</p>
         </div>
       </div>
       
@@ -54,6 +54,21 @@
         </div>
       </div>
 
+<div class="on-demand-block mt-4 p-4 rounded">
+  <h3 > Perc alapú (Start-Stop) parkolás</h3>
+  <p class="text-muted mb-3">
+    Nem tudod pontosan, meddig fogsz maradni? Semmi gond! 
+    Töltsd ki a <strong>Gépjármű adatait</strong> fentebb, indítsd el a parkolást most, és ráérsz a végén kifizetni a pontos időt!
+  </p>
+  
+  <button 
+    class="btn btn-success btn-lg w-100" 
+    style="font-weight: bold;"
+    (click)="startOnDemandParking()"
+    [disabled]="isLoading"> <span *ngIf="!isLoading">PARKOLÁS INDÍTÁSA MOST</span>
+    <span *ngIf="isLoading">Indítás folyamatban... </span>
+  </button>
+</div>
       <div class="info-section-card">
         <h3>Szolgáltatások & Kényelem</h3>
         <div class="features-grid">

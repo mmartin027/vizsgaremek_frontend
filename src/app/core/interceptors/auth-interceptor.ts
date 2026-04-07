@@ -1,13 +1,12 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../services/auth';
 import { catchError, switchMap, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = localStorage.getItem('token');
 
-  //  Eredeti kérés előkészítése a tokennel
   let authReq = req;
   if (token) {
     authReq = req.clone({
@@ -17,7 +16,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  //  Kérés elküldése és a válasz figyelése
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
       
@@ -25,7 +23,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         
         console.warn('Interceptor: 401-es hiba! Megpróbálom frissíteni a tokent...');
 
-        // Megpróbáljuk  frissíteni a tokent
         return authService.refreshToken().pipe(
           switchMap((res: any) => {
             const newToken = res.accessToken;

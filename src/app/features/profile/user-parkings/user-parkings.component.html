@@ -1,0 +1,27 @@
+
+  <app-header></app-header>
+
+
+<div class="container">
+
+
+  <h1>Foglalásaim</h1>
+
+  <div *ngIf="isLoading" class="loader">Betöltés...</div>
+
+  <div *ngIf="!isLoading && bookings.length === 0" class="no-bookings">
+    <p>Nincsenek még foglalásaid.</p>
+  </div>
+
+  <div class="booking-grid" *ngIf="!isLoading && upcomingAndActiveBookings.length > 0">
+    <app-user-booking-card 
+      *ngFor="let item of upcomingAndActiveBookings" 
+      [booking]="item">
+    </app-user-booking-card>
+  </div>
+
+  <div *ngIf="!isLoading && upcomingAndActiveBookings.length === 0" class="no-bookings" style="text-align: center; padding: 40px; color: #666;">
+    <h3 style="margin-top: 0;">Nincsenek aktív foglalásaid.</h3>
+    <p>Jelenleg nincs folyamatban lévő vagy közelgő parkolásod.</p>
+  </div>
+</div>

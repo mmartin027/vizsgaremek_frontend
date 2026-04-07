@@ -1,1 +1,12 @@
-<p>profile works!</p>
+<app-header></app-header>
+
+<div *ngIf="!isLoading && userData">
+  <p><strong>Keresztnév:</strong> {{ userData.firstName }}</p>
+  <p><strong>Vezetéknév:</strong> {{ userData.lastName }}</p>
+  <p><strong>E-mail cím:</strong> {{ userData.email }}</p>
+  <p><strong>Felhasználó azonosító:</strong> user-{{ userData.id }}</p>
+</div>
+
+<div *ngIf="isLoading">
+  <p>Adataid betöltése folyamatban... </p>
+</div>

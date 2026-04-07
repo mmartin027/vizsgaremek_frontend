@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-
-import { AuthService } from '../../../services/auth';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth';
+import { ErrorService } from '../../../core/services/error-service';
+import { environment } from '../../../core/enviroment';
 
 @Component({
   selector: 'app-login',
@@ -13,13 +14,12 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  errorMessage: string = '';  
   isLoading: boolean = false; 
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  
+  private errorService = inject(ErrorService); 
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -28,19 +28,16 @@ export class LoginComponent {
     });
   }
 
-  continueWithGoogle() {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+continueWithGoogle() {
+    const baseUrl = environment.apiUrl.replace('/api', '');
+    window.location.href = `${baseUrl}/oauth2/authorization/google`;
   }
-
- onLogin() {
+  onLogin() {
     if (this.loginForm.valid) {
-      this.errorMessage = '';
       this.isLoading = true;
 
       this.authService.login(this.loginForm.value).subscribe({
         next: (response: any) => { 
-          
-          // Kiszedjük a valódi tokent a válaszból
           if (response && response.token) {
             localStorage.setItem('token', response.token); 
           }
@@ -51,11 +48,13 @@ export class LoginComponent {
         error: (err) => {
           console.error("Login hiba:", err);
           this.isLoading = false;
-          this.errorMessage = err.message || "Hibás felhasználónév vagy jelszó!";
+          
+          const msg = err.error?.message || "Hibás felhasználónév vagy jelszó! Kérlek, próbáld újra.";
+          this.errorService.showError(msg);
         }
       });
     } else {
-      this.errorMessage = "Kérlek töltsd ki az összes mezőt!";
+      this.errorService.showError("Kérlek, töltsd ki a felhasználónevet és a jelszót a bejelentkezéshez!");
     }
   }
 }

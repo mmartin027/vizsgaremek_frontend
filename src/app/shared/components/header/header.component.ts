@@ -1,8 +1,8 @@
 import { Component,inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../../services/auth';
-import { RouterModule, Router } from '@angular/router'; // A Router-t is importáld!
+import { AuthService } from '../../../core/services/auth';
+import { RouterModule, Router } from '@angular/router'; 
 
 @Component({
   selector: 'app-header',
@@ -16,10 +16,9 @@ export class HeaderComponent {
 
 public authService = inject(AuthService);
 
-private router = inject(Router); // <--- Router bekötése
+private router = inject(Router); 
 logout() {
     if (confirm('Biztosan ki szeretnél jelentkezni?')) {
-      // Tokenek törlése
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       

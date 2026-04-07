@@ -2,21 +2,23 @@ import { Routes } from '@angular/router';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { HomeComponent } from './features/home/home.component';
-import { LoginSuccessComponent } from './core/components/login-success/login-success.component';
+import { LoginSuccessComponent } from './features/auth/login-success/login-success.component';
 import{ ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ParkingSearchComponent } from './features/parking-search/parking-search.component';
 import { BookingComponent } from './features/booking/booking.component';
-import { BookingSuccessComponent } from './core/components/booking-success/booking-success.component';
-import { PaymentComponent } from './core/components/payment/payment.component'; 
-import { MyBookingsComponent } from './core/components/user-parkings/user-parkings.component';
-import { BookingUpdateComponent } from './core/components/booking-update/booking-update.component';
-import { ExtensionSuccessComponent } from './core/components/extension-success/extension-success.component';
-import { MapViewComponent } from './core/components/map-view/map-component.component';
+import { BookingSuccessComponent } from './features/booking/booking-success/booking-success.component';
+import { PaymentComponent } from './features/booking/payment/payment.component'; 
+import { MyBookingsComponent } from './features/profile/user-parkings/user-parkings.component';
+import { BookingUpdateComponent } from './features/booking/booking-update/booking-update.component';
+import { ExtensionSuccessComponent } from './features/booking/extension-success/extension-success.component';
+import { MapViewComponent } from './features/map-view/map-component.component';
 import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
+import { ProfileComponent } from './features/profile/profile.component';
 import { adminGuard } from './core/guards/admin-guard';
+import { VerifyEmailComponent } from './features/auth/verify-email/verify-email.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'register', pathMatch: 'full' },
+  { path: '', redirectTo: 'fooldal', pathMatch: 'full' },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'fooldal', component: HomeComponent },
@@ -33,8 +35,9 @@ export const routes: Routes = [
   { path: 'map', component: MapViewComponent },
   { path: 'extension-success', component: ExtensionSuccessComponent }, 
   { path: 'extend-booking/:id', component: BookingUpdateComponent }, 
-
-{path: 'admin',component: AdminDashboardComponent,canActivate: [adminGuard] },
+  {path: 'admin',component: AdminDashboardComponent,canActivate: [adminGuard] },
+  {path:'user-profile',component: ProfileComponent},
+  { path: 'verify-email', component: VerifyEmailComponent },
 
   
   { path: '**', redirectTo: 'home' }

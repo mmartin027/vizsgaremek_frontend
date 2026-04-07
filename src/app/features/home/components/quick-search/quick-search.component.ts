@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common'; // <-- EZ FONTOS: *ngIf és *ngFor miatt
+import { CommonModule } from '@angular/common'; 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router'; // <-- EZ FONTOS: Navigáció miatt
+import { Router } from '@angular/router'; 
 
 @Component({
   selector: 'app-quick-search',
@@ -12,11 +12,11 @@ import { Router } from '@angular/router'; // <-- EZ FONTOS: Navigáció miatt
 })
 export class QuickSearchComponent {
   private fb = inject(FormBuilder);
-  private router = inject(Router); // Router beinjektálása
+  private router = inject(Router); 
 
   showCities = false;
   
-  // A városok listája (később akár backendből is jöhet)
+  
   cities = ['Budapest', 'Debrecen', 'Szeged', 'Miskolc', 'Pécs'];
 
   searchForm = this.fb.group({

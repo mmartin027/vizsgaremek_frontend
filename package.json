@@ -31,6 +31,8 @@
     "@maptiler/sdk": "^3.11.1",
     "@stripe/stripe-js": "^8.7.0",
     "@types/stripe-v3": "^3.1.33",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "maplibre-gl": "^5.18.0",
     "rxjs": "~7.8.0",
     "stripe-angular": "^1.9.3",

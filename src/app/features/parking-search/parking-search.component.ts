@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router'; // <-- ActivatedRoute hozzáadva!
+import { Router, ActivatedRoute } from '@angular/router'; 
 import { CardComponent, ParkingSpotDto } from '../../shared/components/card/card.component';
-import { ParkingService } from '../../services/parking';
+import { ParkingService } from '../../core/services/parking';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
@@ -13,9 +13,8 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 })
 export class ParkingSearchComponent implements OnInit {
   parkingSpots: ParkingSpotDto[] = [];
-  searchCity: string = ''; // Eltároljuk a nevet a HTML számára
+  searchCity: string = ''; 
 
-  // Szótár: Város neve -> Adatbázis ID (Kérlek ellenőrizd, hogy a te adatbázisodban mik az ID-k!)
   cityToIdMap: { [key: string]: number } = {
     'Budapest': 1,
     'Debrecen': 2,

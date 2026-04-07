@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AdminService } from '../../../services/admin-service'; 
+import { AdminService } from '../../../core/services/admin-service';
 import * as maplibregl from 'maplibre-gl';
 
 @Component({
@@ -16,13 +16,11 @@ export class AdminDashboardComponent implements OnInit {
   
   activeTab: string = 'users'; 
   
-  // Adattömbök
   users: any[] = [];
   parkingSpots: any[] = [];
   bookings: any[] = []; 
-  zones: any[] = []; // <-- ÚJ TÖMB A ZÓNÁKNAK
+  zones: any[] = []; 
 
-  // Űrlap változók
   newZone: any = { name: '', zoneCode: '', hourlyRate: 0, mapId: '', polygonData: '' };
   newSpot: any = { name: '', address: '', hourlyRate: 0, capacity: 0, isActive: true, latitude: null, longitude: null, zoneId: null };
 
@@ -59,10 +57,10 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  // --- 1. A ZÓNA RAJZOLÓ TÉRKÉP (Sokszög) ---
+ 
   initZoneMap() {
     this.map = new maplibregl.Map({
-      container: 'admin-map-zones', // Külön ID a Zóna térképnek!
+      container: 'admin-map-zones', 
       style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${this.mapTilerKey}`,
       center: [18.2323, 46.0727],
       zoom: 13
@@ -85,10 +83,10 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // --- 2. A PARKOLÓ TÉRKÉP (Gombostű) ---
+  // ---  A PARKOLÓ TÉRKÉP (Gombostű) ---
   initSpotMap() {
     this.map = new maplibregl.Map({
-      container: 'admin-map-spots', // Külön ID a Parkoló térképnek!
+      container: 'admin-map-spots', 
       style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${this.mapTilerKey}`,
       center: [18.2323, 46.0727],
       zoom: 13
@@ -125,7 +123,7 @@ export class AdminDashboardComponent implements OnInit {
       alert('Kérlek add meg a zóna nevét, és rajzolj egy legalább 3 pontból álló területet!');
       return;
     }
-    this.newZone.polygonData = JSON.stringify(this.polygonCoords); // Itt fűzzük be a hosszú szöveget!
+    this.newZone.polygonData = JSON.stringify(this.polygonCoords); 
     
     this.adminService.addZone(this.newZone).subscribe({
       next: () => {
@@ -173,8 +171,7 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  // --- EGYÉB FUNKCIÓK ---
-// --- EGYÉB FUNKCIÓK ---
+ 
   cancelBooking(id: number) {
     if (confirm('Biztosan le szeretnéd mondani/törölni ezt a foglalást?')) {
       this.adminService.cancelBooking(id).subscribe({

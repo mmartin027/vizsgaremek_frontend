@@ -1,7 +1,7 @@
-<div class="booking-card" [ngClass]="booking.status.toLowerCase()">
+<div class="booking-card" [ngClass]="liveStatus.toLowerCase()">
   <div class="card-left">
     <div class="location-icon">
-      <span class="icon">📍</span>
+      <i class="bi bi-geo-alt" ></i>
     </div>
     <div class="status-indicator"></div>
   </div>
@@ -12,8 +12,8 @@
         <h3 class="parking-name">{{ booking.parkingSpotName }}</h3>
         <p class="parking-address">{{ booking.parkingSpotAddress }}</p>
       </div>
-      <span class="status-badge" [ngClass]="booking.status.toLowerCase()">
-        {{ getStatusLabel(booking.status) }}
+      <span class="status-badge" [ngClass]="liveStatus.toLowerCase()">
+        {{ statusLabel }}
       </span>
     </div>
 
@@ -36,21 +36,22 @@
               </p>
             </div>
             <div class="time-separator">→</div>
-            <div class="time-item">
-              <span class="time-label">Befejezés</span>
-              <p class="time-value">
-                📅 {{ booking.endTime | date:'yyyy. MM. dd.' }}
-                 {{ booking.endTime | date:'HH:mm' }}
-              </p>
-            </div>
+          <div class="time-item">
+           <span class="time-label">Befejezés</span>
+            <p class="time-value">
+            {{ (booking.checkOutTime || booking.endTime) | date:'yyyy. MM. dd.' }}
+            {{ (booking.checkOutTime || booking.endTime) | date:'HH:mm' }}
+         </p>
+        </div>
           </div>
         </div>
 
-        <div class="duration-info">
-          <span class="label">Időtartam</span>
-          <strong>{{ booking.hours }} óra</strong>
-        </div>
+    <div class="duration-info">
+       <span class="label">Időtartam</span>
+      <strong *ngIf="booking.hours">{{ booking.hours }} óra</strong>
+     <strong *ngIf="!booking.hours" class="text-primary">Perc alapú</strong>
       </div>
+   </div>
 
       <div class="card-footer">
         <div class="price-section">
@@ -64,12 +65,27 @@
         </div>
         
         <div class="card-actions">
+          
+
+          <div *ngIf="booking.status === 'IN_PROGRESS'" class="timer-section w-100 mb-3 text-center p-3" style="background-color: #f8f9fa; border-radius: 8px; border: 2px solid #dc3545;">
+  <span style="font-size: 14px; color: #6c757d; text-transform: uppercase; font-weight: bold;">Eltelt idő</span>
+  <h2 style="font-size: 2.5rem; font-weight: 800; color: #dc3545; margin: 10px 0; font-family: monospace;">
+    {{ parkingTimer }}
+  </h2>
+  <button 
+    class="btn btn-danger btn-lg w-100 font-weight-bold" 
+    style="font-size: 1.1rem; padding: 12px;"
+    (click)="stopOnDemandParking()">
+     Parkolás Leállítása és Fizetés
+  </button>
+</div>
+
           <button 
             class="btn-extend" 
             (click)="extendBooking(booking)"
-            *ngIf="booking.status === 'ACTIVE'"
+            *ngIf="canExtend(booking)"
             [disabled]="isExtending">
-            ⏱️ Időpont hosszabbítás
+            ⏱ Időpont hosszabbítás
           </button>
           
           <button 
@@ -81,7 +97,7 @@
           <button 
             class="btn-cancel" 
             (click)="cancelBooking(booking)"
-            *ngIf="booking.status === 'ACTIVE' && canCancel(booking)">
+            *ngIf="canCancel(booking)">
             🗑️ Törlés
           </button>
         </div>

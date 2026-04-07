@@ -1,9 +1,9 @@
 .booking-card {
   display: flex;
   background-color: #ffffff;
-  border-radius: 16px;
+  border-radius: 10px;
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto 24px auto;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -19,12 +19,13 @@
 
 .card-left {
   width: 8px;
-  background: linear-gradient(180deg, #3b82f6 0%, #1e40af 100%);
   position: relative;
+  left:19px;
 }
 
-.booking-card.active .card-left {
-  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+.booking-card.active .location-icon {
+  background-color: #72c996;
+  color:#208727b2 ;
 }
 
 .booking-card.completed .card-left {
@@ -42,7 +43,6 @@
   transform: translateX(-50%);
   width: 48px;
   height: 48px;
-  background: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -72,11 +72,15 @@
   font-size: 24px;
   font-weight: 700;
   color: #1f2937;
+  left:18px;
+  position:relative;
   margin: 0 0 8px 0;
 }
 
 .parking-address {
   color: #6b7280;
+  left:18px;
+  position: relative;
   font-size: 14px;
   margin: 0;
 }
@@ -105,7 +109,6 @@
   color: #991b1b;
 }
 
-/* Információs sorok */
 .card-body {
   display: flex;
   flex-direction: column;
@@ -130,7 +133,6 @@
   font-weight: 600;
 }
 
-/* Autó info */
 .car-info strong {
   display: block;
   font-size: 18px;
@@ -150,7 +152,6 @@
   border: 2px solid #fcd34d;
 }
 
-/* Időpont info */
 .time-details {
   display: flex;
   align-items: center;
@@ -181,7 +182,6 @@
   font-weight: bold;
 }
 
-/* Időtartam */
 .duration-info strong {
   display: block;
   font-size: 20px;
@@ -189,7 +189,6 @@
   font-weight: 700;
 }
 
-/* Lábléc */
 .card-footer {
   display: grid;
   grid-template-columns: 1fr 1fr 2fr;
@@ -197,7 +196,6 @@
   align-items: center;
 }
 
-/* Ár szekció */
 .price-section {
   display: flex;
   flex-direction: column;
@@ -217,18 +215,6 @@
   color: #1f2937;
 }
 
-/* Belépési kód */
-/*
-.access-code {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 16px;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-*/
 .code-label {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.9);
@@ -244,7 +230,6 @@
   letter-spacing: 3px;
 }
 
-/* Gombok */
 .card-actions {
   display: flex;
   gap: 12px;

@@ -3,3 +3,6 @@
 @import "tailwindcss";
 
 
+* {
+  font-family: 'Sora', sans-serif;
+}

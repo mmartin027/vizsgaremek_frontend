@@ -2,11 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { StripeService } from '../../services/stripe.service';
-import { BookingService } from '../../services/booking.service'; 
-import { ParkingService } from '../../services/parking';
-import { AuthService } from '../../services/auth';
+import { StripeService } from '../../core/services/stripe.service';
+import { BookingService } from '../../core/services/booking.service';
+import { ParkingService } from '../../core/services/parking';
+import { AuthService } from '../../core/services/auth';
 import { HeaderComponent } from '../../shared/components/header/header.component';
+import { ErrorService } from '../../core/services/error-service';
+
+
 
 @Component({
   selector: 'app-booking',
@@ -18,6 +21,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 export class BookingComponent implements OnInit {
   spotId!: number;
   selectedSpot?: any;
+  isLoading: boolean = false; 
   
   bookingData = {
     licensePlate: '',
@@ -34,7 +38,8 @@ export class BookingComponent implements OnInit {
     private bookingService: BookingService, 
     private parkingService: ParkingService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private errorService: ErrorService
   ) {}
 
   ngOnInit() {
@@ -48,7 +53,6 @@ export class BookingComponent implements OnInit {
     this.parkingService.getById(this.spotId).subscribe({
       next: (spot) => {
         this.selectedSpot = spot;
-        console.log('Parkolóhely betöltve:', spot);
       },
       error: (err) => console.error('Hiba a betöltéskor:', err)
     });
@@ -79,38 +83,62 @@ export class BookingComponent implements OnInit {
     );
   }
 
- async confirmBooking() {
-  if (!this.bookingData.startTime || !this.bookingData.endTime) {
-    alert('Kérlek válassz időpontot!');
-    return;
+  async confirmBooking() {
+    if (!this.bookingData.startTime || !this.bookingData.endTime) {
+      alert('Kérlek válassz időpontot!');
+      return;
+    }
+
+    const payload = {
+      ...this.bookingData,
+      startTime: new Date(this.bookingData.startTime).toISOString(), 
+      endTime: new Date(this.bookingData.endTime).toISOString(),
+      licensePlate: this.bookingData.licensePlate.toUpperCase(),
+      userId: this.authService.getCurrentUserId() ? String(this.authService.getCurrentUserId()) : ''
+    };
+
+    this.bookingService.createCheckoutSession(this.spotId, payload).subscribe({
+      next: (response: any) => {
+        if (response.url) {
+          window.location.href = response.url;
+        }
+      },
+      error: (err) => {
+        console.error('Szerver hiba:', err);
+        alert('Szerver hiba történt a Stripe indításakor.');
+      }
+    });
   }
 
-
-  const formattedStartTime = new Date(this.bookingData.startTime).toISOString();
-  const formattedEndTime = new Date(this.bookingData.endTime).toISOString();
-
-const payload = {
-    ...this.bookingData,
-    startTime: formattedStartTime, 
-    endTime: formattedEndTime,
-    licensePlate: this.bookingData.licensePlate.toUpperCase(),
+  startOnDemandParking() {
+    const licensePlate = this.bookingData.licensePlate;
     
-    // JAVÍTVA: Szöveggé (String) alakítjuk, hogy a Stripe megegye!
-    userId: this.authService.getCurrentUserId() ? String(this.authService.getCurrentUserId()) : ''
-  };
-
-  console.log('Küldött adatok (Instant formátumban):', payload);
-
-  this.bookingService.createCheckoutSession(this.spotId, payload).subscribe({
-    next: (response: any) => {
-      if (response.url) {
-        window.location.href = response.url;
-      }
-    },
-    error: (err) => {
-      console.error('Szerver hiba:', err);
-      alert('Szerver hiba történt a Stripe indításakor.');
+    if (!licensePlate || licensePlate.trim().length < 4) {
+      this.errorService.showError("Kérlek, add meg az autó adatait (rendszám, márka stb.) a parkolás indításához!");
+      return;
     }
-  });
-}
+
+    this.isLoading = true;
+
+    const payload = {
+      parkingSpotId: this.spotId,
+      userId: this.authService.getCurrentUserId(),
+      licensePlate: licensePlate.toUpperCase(),
+      carBrand: this.bookingData.carBrand,
+      carModel: this.bookingData.carModel,
+      carColor: this.bookingData.carColor
+    };
+
+    this.bookingService.startOnDemandParking(payload).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+     
+        this.router.navigate(['/foglalasaim']); 
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.errorService.showError(err.error?.error || "Hiba történt a parkolás indításakor!");
+      }
+    });
+  }
 }

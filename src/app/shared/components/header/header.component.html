@@ -1,26 +1,31 @@
 <header class="header">
-  <div class="logo">
-  </div>
+  
+
+  <input type="checkbox" id="menu-toggle" class="menu-checkbox">
+  
+  <label for="menu-toggle" class="hamburger">☰</label>
+
   <nav class="nav-links">
+    
     <a routerLink="/fooldal" routerLinkActive="active">Főoldal</a>
     <a routerLink="/parkolo-kereses" routerLinkActive="active">Parkolókeresés</a>
-    <a routerLink="/user-bookings" routerLinkActive="active">Foglalásaim</a>
+    
+    <ng-container *ngIf="authService.isLoggedIn()">
+      <a routerLink="/user-bookings" routerLinkActive="active">Foglalásaim</a>
+      <a routerLink="/user-profile" routerLinkActive="active">Profilom</a>
+    </ng-container>
 
-<a *ngIf="authService.isAdmin()" 
-     routerLink="/admin" 
-     style="background-color: #26B9D1; color: #f4f4f4; font-weight: bold; padding: 8px 15px; border-radius: 5px; text-decoration: none; margin-left: 15px;">
-     Admin Panel
-  </a>
+    <div class="auth-buttons">
+      <ng-container *ngIf="!authService.isLoggedIn()">
+        <a routerLink="/login" class="auth-btn login-btn">Bejelentkezés</a>
+        <a routerLink="/register" class="auth-btn register-btn">Regisztráció</a>
+      </ng-container>
+
+      <ng-container *ngIf="authService.isLoggedIn()">
+        <a *ngIf="authService.isAdmin()" routerLink="/admin" class="admin-btn">Admin Panel</a>
+        <button (click)="logout()" class="logout-btn">Kijelentkezés</button>
+      </ng-container>
+    </div>
+
   </nav>
-<ng-container *ngIf="!authService.isLoggedIn()">
-    <a routerLink="/login" style="margin-left: 15px; text-decoration: none; color: white;">Bejelentkezés</a>
-    <a routerLink="/register" style="margin-left: 15px; text-decoration: none; color: white;">Regisztráció</a>
-  </ng-container>
-
-  <button *ngIf="authService.isLoggedIn()" 
-          (click)="logout()" 
-          style="margin-left: 15px; background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
-     Kijelentkezés
-  </button>
-  
 </header>

@@ -1,11 +1,31 @@
-<div class="map-container">
-  <div id="map"></div>
+<div class="map-sidebar-card" *ngIf="spot" (click)="viewDetails.emit(spot.id)" style="cursor: pointer;">
+  
+  <div class="card-top-row">
+    <div class="spot-icon-wrapper">
+      <img [src]="spot.main_Image_Url || 'assets/no-image-parking.jpg'" class="spot-icon">
+    </div>
 
-  <div *ngIf="selectedZone" class="zone-card">
-    <button (click)="selectedZone = null">X</button>
-    <img [src]="'assets/img/zone-' + selectedZone.zoneCode + '.jpg'" alt="Zone image">
-    <h2>{{ selectedZone.name }}</h2>
-    <p>Óradíj: {{ selectedZone.hourlyRate }} Ft</p>
-    <button class="details-btn">Részletek és Foglalás</button>
+    <div class="spot-info">
+      <h3 class="spot-name">{{ spot.name }}</h3>
+      <p class="spot-address">{{ spot.address }}</p>
+      <div class="spot-meta">
+        <span>⭐ 4.8</span>
+        <span>📍 500 m</span>
+      </div>
+    </div>
+
+    <div class="spot-price-col">
+      <span class="price-value">{{ spot.hourlyRate }} Ft</span>
+      <span class="price-unit">/ óra</span>
+    </div>
   </div>
+
+  <div class="spot-features">
+    <span class="badge">0-24</span>
+    <span class="badge">CCTV</span>
+  </div>
+
+  <button class="spot-book-btn">
+    Részletek & Foglalás
+  </button>
 </div>

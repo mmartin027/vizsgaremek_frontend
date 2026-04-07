@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8080/api',
-  imageUrl: 'http://localhost:8080/images/'
+  production: true, 
+  apiUrl: 'https://netparkolo.hu/api',
+  imageUrl: 'https://netparkolo.hu/images/'
 };

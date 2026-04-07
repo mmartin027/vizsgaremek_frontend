@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-
+import { environment } from '../../../core/enviroment';
 
 export interface ParkingSpotDto {
   id: number;
@@ -26,7 +26,7 @@ export class CardComponent {
 
 
 
-  readonly IMAGE_URL = 'http://localhost:8080/images';
+  readonly IMAGE_URL = `${environment.apiUrl}/images`;
 
   get featureList(): string[] {
     if (!this.spot?.features) return [];

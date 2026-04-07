@@ -77,6 +77,29 @@
     color: #64748B;
 }
 
+.on-demand-block{
+     background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+
+}
+
+.btn {
+   background-color: #4dc2d6;
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-weight: bold;
+    margin: 20px 0;
+    cursor: pointer;
+
+
+
+}
+
 .total {
     color: #1E293B;
     font-weight: bold;

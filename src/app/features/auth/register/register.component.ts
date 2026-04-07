@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../../../services/auth';
+import { AuthService } from '../../../core/services/auth';
 import { Router, RouterLink } from '@angular/router'; 
+import { environment } from '../../../core/enviroment';
 
 @Component({
   selector: 'app-register',
@@ -12,6 +13,7 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class RegisterComponent {
   registerForm: FormGroup;
+  
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -24,15 +26,28 @@ export class RegisterComponent {
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      password_again : ['', [Validators.required, Validators.minLength(6)]],
       phone: ['']
     });
   }
 
-  continueWithGoogle() {
-  window.location.href = 'http://localhost:8080/oauth2/authorization/google';
-}
+
+continueWithGoogle() {
+    const baseUrl = environment.apiUrl.replace('/api', '');
+    window.location.href = `${baseUrl}/oauth2/authorization/google`;
+  }
 
   onSubmit() {
+
+    
+    const password = this.registerForm.get('password')?.value;
+    const passwordAgain = this.registerForm.get('password_again')?.value;
+
+    if (password !== passwordAgain) {
+      alert("A két jelszó nem egyezik meg! Kérlek, gépeld be újra.");
+      return; //
+    }
+    
     if (this.registerForm.valid) {
       const data = {
         ...this.registerForm.value, 
@@ -43,19 +58,22 @@ export class RegisterComponent {
         regToken: "REG" + Date.now()
       };
 
-      this.authService.register(data).subscribe({
+  
+
+    this.authService.register(data).subscribe({
         next: (response) => {
           console.log("Sikeres regisztráció:", response);
-          alert("Sikeres regisztráció!");
-          this.router.navigate(['/login']); 
+          alert("Sikeres regisztráció! Elküldtünk egy 6 jegyű kódot az e-mail címedre.");
+          
+         
+          this.router.navigate(['/verify-email'], { queryParams: { email: data.email } }); 
         },
         error: (err) => {
           console.error("Hiba:", err);
           alert("Hiba történt a regisztráció során!");
-        }
+        },
       });
-    } else {
-      this.registerForm.markAllAsTouched();
-    }
   }
+
+}
 }
