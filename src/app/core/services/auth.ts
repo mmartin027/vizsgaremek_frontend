@@ -29,7 +29,6 @@ login(credentials: any): Observable<any> {
           if (res && res.accessToken && res.refreshToken) {
             localStorage.setItem('token', res.accessToken); 
             localStorage.setItem('refreshToken', res.refreshToken); 
-            console.log('Sikeres bejelentkezés! Tokenek elmentve.');
           }
         }),
         catchError(this.handleError)
@@ -54,18 +53,18 @@ login(credentials: any): Observable<any> {
     localStorage.removeItem('token'); 
     localStorage.removeItem('refreshToken'); 
   }
-  verifyEmail(email: string): Observable<any> {
-    return this.http.post(`${this.forgotUrl}/verifyMail/${email}`, {})
+verifyEmail(email: string): Observable<any> {
+    return this.http.post(`${this.forgotUrl}/verifyMail/${email}`, {}, { responseType: 'text' })
       .pipe(catchError(this.handleError));
   }
 
   verifyOtp(otp: number, email: string): Observable<any> {
-    return this.http.post(`${this.forgotUrl}/verifyOtp/${otp}/${email}`, {})
+    return this.http.post(`${this.forgotUrl}/verifyOtp/${otp}/${email}`, {}, { responseType: 'text' })
       .pipe(catchError(this.handleError));
   }
 
   changePassword(email: string, passwordData: any): Observable<any> {
-    return this.http.post(`${this.forgotUrl}/changePassword/${email}`, passwordData)
+    return this.http.post(`${this.forgotUrl}/changePassword/${email}`, passwordData, { responseType: 'text' })
       .pipe(catchError(this.handleError));
   }
 
@@ -83,7 +82,6 @@ private decodeToken(rawToken: string): any {
 
     let payload = parts[1];
     
-    // 2. URL karakterek cseréje
     payload = payload.replace(/-/g, '+').replace(/_/g, '/');
     
     while (payload.length % 4 !== 0) {
@@ -109,11 +107,9 @@ private decodeToken(rawToken: string): any {
 getCurrentUserId(): number | null {
   const token = localStorage.getItem('token');
   
-  console.log('--- JWT DEBUG START ---');
-  console.log('1. A localStorage-ból kiolvasott token:', token);
+
 
   if (!token || token.includes('object Object')) {
-    console.error('2. HIBA: A token hiányzik, vagy hibás formátumban lett elmentve!');
     return null;
   }
 
@@ -122,7 +118,6 @@ getCurrentUserId(): number | null {
     const payloadStr = cleanToken.split('.')[1];
     
     if (!payloadStr) {
-       console.error('2. HIBA: A token nem tartalmaz payload részt (nincs pont benne).');
        return null;
     }
 
@@ -137,12 +132,9 @@ getCurrentUserId(): number | null {
     );
 
     const decoded = JSON.parse(jsonString);
-    console.log('2. SIKER: A dekódolt token tartalma:', decoded);
 
-    // 5. UserId kinyerése
     if (decoded && decoded.userId !== undefined) {
-      console.log('3. SIKER: Kinyert userId:', decoded.userId);
-      console.log('--- JWT DEBUG END ---');
+  
       return Number(decoded.userId);
     } else {
       console.error('3. HIBA: A dekódolt tokenben NINCS userId mező!');
@@ -167,7 +159,6 @@ getCurrentUserId(): number | null {
   }
 
  
-// Ez visszaadja a tokenben lévő adatokat 
   getDecodedToken(): any {
     const token = localStorage.getItem('token');
     if (!token) return null;
@@ -181,19 +172,14 @@ getCurrentUserId(): number | null {
     }
   }
 
-  // Ellenőrzi, hogy a felhasználó admin-e
 isAdmin(): boolean {
     const tokenPayload = this.getDecodedToken();
-    console.log('1. A token teljes tartalma:', tokenPayload); 
     
     if (!tokenPayload) return false;
 
-    // Megpróbáljuk megkeresni a jogokat
     const roles = tokenPayload.roles || tokenPayload.authorities || tokenPayload.role || [];
-    console.log('2. A talált jogok:', roles); 
     
     const isUserAdmin = roles.includes('ROLE_ADMIN');
-    console.log('3. Eredmény (Admin-e?):', isUserAdmin);
     
     return isUserAdmin; 
   }

@@ -2,6 +2,8 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angu
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { BookingService } from '../../../core/services/booking.service';
+import { AlertService } from '../../../core/services/alert';
+
 export interface BookingDto {
   id?: number;
   parkingSpotId?: number;
@@ -14,6 +16,7 @@ export interface BookingDto {
   totalPrice: number;
   licensePlate: string;
   carBrand: string;
+  parkingType?:string;
   carModel: string;
   carColor?: string;
   status: string; 
@@ -21,6 +24,7 @@ export interface BookingDto {
   userId?: number;
   createdAt?: string;
   checkOutTime?: string;
+  qrCode?: string;          
 }
 
 @Component({
@@ -43,10 +47,13 @@ export class UserBookingCardComponent implements OnInit, OnDestroy {
   parkingTimer: string = '00:00:00';
   private timerInterval: any;
 
-  constructor(private router: Router, private bookingService: BookingService) {}
+  constructor(
+    private router: Router, 
+    private bookingService: BookingService,
+    private alertService: AlertService 
+  ) {}
 
   ngOnInit() {
-
     console.log('Kártya adata megérkezett:', this.booking);
     if (this.booking && this.booking.status === 'IN_PROGRESS' && this.booking.checkInTime) {
       this.startTimer(this.booking.checkInTime);
@@ -80,12 +87,14 @@ export class UserBookingCardComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
- 
-  stopOnDemandParking(): void {
+  async stopOnDemandParking(): Promise<void> {
     if (!this.booking.id) return;
 
     const confirmMsg = 'Biztosan leállítod a parkolást és kifizeted a díjat?';
-    if (confirm(confirmMsg)) {
+    
+    const isConfirmed = await this.alertService.confirm('Parkolás leállítása', confirmMsg, 'Igen, leállítás');
+
+    if (isConfirmed) {
       if (this.timerInterval) {
         clearInterval(this.timerInterval);
       }
@@ -94,20 +103,36 @@ export class UserBookingCardComponent implements OnInit, OnDestroy {
       this.bookingService.stopAndPayOnDemandParking(this.booking.id).subscribe({
         next: (stripeResponse: any) => {
           console.log('Stripe link megérkezett:', stripeResponse.url);
-          
           window.location.href = stripeResponse.url; 
         },
         error: (err) => {
           console.error('Hiba a leállításkor / Stripe híváskor:', err);
-          alert('Hiba történt a leállításkor vagy a fizetés indításakor!');
+          this.alertService.error('Hiba történt', 'Hiba történt a leállításkor vagy a fizetés indításakor!');
           this.actionOccurred.emit(); 
         }
       });
     }
   }
 
+  get showEndTime(): boolean {
+    if (this.booking.status === 'IN_PROGRESS') {
+      return false;
+    }
+    return true;
+  }
+
+  get finalEndTime(): string {
+    if (this.booking.checkOutTime && (this.booking.status === 'COMPLETED' || this.booking.status === 'PENDING_PAYMENT')) {
+      return this.booking.checkOutTime;
+    }
+    return this.booking.endTime;
+  }
+
   get liveStatus(): string {
-    if (this.booking.status === 'CANCELLED') return 'CANCELLED';
+    if (this.booking.status === 'CANCELLED' || this.booking.status === 'CANCELLED_BY_ADMIN') {
+      return 'CANCELLED';
+    }
+
     if (this.booking.status === 'IN_PROGRESS') return 'IN_PROGRESS'; 
     if (this.booking.status === 'PENDING_PAYMENT') return 'PENDING_PAYMENT';
     if (this.booking.status === 'COMPLETED') return 'COMPLETED'; 
@@ -131,7 +156,7 @@ export class UserBookingCardComponent implements OnInit, OnDestroy {
       'IN_PROGRESS': 'Folyamatban', 
       'UPCOMING': 'Hamarosan',
       'EXPIRED': 'Lejárt',
-      'CANCELLED': 'Lemondva',
+      'CANCELLED': 'Lemondva', 
       'CONFIRMED': 'Visszaigazolva',
       'PENDING_PAYMENT': 'Fizetésre vár', 
       'COMPLETED': 'Befejezett'
@@ -140,11 +165,14 @@ export class UserBookingCardComponent implements OnInit, OnDestroy {
   }
 
   canCancel(booking: BookingDto): boolean {
-    const now = new Date();
-    const startTime = new Date(booking.startTime);
-    const hoursDiff = (startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
-
-    return (this.liveStatus === 'ACTIVE' || this.liveStatus === 'UPCOMING') && hoursDiff >= 1;
+    const status = this.liveStatus;
+    if (status === 'CANCELLED' || status === 'COMPLETED' || status === 'EXPIRED' || status === 'PENDING_PAYMENT' || status === 'IN_PROGRESS') {
+      return false;
+    }
+    if (booking.parkingType === 'ON_DEMAND' || booking.parkingType === 'MONTHLY' || booking.parkingType === 'DAILY') {
+      return false;
+    }
+    return true;
   }
 
   canExtend(booking: BookingDto): boolean {
@@ -153,21 +181,34 @@ export class UserBookingCardComponent implements OnInit, OnDestroy {
 
   extendBooking(booking: BookingDto): void {
     if (!this.canExtend(booking)) {
-      alert('Ezt a foglalást már nem lehet hosszabbítani, mert lejárt.');
+      this.alertService.error('Nem hosszabbítható', 'Ezt a foglalást már nem lehet hosszabbítani, mert lejárt.');
       return;
     }
     this.router.navigate(['/extend-booking', booking.id]);
   }
-
-  cancelBooking(booking: BookingDto): void {
+  
+  async cancelBooking(booking: BookingDto): Promise<void> {
     if (!this.canCancel(booking)) {
-      alert('Ezt a foglalást már nem lehet lemondani. (Minimum 1 órával a kezdés előtt lehetséges)');
+      this.alertService.error('Nem lemondható', 'Ezt a foglalást már nem lehet lemondani. (Minimum 1 órával a kezdés előtt lehetséges)');
       return;
     }
 
-    const confirmMsg = `Biztosan lemondod ezt a foglalást?\n\nParkoló: ${booking.parkingSpotName}\nKezdés: ${new Date(booking.startTime).toLocaleString('hu-HU')}\n\nA lemondás után visszatérítést kapsz.`;
-    if (confirm(confirmMsg)) {
-      this.onCancel.emit(booking);
+    const confirmMsg = `Parkoló: ${booking.parkingSpotName}<br>Kezdés: ${new Date(booking.startTime).toLocaleString('hu-HU')}<br><br>A fizetett összeg automatikusan visszatérítésre kerül a kártyádra.`;
+    
+    const isConfirmed = await this.alertService.confirm('Biztosan lemondod?', confirmMsg, 'Igen, lemondom');
+
+    if (isConfirmed) {
+      this.bookingService.cancelBooking(booking.id!).subscribe({
+        next: () => {
+          this.alertService.success('Lemondva', 'A visszatérítés 5-10 munkanapon belül megjelenik a kártyádon.');
+          this.booking.status = 'CANCELLED';
+          this.actionOccurred.emit();
+        },
+        error: (err) => {
+          console.error('Törlés hiba:', err);
+          this.alertService.error('Hiba', err.error?.error || err.error || 'Nem sikerült lemondani');
+        }
+      });
     }
   }
 
@@ -178,7 +219,7 @@ export class UserBookingCardComponent implements OnInit, OnDestroy {
   copyAccessCode(): void {
     if (this.booking.accessCode) {
       navigator.clipboard.writeText(this.booking.accessCode).then(() => {
-        alert('Belépési kód vágólapra másolva: ' + this.booking.accessCode);
+        this.alertService.toast('Belépési kód másolva!', 'success');
       });
     }
   }

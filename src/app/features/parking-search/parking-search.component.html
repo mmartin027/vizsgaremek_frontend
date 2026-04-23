@@ -2,35 +2,80 @@
   <header>
     <app-header></app-header>
     
-    <div class="filters" style="display: flex; align-items: center; gap: 15px; padding: 10px 20px;">
+    <div class="filters" style="display: flex; align-items: center; flex-wrap: wrap; gap: 15px; padding: 10px 20px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
       
       <h2 style="margin: 0; margin-right: auto; color: #333; font-size: 20px;">
-        Találatok: <span style="color: #26b1cc;">{{ searchCity || 'Összes' }}</span>
+        Találatok: <span style="color: #26b1cc;">{{ selectedCityFilter === 'all' ? 'Összes város' : selectedCityFilter }}</span>
       </h2>
 
-      <button>Szűrők</button>
+      <select class="custom-select" [(ngModel)]="selectedCityFilter" (change)="onCityFilterChange()">
+        <option value="all">Minden város</option>
+        <option value="Budapest">Budapest</option>
+        <option value="Debrecen">Debrecen</option>
+        <option value="Györ">Szeged</option>
+        <option value="Pécs">Pécs</option>
+      </select>
+
+      <select class="custom-select" [(ngModel)]="selectedTypeFilter" (change)="applyFiltersAndSort()">
+        <option value="all">Minden típus</option>
+        <option value="covered">Csak fedett</option>
+        <option value="open">Csak nyitott</option>
+      </select>
+
+      <select class="custom-select" [(ngModel)]="selectedSort" (change)="applyFiltersAndSort()">
+        <option value="recommended">Ajánlott</option>
+        <option value="az">Név: A-Z</option>
+        <option value="za">Név: Z-A</option>
+        <option value="price_asc">Ár: Legolcsóbb elöl</option>
+        <option value="price_desc">Ár: Legdrágább elöl</option>
+      </select>
       
       <button class="map-view-btn" (click)="openMapView()">
-          Térképnézet
+          <i class="bi bi-map me-1"></i> Térképnézet
       </button>
 
-      <span>Rendezés: Ajánlott</span>
     </div>
   </header>
 
-  @if (parkingSpots.length === 0) {
-    <div style="padding: 50px; text-align: center; color: #666;">
-      <h3>Sajnos jelenleg nem találtunk elérhető parkolót itt: {{ searchCity }}</h3>
-      <p>Próbálj meg egy másik várost keresni a főoldalon!</p>
-    </div>
-  }
-
   <div class="cards-container">
-    @for (spot of parkingSpots; track spot.id) {
-      <app-parking-card
-        [spot]="spot"
-        (viewDetails)="handleViewDetails($event)">
-      </app-parking-card>
+    <div class="search-box p-2 mb-3">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="text" 
+               class="form-control border-start-0" 
+               placeholder="Keresés név vagy cím alapján..."
+               [value]="searchQuery"
+               (input)="onSearchChange($any($event.target).value)">
+      </div>
+    </div>  
+
+    @if (isLoading) {
+      <div style="padding: 50px; text-align: center; color: #26b1cc;">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Betöltés...</span>
+        </div>
+        <h4 class="mt-3">Parkolók betöltése...</h4>
+      </div>
+    } @else {
+      
+      @if (parkingSpots.length === 0) {
+        <div style="padding: 50px; text-align: center; color: #666;">
+          <h3>Sajnos nem találtunk a szűrésnek megfelelő parkolót.</h3>
+          <p>Próbáld meg lazítani a feltételeket, vagy válassz másik várost!</p>
+        </div>
+      }
+
+      <div class="cards-container">
+        @for (spot of parkingSpots; track spot.id) {
+          <app-parking-card
+            [spot]="spot"
+            (viewDetails)="handleViewDetails($event)">
+          </app-parking-card>
+        }
+      </div>
+
     }
   </div>
 </div>

@@ -12,12 +12,10 @@ export class AdminService {
 
   constructor(private http: HttpClient) { }
 
-  // --- FELHASZNÁLÓK ---
   getAllUsers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/users`); 
   }
 
-  // --- PARKOLÓK ---
   getAllParkingSpots(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/parking-spots`);
   }
@@ -38,8 +36,6 @@ export class AdminService {
     return this.http.delete(`${this.apiUrl}/bookings/${id}`, { responseType: 'text' });
   }
 
-// --- ZÓNÁK (ZONES) VÉGPONTOK ---
-
   getAllZones(): Observable<any> {
     return this.http.get(`${this.apiUrl}/zones`); 
   }
@@ -48,8 +44,24 @@ export class AdminService {
     return this.http.post(`${this.apiUrl}/zones`, zone);
   }
 
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/users/${id}`, { responseType: 'text' });
+  }
+
+  updateSpotFeatures(spotId: number, features: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/parking-spots/${spotId}/features`, { features });
+  }
+
+  updateZoneFeatures(zoneId: number, features: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/zones/${zoneId}/features`, { features });
+  }
+
   deleteZone(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/zones/${id}`);
+  }
+
+  updateUserRole(userId: number, role: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${userId}/role`, { role: role }, { responseType: 'text' });
   }
 
 }

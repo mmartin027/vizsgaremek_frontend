@@ -42,7 +42,6 @@ export class BookingService {
   stopOnDemandParking(bookingId: number): Observable<{ url: string }> {
     return this.http.post<{ url: string }>(`${this.CHECKOUT_URL}/stop-session?bookingId=${bookingId}`, {});
   }
-// Ez hívja meg a stripe leállítást!
   stopAndPayOnDemandParking(bookingId: number) {
     return this.http.post(`${environment.apiUrl}/checkout/stop-session?bookingId=${bookingId}`, {});
   }
@@ -55,9 +54,18 @@ export class BookingService {
     return this.http.get<any[]>(`${this.BOOKING_URL}/user/${userId}`);
   }
 
-  cancelBooking(bookingId: number): Observable<any> {
-    return this.http.delete<any>(`${this.BOOKING_URL}/${bookingId}`);
-  }
+
+  createSubscriptionSession(spotId: number, subscriptionType: string, data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.CHECKOUT_URL}/create-subscription-session`,
+      data,
+      { params: { parkingSpotId: spotId.toString(), subscriptionType } }
+    );
+}
+
+ cancelBooking(bookingId: number): Observable<any> {
+    return this.http.delete(`${this.BOOKING_URL}/${bookingId}`, { responseType: 'text' });
+}
 
   confirmPayment(sessionId: string): Observable<any> {
     return this.http.post<any>(

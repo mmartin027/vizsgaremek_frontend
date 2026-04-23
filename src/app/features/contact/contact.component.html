@@ -1,0 +1,59 @@
+<app-header></app-header>
+
+<div class="contact-page">
+  <div class="contact-container">
+    
+    <h1 class="contact-title">Kapcsolat</h1>
+
+    <div class="contact-info">
+      <p class="info-heading">Ügyfélszolgálat és Panaszkezelés</p>
+      <p>Hétfő – Péntek: 08:00 – 18:00</p>
+      <p>Hétvége: 10:00 – 14:00</p>
+      <p class="text-muted mt-2 small">
+        * Visszatérítési igény (pl. foglalt, de teli parkoló esetén) leadásához kérjük, adja meg a foglalási azonosítóját is!
+      </p>
+    </div>
+
+    <div *ngIf="isSubmitted" class="alert-success-custom">
+      <i class="bi bi-check-circle"></i> Üzenetét sikeresen megkaptuk! Hamarosan felvesszük Önnel a kapcsolatot.
+    </div>
+
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+      
+      <div class="form-row">
+        <div class="form-group half-width">
+          <input type="text" formControlName="name" placeholder="Név">
+        </div>
+        <div class="form-group half-width">
+          <input type="email" formControlName="email" placeholder="Email *" 
+                 [class.invalid]="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half-width">
+          <select formControlName="subject" class="custom-select">
+            <option value="general">Általános kérdés</option>
+            <option value="refund">Visszatérítési igény / Teli parkoló</option>
+            <option value="technical">Technikai hiba</option>
+          </select>
+        </div>
+        <div class="form-group half-width">
+          <input type="text" formControlName="bookingId" placeholder="Foglalási azonosító (PARKEASY-...)">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input type="text" formControlName="phone" placeholder="Telefonszám">
+      </div>
+
+      <div class="form-group">
+        <textarea formControlName="message" rows="5" placeholder="Üzenet / Panasz részletes leírása *"
+                  [class.invalid]="contactForm.get('message')?.invalid && contactForm.get('message')?.touched"></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">Küldés</button>
+
+    </form>
+  </div>
+</div>

@@ -1,39 +1,58 @@
-<div class="register-wrapper">
-  <div class="left-panel">
-    <img src="assets/Image-Parkolo-felulnezet.png" alt="Parkoló felülnézet" class="bg-image">
-    <div class="overlay-content">
-      <h2 class="logo-text">ParkEasy</h2>
-      <h1>Csatlakozzon hozzánk</h1>
-      <p>A kapcsolat fenntartásához kérjük,<br>jelentkezzen be személyes<br>adataival</p>
-      <button routerLink="/login" class="ghost-btn">Bejelentkezés</button>
-    </div>
-  </div>
- 
-  <div class="right-panel">
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
-      <div class="google-button">
-        
-      </div>
- 
-      <h2 class="form-title">REGISZTRÁCIÓ</h2>
-      <button type="button" (click)="continueWithGoogle()" class="google-btn">
-          <img src="assets/google-icon-logo-symbol-free-png.png" alt="Google">
+<app-header></app-header>
+
+<div class="auth-wrapper d-flex align-items-center justify-content-center">
+  <div class="container d-flex justify-content-center px-3">
+    
+    <div class="card auth-card border-0 shadow-lg p-4 p-md-5">
+      
+      <h2 class="text-center fw-bold mb-4 auth-title">REGISZTRÁCIÓ</h2>
+
+       <div class="text-center mb-4">
+        <button type="button" class="btn btn-google rounded-circle shadow-sm" (click)="continueWithGoogle()">
+          <span class="fw-bold fs-4 google-text">G</span>
         </button>
-      <p class="form-subtitle">Vagy használja az e-mail fiókját:</p>
- 
-      <input type="text" formControlName="username" placeholder="Felhasználónév">
-      <input type="text" formControlName="firstName" placeholder="Keresztnév">
-      <input type="text" formControlName="lastName" placeholder="Vezetéknév">
-      <input type="text" formControlName="phone" placeholder="Telefon">
-      <input type="email" id="email" formControlName="email" placeholder="E-mail">
-      <input type="password" id="password" formControlName="password" placeholder="Jelszó">
-      <input type="password" id="passwordagain" formControlName="password_again" placeholder="Jelszó mégegyszer">
- 
-      <button class="sign-in-button" type="submit">REGISZTRÁCIÓ</button>
- 
-      <div class="mobile-login-link">
-        <p>Már van fiókja? <a routerLink="/login">Bejelentkezés</a></p>
       </div>
-    </form>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        
+        <div class="mb-3">
+          <input type="text" formControlName="username" class="form-control custom-input" placeholder="Felhasználónév" required>
+        </div>
+
+        <div class="mb-3">
+          <input type="text" formControlName="firstName" class="form-control custom-input" placeholder="Keresztnév" required>
+        </div>
+
+        <div class="mb-3">
+          <input type="text" formControlName="lastName" class="form-control custom-input" placeholder="Vezetéknév" required>
+        </div>
+
+        <div class="mb-3">
+          <input type="email" formControlName="email" class="form-control custom-input" placeholder="E-mail cím" required>
+        </div>
+
+        <div class="mb-3">
+          <input type="text" formControlName="phone" class="form-control custom-input" placeholder="Telefonszám" required>
+        </div>
+        
+        <div class="mb-3">
+          <input type="password" formControlName="password" class="form-control custom-input" placeholder="Jelszó" required>
+        </div>
+
+        <div class="mb-4">
+          <input type="password" formControlName="password_again" class="form-control custom-input" placeholder="Jelszó újra" required>
+        </div>
+
+        <button type="submit" [disabled]="registerForm.invalid" class="btn w-100 btn-primary-custom rounded-pill py-3 fw-bold mb-4">
+          Regisztráció
+        </button>
+
+        <div class="text-center">
+          <span class="text-muted small">Már van fiókja? </span>
+          <a routerLink="/login" class="fw-bold text-decoration-none login-link">Bejelentkezés</a>
+        </div>
+      </form>
+
+    </div>
   </div>
 </div>

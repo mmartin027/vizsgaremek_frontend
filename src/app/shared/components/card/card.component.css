@@ -141,33 +141,278 @@
 
 @media (max-width: 980px) {
   .parking-card {
-    width: 100%; /* Mobilon töltse ki a rendelkezésre álló helyet */
-    flex-direction: column; /* A kép és a tartalom kerüljön egymás alá */
+    width: 100%;
+    flex-direction: column; 
     min-height: auto;
   }
 
   .card-image-container {
-    width: 100%; /* A kép is legyen teljes szélességű */
-    height: 180px; /* Egy fix magasság, hogy ne legyen túl hatalmas a kép */
-    min-width: unset; /* Töröljük az asztali minimum szélességet */
+    width: 100%; 
+    height: 180px; 
+    min-width: unset; 
   }
 
   .card-content {
-    padding: 15px; /* Mobilon kicsit kisebb belső margó is elég */
+    padding: 15px;
   }
 
   .parking-name {
-    font-size: 1.25rem; /* Kicsit kisebb betűméret a címnek */
+    font-size: 1.25rem; 
   }
 
   .features {
-    margin: 10px 0 15px 0; /* Kisebb térköz a badge-ek körül */
+    margin: 10px 0 15px 0; 
   }
 
   .booking-btn {
-    width: 100%; /* A Figmához hűen: teljes szélességű gomb! */
-    align-self: center; /* Középre igazítjuk */
-    padding: 15px; /* Kicsit magasabb gomb, hogy könnyebb legyen rábökni */
-    margin-top: auto; /* Letolja a gombot a kártya legaljára */
+    width: 100%; 
+    align-self: center; 
+    padding: 15px; 
+    margin-top: auto; 
   }
+.parking-card.full {
+  opacity: 0.8;
+  filter: grayscale(0.5);
+}
+
+.status-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  font-size: 0.8rem;
+  z-index: 2;
+}
+
+.status-badge.full {
+  background-color: #dc3545; 
+}
+
+.status-badge.warning {
+  background-color: #ffc107; 
+  color: #000;
+}
+
+.booking-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.availability-info {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.parking-card {
+  display: flex;
+  background-color: #ffffff;
+  border-radius: 12px;
+  width: 50%;
+  max-width: 800px;
+  margin: 0 auto 20px auto;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e6ed;
+  transition: transform 0.2s ease-in-out;
+  min-height: 200px;
+}
+
+.parking-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.parking-card.full {
+  opacity: 0.8;
+  filter: grayscale(0.5);
+}
+
+.card-image-container {
+  width: 35%; 
+  min-width: 200px;
+  background-color: #f8f9fa;
+  position: relative; 
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  display: block;
+}
+
+.status-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  font-size: 0.8rem;
+  z-index: 2;
+}
+
+.status-badge.full {
+  background-color: #dc3545; 
+}
+
+.status-badge.warning {
+  background-color: #ffc107; 
+  color: #000;
+}
+
+.card-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+}
+
+.parking-name {
+  margin: 0 0 10px 0;
+  font-size: 1.4rem;
+  color: #2d3436;
+  font-weight: 700;
+}
+
+.price {
+  font-size: 1.3rem;
+  color: #00bcd4; 
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.unit {
+  font-size: 0.9rem;
+  color: #636e72;
+  font-weight: normal;
+  margin-left: 4px;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.feature-badge {
+  background-color: #f1f3f5;
+  color: #495057;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid #dee2e6;
+}
+
+.availability-info {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.booking-btn {
+  background-color: #00bcd4;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: fit-content;
+  align-self: flex-end;  
+}
+
+.booking-btn:hover {
+  background-color: #00acc1;
+}
+
+.booking-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cards-container .parking-card {
+  width: 100%;       
+  max-width: none;
+  min-height: 120px;
+  margin: 0 0 12px 0;
+  display: flex;
+  flex-direction: row; 
+}
+
+.cards-container .card-image-container {
+  width: 100px;     
+  min-width: 100px;
+  height: 120px;
+}
+
+.cards-container .card-content {
+  padding: 10px;    
+  gap: 4px;
+}
+
+.cards-container .parking-name {
+  font-size: 1rem;   
+  margin-bottom: 2px;
+}
+
+.cards-container .price {
+  font-size: 1.1rem;
+}
+
+.cards-container .features, 
+.cards-container .booking-btn {
+  display: none; 
+}
+
+.cards-container .card-content::after {
+  content: 'Kattintson a részletekért';
+  font-size: 0.7rem;
+  color: #00bcd4;
+  text-align: right;
+}
+
+@media (max-width: 980px) {
+  .parking-card {
+    width: 100%;
+    flex-direction: column; 
+    min-height: auto;
+  }
+
+  .card-image-container {
+    width: 100%; 
+    height: 180px; 
+    min-width: unset; 
+  }
+
+  .card-content {
+    padding: 15px;
+  }
+
+  .parking-name {
+    font-size: 1.25rem; 
+  }
+
+  .features {
+    margin: 10px 0 15px 0; 
+  }
+
+  .booking-btn {
+    width: 100%; 
+    align-self: center; 
+    padding: 15px; 
+    margin-top: auto; 
+  }
+}
+
 }

@@ -18,6 +18,9 @@ export class ParkingService {
     return this.http.get<ParkingSpotDto[]>(`${this.apiUrl}/search?cityId=${cityId}`);
   }
 
+  searchByCityName(cityName: string): Observable<ParkingSpotDto[]> {
+    return this.http.get<ParkingSpotDto[]>(`${this.apiUrl}/search?cityName=${cityName}`);
+}
 
   getById(id: number | string): Observable<ParkingSpotDto> {
     return this.http.get<ParkingSpotDto>(`${this.apiUrl}/${id}`);

@@ -1,7 +1,7 @@
 <div class="error-overlay" *ngIf="errorMessage" (click)="closeError()">
   
   <div class="error-card" (click)="$event.stopPropagation()">
-    <div class="error-icon">⚠️</div>
+    <div class="error-icon"></div>
     <h3>Hiba történt!</h3>
     <p>{{ errorMessage }}</p>
     <button class="btn-close" (click)="closeError()">Értem</button>

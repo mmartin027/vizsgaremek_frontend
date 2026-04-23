@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core'; // <-- OnDestroy import hozzáadva
+import { Component, OnInit, OnDestroy } from '@angular/core'; 
 import { ActivatedRoute, Router } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -18,6 +18,9 @@ export class BookingSuccessComponent implements OnInit, OnDestroy {
   countdown = 10;
   private timer: any;
 
+  today: Date = new Date();
+  selectedSpot: any = null; 
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,      
@@ -33,14 +36,18 @@ export class BookingSuccessComponent implements OnInit, OnDestroy {
         {}
       ).subscribe({
         next: (res) => {
-          console.log('Backend válasz:', res);
-          this.accessCode = res.accessCode; 
-          this.isLoading = false;
           
+          this.accessCode = res.accessCode; 
+          
+  
+          this.selectedSpot = {
+            name: res.parkingSpotName || res.parkingName || res.spotName || 'Vizsgaremek Parkoló'
+          };
+
+          this.isLoading = false;
           this.startCountdown();
         },
         error: (err) => {
-          console.error('Hiba a confirm-payment során:', err);
           this.error = 'A fizetés sikerült, de a foglalást nem tudtuk rögzíteni. Kérjük, vegye fel a kapcsolatot az ügyfélszolgálattal!';
           this.isLoading = false;
         }
@@ -54,7 +61,7 @@ export class BookingSuccessComponent implements OnInit, OnDestroy {
   startCountdown() {
     this.timer = setInterval(() => {
       this.countdown--;
-      if (this.countdown === 0) {
+      if (this.countdown <= 0) {
         this.goHome();
       }
     }, 1000);

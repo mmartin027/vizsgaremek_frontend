@@ -1,0 +1,47 @@
+.custom-tab-btn {
+  background-color: transparent;
+  color: #2CB8D7;
+  border: 1px solid #2CB8D7;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.custom-tab-btn:hover {
+  background-color: rgba(44, 184, 215, 0.1); 
+  color: #2CB8D7;
+}
+
+.custom-tab-btn.active {
+  background-color: #2CB8D7;
+  color: white;
+  border-color: #2CB8D7;
+  box-shadow: 0 4px 10px rgba(44, 184, 215, 0.3); 
+}
+
+.booking-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px; 
+}
+
+.empty-state {
+  background-color: #f9fafb;
+  border-radius: 12px;
+  border: 2px dashed #e5e7eb;
+  margin-top: 20px;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #6b7280;
+}

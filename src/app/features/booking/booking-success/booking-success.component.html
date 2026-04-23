@@ -1,40 +1,67 @@
-<div class="success-container">
+<div class="payment-status-container">
   
-  <div *ngIf="isLoading" class="loading">
+  <div *ngIf="isLoading" class="status-card loading-state">
     <div class="spinner"></div>
-    <h2>⏳ Foglalás létrehozása...</h2>
-    <p>Kérjük várjon, a fizetés feldolgozása folyamatban van...</p>
+    <h2>Foglalás feldolgozása...</h2>
+    <p>Kérjük várjon, a fizetés ellenőrzése folyamatban van.</p>
   </div>
-  
-  <div *ngIf="!isLoading && !error" class="success">
-    <div class="success-icon">✅</div>
-    <h2>Sikeres foglalás!</h2>
+
+  <div *ngIf="!isLoading && !error" class="status-card success-card">
     
-    <div *ngIf="accessCode" class="access-code-container">
-      <p>Hozzáférési kód:</p>
-      <h3 class="access-code">{{ accessCode }}</h3>
-      <p class="info-text">
-        Kérjük, mentse el a hozzáférési kódot, mert erre szüksége lesz a parkolóba való belépéshez!
-      </p>
+    <div class="header-section">
+      <div class="checkmark-circle">
+        <i class="bi bi-check-lg"></i>
+      </div>
+      <h1>Sikeres foglalás!</h1>
+      <p class="subtitle">A tranzakció sikeresen lezajlott.</p>
     </div>
 
-    <p class="info-text">
-      A fizetés rendben lezajlott, a foglalást sikeresen rögzítettük az adatbázisban.
-    </p>
-    
-    <p class="info-text" style="color: #d9534f; font-weight: bold; margin-top: 20px;">
-      Automatikus átirányítás a foglalásaidhoz: {{ countdown }} másodperc múlva...
-    </p>
+    <div class="details-section">
+      <div class="detail-row">
+        <span class="label">Parkoló:</span>
+        <span class="value">{{ selectedSpot?.name || 'ParkEasy Parkoló' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Dátum:</span>
+        <span class="value">{{ today | date:'yyyy. MM. dd.' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Fizetési mód:</span>
+        <span class="value">Stripe Online</span>
+      </div>
+      
+      <div class="divider"></div>
 
-    <button class="btn-primary" (click)="goHome()">Tovább a foglalásaimhoz</button>
+      <div *ngIf="accessCode" class="access-code-wrapper">
+        <span class="access-label">HOZZÁFÉRÉSI KÓD</span>
+        <div class="code-box">
+          {{ accessCode }}
+        </div>
+        <p class="code-info">
+          Kérjük, mentse el ezt a kódot! Erre szüksége lesz a sorompónál a belépéshez.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-section">
+      <p class="countdown-text">
+        Automatikus átirányítás: <span>{{ countdown }}</span> másodperc múlva...
+      </p>
+      <button class="btn-action" (click)="goHome()">
+        Tovább a foglalásaimhoz
+      </button>
+    </div>
   </div>
-  
-  <div *ngIf="error" class="error">
-    <div class="error-icon"></div>
+
+  <div *ngIf="error" class="status-card error-card">
+    <div class="error-circle">
+      <i class="bi bi-exclamation-lg"></i>
+    </div>
     <h2>Hiba történt</h2>
     <p class="error-message">{{ error }}</p>
-    
-    <button class="btn-primary" (click)="goHome()">Vissza a főoldalra</button>
+    <button class="btn-action btn-retry" (click)="goHome()">
+      Vissza a főoldalra
+    </button>
   </div>
-  
+
 </div>

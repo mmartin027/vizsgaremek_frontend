@@ -1,64 +1,52 @@
-.foglalotomb {
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  gap: 15px;
-  padding: 30px; 
-  border-radius: 15px; 
-  
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); 
-  
+.booking-panel {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 500px;
+  
+  max-width: 450px; 
+  padding: 40px !important; 
+  
+  margin-left: auto;
+  margin-right: 0;
 }
 
-
-.idopont-sor {
-  display: flex;
-  gap: 15px; 
-  width: 100%;
-}
-
-.idopont-sor > div {
-  flex: 1; 
-}
-
-
-.foglalotomb label {
-  display: block;
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 5px;
+.welcome-header {
   text-align: left;
+  margin-bottom: 30px;
 }
 
-.foglalotomb input, .foglalotomb select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  font-size: 14px;
+.hello-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 1px;
+  color: #333 !important; 
 }
 
+.name-text {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #26b1cc; 
+  background-color: transparent; 
+  display: inline-block;
+  padding: 0;
+  margin-top: 5px;
+}
 
-.foglalotomb button {
-  padding: 15px;
-  background-color: #26B9D1; 
-  color: white;
-  border: none;
-  border-radius: 8px;
+.action-card {
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 10px;
-  transition: background 0.3s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: #f8f9fa !important; 
+  border: 1px solid #e9ecef !important;
 }
 
-.foglalotomb button:hover {
-  background-color: #1fa4ba; 
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.1) !important;
+  border-color: #26b1cc !important; 
+}
+
+.card-icon {
+  color: #26b1cc; 
 }

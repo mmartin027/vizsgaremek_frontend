@@ -2,34 +2,46 @@
   <app-header></app-header>
 </header>
 
+<div *ngIf="notLoggedIn" class="login-prompt">
+  <div class="login-prompt-card">
+    <div class="prompt-icon"></div>
+    <h2>Bejelentkezés szükséges</h2>
+    <p>A foglaláshoz és parkolás indításához be kell jelentkeznie fiókjába.</p>
+    <div class="prompt-buttons">
+      <a routerLink="/login" class="btn-login">Bejelentkezés</a>
+      <a routerLink="/register" class="btn-register">Regisztráció</a>
+    </div>
+  </div>
+</div>
+
+
 @if (selectedSpot) {
   <div class="container">
     <div class="left-column">
       <div class="spot-header-card">
         <div class="image-box">
-          <img [src]="selectedSpot.main_image_url || selectedSpot.main_Image_Url" [alt]="selectedSpot.name">
+          <img [src]="selectedSpot.main_image_url || selectedSpot.main_Image_Url || 'assets/no-image-parking.jpg'" [alt]="selectedSpot.name">
         </div>
         <div class="info-box">
           <div class="badge-row">
-            <span class="badge">{{ selectedSpot.parkingType || 'Kültéri Parkoló' }}</span>
-            <span class="distance-tag">300 m távolságra</span>
+            <span class="badge">{{ selectedSpot.parkingType === 'COVERED' ? 'Fedett Parkoló' : 'Kültéri Parkoló' }}</span>
           </div>
           <h2>{{ selectedSpot.name }}</h2>
           <p class="address"> {{ selectedSpot.address }}</p>
         </div>
       </div>
       
-      <div class="zone-alert">
+      <div class="zone-alert" *ngIf="selectedSpot.parkingType !== 'COVERED'">
         <div class="alert-icon">🅿️</div>
         <div class="alert-text">
           <p><strong>Zónás parkolás - Jegyvásárlás</strong></p>
-          <p>A jegyvásárlás után a kiválasztott zónában bárhol parkolhat.</p>
+          <p>Indítsa el a parkolást és fizessen a tényleges időtartam alapján.</p>
           <p class="validity">Érvényes: {{ selectedSpot.zoneName || selectedSpot.name }}</p>
         </div>
       </div>
-      
-      <div class="booking-details-section">
-        <h3>Foglalási részletek</h3>
+
+      <div class="booking-details-section" *ngIf="selectedSpot.parkingType === 'COVERED'">
+        <h3>Előre foglalás</h3>
         <div class="date-inputs">
           <div class="input-group">
             <label>Kezdő dátum és időpont</label>
@@ -40,37 +52,104 @@
             <input [(ngModel)]="bookingData.endTime" type="datetime-local" class="form-control" required>
           </div>
         </div>
+      </div>
+
+   <div class="car-inputs-section">
+        <h3>Gépjármű adatai</h3>
         
-        <div class="car-inputs">
-          <h3>Gépjármű adatai</h3>
-          <div class="input-row">
-            <input [(ngModel)]="bookingData.licensePlate" placeholder="Rendszám (pl: ABC-123)" class="form-control" required>
-            <input [(ngModel)]="bookingData.carBrand" placeholder="Autó márka (pl: Toyota)" class="form-control" required>
+        <div class="input-row">
+          <div class="input-wrapper">
+            <app-form-error [control]="plateCtrl?.control" fieldName="Rendszám"></app-form-error>
+            <input 
+              [(ngModel)]="bookingData.licensePlate" 
+              name="licensePlate" 
+              #plateCtrl="ngModel" 
+              placeholder="Rendszám (pl: ABC-123)" 
+              class="form-control" 
+              required 
+              pattern="^([A-Za-z]{3}|[A-Za-z]{4})-?[0-9]{3}$">
           </div>
-          <div class="input-row">
-            <input [(ngModel)]="bookingData.carModel" placeholder="Autó típus (pl: Corolla)" class="form-control" required>
-            <input [(ngModel)]="bookingData.carColor" placeholder="Szín (pl: Fekete)" class="form-control" required>
+          
+          <div class="input-wrapper">
+            <app-form-error [control]="brandCtrl?.control" fieldName="Autó márka"></app-form-error>
+            <input 
+              [(ngModel)]="bookingData.carBrand" 
+              name="carBrand" 
+              #brandCtrl="ngModel" 
+              placeholder="Autó márka (pl: Toyota)" 
+              class="form-control" 
+              required>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <div class="input-wrapper">
+            <app-form-error [control]="modelCtrl?.control" fieldName="Autó típus"></app-form-error>
+            <input 
+              [(ngModel)]="bookingData.carModel" 
+              name="carModel" 
+              #modelCtrl="ngModel" 
+              placeholder="Autó típus (pl: Corolla)" 
+              class="form-control" 
+              required>
+          </div>
+
+          <div class="input-wrapper">
+            <app-form-error [control]="colorCtrl?.control" fieldName="Szín"></app-form-error>
+            <input 
+              [(ngModel)]="bookingData.carColor" 
+              name="carColor" 
+              #colorCtrl="ngModel" 
+              placeholder="Szín (pl: Fekete)" 
+              class="form-control" 
+              required>
           </div>
         </div>
       </div>
 
-<div class="on-demand-block mt-4 p-4 rounded">
-  <h3 > Perc alapú (Start-Stop) parkolás</h3>
+      <div class="on-demand-block mt-4 p-4 rounded">
+        <h3>Perc alapú (Start-Stop) parkolás</h3>
+        <p class="text-muted mb-3">
+          Nem tudod pontosan, meddig fogsz maradni? Semmi gond! 
+          Töltsd ki a <strong>Gépjármű adatait</strong>, indítsd el a parkolást most, és a végén fizess a pontos időért!
+        </p>
+        <button 
+          class="btn btn-success btn-lg w-100" 
+          style="font-weight: bold;"
+          (click)="startOnDemandParking()"
+          [disabled]="isLoading">
+          <span *ngIf="!isLoading">PARKOLÁS INDÍTÁSA MOST</span>
+          <span *ngIf="isLoading">Indítás folyamatban...</span>
+        </button>
+      </div>
+
+<div class="subscription-block mt-4 p-4 rounded" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd;">
+  <h3 style="color: #0284c7;">Bérlet vásárlás</h3>
   <p class="text-muted mb-3">
-    Nem tudod pontosan, meddig fogsz maradni? Semmi gond! 
-    Töltsd ki a <strong>Gépjármű adatait</strong> fentebb, indítsd el a parkolást most, és ráérsz a végén kifizetni a pontos időt!
+    Rendszeres parkoló? Vásároljon napi vagy havi bérletet és spóroljon!
   </p>
   
-  <button 
-    class="btn btn-success btn-lg w-100" 
-    style="font-weight: bold;"
-    (click)="startOnDemandParking()"
-    [disabled]="isLoading"> <span *ngIf="!isLoading">PARKOLÁS INDÍTÁSA MOST</span>
-    <span *ngIf="isLoading">Indítás folyamatban... </span>
-  </button>
+  <div class="d-flex gap-3">
+    <div class="flex-fill p-3 rounded text-center" style="background: white; border: 2px solid #e0f2fe; cursor: pointer;" (click)="buySubscription('DAILY')">
+      <h5 class="fw-bold mb-1" style="color: #0284c7;">Napi bérlet</h5>
+       <p class="fs-4 fw-bold mb-0" style="color: #0284c7;">
+        {{ (selectedSpot?.dailyRate || 4000) | number }} Ft
+       </p>
+      <small class="text-muted">24 órás korlátlan parkolás</small>
+    </div>
+
+    <div class="flex-fill p-3 rounded text-center" style="background: white; border: 2px solid #e0f2fe; cursor: pointer;" (click)="buySubscription('MONTHLY')">
+      <h5 class="fw-bold mb-1" style="color: #0284c7;">Havi bérlet</h5>
+        <p class="fs-4 fw-bold mb-0" style="color: #0284c7;">
+          {{ (selectedSpot?.monthlyRate || 35000) | number }} Ft
+        </p>
+      <small class="text-muted">30 napos korlátlan parkolás</small>
+    </div>
+  </div>
 </div>
+
       <div class="info-section-card">
-        <h3>Szolgáltatások & Kényelem</h3>
+        <h3>Szolgáltatások</h3>
         <div class="features-grid">
           <div class="feature-item">
             <span class="icon">🛡️</span>
@@ -80,17 +159,17 @@
             </div>
           </div>
           <div class="feature-item">
-            <span class="icon">🌳</span>
+            <span class="icon">{{ selectedSpot.parkingType === 'COVERED' ? '🏢' : '🌳' }}</span>
             <div>
-              <h4>Kültéri Parkolás</h4>
-              <p>Flexibilis parkolás a zónán belül</p>
+              <h4>{{ selectedSpot.parkingType === 'COVERED' ? 'Fedett Parkolás' : 'Kültéri Parkolás' }}</h4>
+              <p>{{ selectedSpot.parkingType === 'COVERED' ? 'Védett, zárt parkolóház' : 'Flexibilis parkolás a zónán belül' }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
     
-    <div class="right-column">
+    <div class="right-column" *ngIf="selectedSpot.parkingType === 'COVERED'">
       <div class="price-summary-card">
         <h3>Ár összesítő</h3>
         <div class="price-row">

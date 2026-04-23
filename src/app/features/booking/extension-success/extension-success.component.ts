@@ -8,52 +8,23 @@ import { environment } from '../../../core/enviroment';
   selector: 'app-extension-success',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="container">
-      <div *ngIf="isLoading">
-        <div class="spinner"></div>
-        <h2>Hosszabbítás feldolgozása...</h2>
-      </div>
-      
-      <div *ngIf="!isLoading && booking">
-        <div class="icon"></div>
-        <h2>Sikeres hosszabbítás!</h2>
-        <p>Új befejezés: {{ booking.endTime | date:'yyyy. MM. dd. HH:mm' }}</p>
-        <p>Összesen: {{ booking.hours }} óra</p>
-        <p>Új végösszeg: {{ booking.totalPrice | number }} Ft</p>
-        <button (click)="goToBookings()">Vissza a foglalásokhoz</button>
-      </div>
-      
-      <div *ngIf="error">
-        <div class="icon"></div>
-        <h2>Hiba</h2>
-        <p>{{ error }}</p>
-        <button (click)="goToBookings()">Vissza</button>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .container { max-width: 600px; margin: 80px auto; padding: 40px; text-align: center; }
-    .spinner { width: 50px; height: 50px; border: 4px solid #f3f4f6; border-top-color: #3b82f6; 
-                border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .icon { font-size: 80px; margin: 20px; }
-    button { margin-top: 20px; padding: 12px 24px; background: #3b82f6; color: white; 
-             border: none; border-radius: 8px; cursor: pointer; }
-  `]
+  templateUrl: './extension-success.component.html',
+  styleUrls: ['./extension-success.component.css']
 })
 export class ExtensionSuccessComponent implements OnInit {
   isLoading = true;
   booking: any = null;
   error = '';
-
+  
+  fallbackDate: Date = new Date();
+  isSuccess = false; 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient
   ) {}
 
-  ngOnInit() {
+ ngOnInit() {
     const sessionId = this.route.snapshot.queryParamMap.get('session_id');
     
     if (sessionId) {
@@ -62,16 +33,25 @@ export class ExtensionSuccessComponent implements OnInit {
         {}
       ).subscribe({
         next: (response) => {
-          this.booking = response.booking;
+          
+          const data = response.booking ? response.booking : response;
+
+          this.booking = {
+             endTime: data.endTime || data.newEndTime || new Date(),
+             hours: data.hours || data.extendedHours || data.duration || 0, 
+             totalPrice: data.totalPrice || data.amount || data.price || 0
+          };
+          
+          this.isSuccess = true;
           this.isLoading = false;
         },
         error: (err) => {
-          this.error = err.error?.error || 'Hiba történt';
+          this.error = err.error?.error || 'Hiba történt a fizetés megerősítésekor.';
           this.isLoading = false;
         }
       });
     } else {
-      this.error = 'Hiányzó session ID';
+      this.error = 'Hiányzó fizetési azonosító (session ID).';
       this.isLoading = false;
     }
   }

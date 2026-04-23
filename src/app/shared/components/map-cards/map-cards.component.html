@@ -1,17 +1,13 @@
-<div class="map-sidebar-card" *ngIf="spot" (click)="viewDetails.emit(spot.id)" style="cursor: pointer;">
+<div class="map-sidebar-card" *ngIf="spot" (click)="onCardClick()" style="cursor: pointer;">
   
   <div class="card-top-row">
     <div class="spot-icon-wrapper">
-      <img [src]="spot.main_Image_Url || 'assets/no-image-parking.jpg'" class="spot-icon">
+      <img [src]="spot.main_Image_Url || spot.main_Image_Url || 'assets/no-image-parking.jpg'" class="spot-icon">
     </div>
 
     <div class="spot-info">
       <h3 class="spot-name">{{ spot.name }}</h3>
-      <p class="spot-address">{{ spot.address }}</p>
-      <div class="spot-meta">
-        <span>⭐ 4.8</span>
-        <span>📍 500 m</span>
-      </div>
+      <p class="spot-address">{{ spot.address || 'Cím nem elérhető' }}</p>
     </div>
 
     <div class="spot-price-col">
@@ -21,11 +17,14 @@
   </div>
 
   <div class="spot-features">
-    <span class="badge">0-24</span>
-    <span class="badge">CCTV</span>
+    <div class="feature-badges" *ngIf="featureList.length > 0">
+      <span class="badge badge-info me-1" *ngFor="let feature of featureList">
+        {{ feature }}
+      </span>
+    </div>
   </div>
 
-  <button class="spot-book-btn">
+  <button class="spot-book-btn" (click)="onButtonClick($event)">
     Részletek & Foglalás
   </button>
 </div>

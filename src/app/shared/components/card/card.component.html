@@ -1,25 +1,46 @@
 @if (spot) {
-  <div class="parking-card">
+  <div class="parking-card" [class.full]="isFull && !isZone">
     <div class="card-image-container">
-      <img [src]=" spot.main_Image_Url" [alt]="spot.name" class="card-image">
+      <img [src]="spot.main_Image_Url" [alt]="spot.name" class="card-image">
+      
+      @if (!isZone) {
+        @if (isFull) {
+          <div class="status-badge full">Megtelt</div>
+        } @else if (spot.availableSpaces < 5) {
+          <div class="status-badge warning">Már csak {{ spot.availableSpaces }} hely!</div>
+        }
+      }
     </div>
+
     <div class="card-content">
       <h3 class="parking-name">{{ spot.name }}</h3>
+      
       <div class="location-container">
         <span class="address-text">{{ spot.address }}</span>
       </div>
+
+      @if (!isZone) {
+        <div class="availability-info">
+          <small>Szabad helyek: {{ spot.availableSpaces }} / {{ spot.capacity }}</small>
+        </div>
+      }
+
       <p class="price">{{ spot.hourlyRate }} Ft<span class="unit">/óra</span></p>
+
       @if (featureList.length > 0) {
         <div class="features">
           @for (feature of featureList; track feature) {
-            <span class="feature-badge">
-              {{ feature }}
-            </span>
+            <span class="feature-badge">{{ feature }}</span>
           }
         </div>
       }
-      <button class="booking-btn" (click)="onBtnClick()">
-        Foglalás
+
+    
+      <button 
+        class="booking-btn"
+        [disabled]="isFull && !isZone" 
+        (click)="onBtnClick()">
+        {{ (isFull && !isZone) ? 'Megtelt' : 'Parkolás indítása ' }}
       </button>
     </div>
   </div>

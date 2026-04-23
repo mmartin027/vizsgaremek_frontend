@@ -1,23 +1,73 @@
-<div class="container">
-  @if (step === 1) {
-    <div>
-      <h3>Elfelejtett jelszó</h3>
-      <form [formGroup]="emailForm" (ngSubmit)="sendEmail()">
-        <input type="email" formControlName="email" placeholder="Email címed">
-        <button type="submit" [disabled]="emailForm.invalid">Kód küldése</button>
-      </form>
+<div class="verify-page-wrapper">
+  
+  <div class="verify-card shadow-lg">
+    
+    <div class="card-header-visual">
+      <div class="logo-placeholder">NETPARKOLÓ</div>
+      <div class="icon-section">
+        <i class="bi bi-envelope-open-fill mail-icon"></i>
+      </div>
     </div>
-  }
 
-  @if (step === 2) {
-    <div>
-      <h3>Írd be a kapott kódot</h3>
-      <form [formGroup]="otpForm" (ngSubmit)="verifyCode()">
-        <input type="number" formControlName="otp" placeholder="6 jegyű kód">
-        <button type="submit">Ellenőrzés</button>
-      </form>
-    </div>
-  }
+    @if (step === 1) {
+      <div class="verify-content">
+        <h2 class="verify-title">Email ellenőrzés</h2>
+        <p class="verify-subtitle">Add meg az email címedet, ahová küldhetjük a megerősítő kódot.</p>
+        
+        <form [formGroup]="emailForm" (ngSubmit)="sendEmail()" class="form-section">
+          <div class="input-wrapper">
+            <input type="email" 
+                   formControlName="email" 
+                   placeholder="Email címed (pl. nev@email.hu)" 
+                   class="custom-input"
+                   [class.is-invalid]="emailForm.get('email')?.invalid && emailForm.get('email')?.touched">
+          </div>
+          
+          <button type="submit" 
+                  class="netparkolo-btn main-btn" 
+                  [disabled]="emailForm.invalid || isLoading">
+            {{ isLoading ? 'Küldés...' : 'Kód küldése' }}
+          </button>
+        </form>
+      </div>
+    }
 
- 
+    @if (step === 2) {
+      <div class="verify-content">
+        <h2 class="verify-title">Írd be a kapott kódot</h2>
+        <p class="verify-subtitle">
+          Egy ellenőrző kódot küldtünk a következő címre: <br>
+          <strong>{{ userEmail }}</strong>
+        </p>
+        
+        <form [formGroup]="otpForm" (ngSubmit)="verifyCode()" class="form-section">
+          <div class="input-wrapper otp-wrapper">
+            <input type="number" 
+                   formControlName="otp" 
+                   placeholder="0 0 0 0 0 0" 
+                   class="custom-input otp-input"
+                   [class.is-invalid]="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched"
+                   maxlength="6">
+          </div>
+          
+          <button type="submit" 
+                  class="netparkolo-btn main-btn"
+                  [disabled]="otpForm.invalid || isLoading">
+            {{ isLoading ? 'Ellenőrzés...' : 'Ellenőrzés' }}
+          </button>
+        </form>
+
+        <div class="footer-links">
+          <a (click)="sendEmail()" class="footer-link">Kód újraküldése</a>
+        </div>
+      </div>
+    }
+
+    @if (errorMessage) {
+      <div class="alert alert-danger mx-4 my-2 text-center" role="alert">
+        {{ errorMessage }}
+      </div>
+    }
+
+  </div>
 </div>

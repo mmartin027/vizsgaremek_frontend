@@ -7,11 +7,14 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 import { CardComponent, ParkingSpotDto } from '../../shared/components/card/card.component';
 import { ParkingService } from '../../core/services/parking';
 import { MapCardsComponent } from '../../shared/components/map-cards/map-cards.component';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-map-view',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, CardComponent, MapCardsComponent],
+  imports: [CommonModule, HeaderComponent, MapCardsComponent,FormsModule],
   templateUrl: './map-component.component.html',
   styleUrls: ['./map-component.component.css']
 })
@@ -19,31 +22,138 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
   map!: maplibregl.Map;
   parkingSpots: ParkingSpotDto[] = [];
   markers: maplibregl.Marker[] = [];
+  
   parkingZones: any[] = [];
+  filteredZones: any[] = []; 
+  
   rawGeoJson: any = null;
   clickedZoneId: string | number | null = null;
   isLoading = true;
   activeMobileView: 'list' | 'map' = 'map';
   selectedZone: any = null;
+  searchQuery: string = '';
+  allSpots: ParkingSpotDto[] = [];
+  filteredSpots: ParkingSpotDto[] = [];
+  private searchTimeout: any;
+
+
+
+  activeFilter: 'ALL' | 'COVERED' | 'OUTDOOR' = 'ALL'; 
+
+  showMapOnMobile: boolean = true;
 
   constructor(
     private mapService: MapService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private parkingService: ParkingService,
+    private route: ActivatedRoute
+
   ) {}
 
-  ngOnInit() {
+ngOnInit() {
     this.loadMapData();
     this.parkingService.searchByCity(1).subscribe(data => {
+      this.allSpots = data;
       this.parkingSpots = data;
+      this.filteredSpots = data; 
+      this.cdr.detectChanges();
     });
+}
+
+focusOnSpot(spotId: number) {
+    const targetSpot = this.parkingSpots.find(s => s.id === spotId);
+    
+    if (targetSpot && targetSpot.latitude && targetSpot.longitude) {
+      this.map.flyTo({
+        center: [targetSpot.longitude, targetSpot.latitude],
+        zoom: 16,
+        essential: true,
+        speed: 1.2
+      });
+
+      if (window.innerWidth < 768) {
+        this.setView('map');
+      }
+    }
   }
 
-setView(view: 'list' | 'map') {
-    this.activeMobileView = view;
-    
+onSearchChange(query: string) {
+  this.searchQuery = query;
+  
+  if (!query.trim()) {
+    this.parkingSpots = [...this.allSpots];
+    this.filteredSpots = [...this.allSpots]; 
+    this.cdr.detectChanges();
+    return;
+  }
 
+  const q = query.toLowerCase();
+  
+  const localResults = this.allSpots.filter(spot =>
+    spot.name?.toLowerCase().includes(q) ||
+    spot.address?.toLowerCase().includes(q)
+  );
+
+  if (localResults.length > 0) {
+    this.parkingSpots = localResults;
+    this.filteredSpots = localResults; 
+    this.cdr.detectChanges();
+  } else {
+    this.parkingService.searchByCityName(query).subscribe({
+      next: (data) => {
+        this.parkingSpots = data;
+        this.filteredSpots = data; 
+        
+        if (data.length > 0) {
+          const newUniqueSpots = data.filter(ds => !this.allSpots.some(as => as.id === ds.id));
+          this.allSpots = [...this.allSpots, ...newUniqueSpots];
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.parkingSpots = [];
+        this.filteredSpots = [];
+        this.cdr.detectChanges();
+      }
+    });
+  }
+}
+ setFilter(filterType: 'ALL' | 'COVERED' | 'OUTDOOR') {
+  this.activeFilter = filterType;
+
+  if (filterType === 'ALL') {
+    this.filteredZones = [...this.parkingZones];
+  } else if (filterType === 'COVERED') {
+    this.filteredZones = this.parkingZones.filter(
+      (feature) => feature.properties?.featureKind === 'spot'
+    );
+  } else if (filterType === 'OUTDOOR') {
+    this.filteredZones = this.parkingZones.filter(
+      (feature) => feature.properties?.featureKind === 'zone'
+    );
+  }
+  this.refreshMapData();
+}
+
+  refreshMapData() {
+    if (!this.map) return;
+    
+    this.closeSidebar();
+
+    if (this.map.getSource('parking-zones-source')) {
+      const updatedGeoJson = {
+        ...this.rawGeoJson,
+        features: this.filteredZones
+      };
+      (this.map.getSource('parking-zones-source') as maplibregl.GeoJSONSource).setData(updatedGeoJson);
+    }
+
+    this.addMarkersToMap();
+  }
+
+  setView(view: 'list' | 'map') {
+    this.activeMobileView = view;
     if (view === 'map') {
       setTimeout(() => {
         if (this.map) {
@@ -54,13 +164,13 @@ setView(view: 'list' | 'map') {
   }
 
   handleViewDetails(id: number) {
-  if (id) {
-    console.log('Navigáció a parkolóhoz, ID:', id);
-    this.router.navigate(['/booking', id]);
-  } else {
-    console.error('Hiba: Nincs parkoló ID!');
+    if (id) {
+      this.router.navigate(['/booking', id]);
+    } else {
+      console.error('Hiba: Nincs parkoló ID!');
+    }
   }
-}
+
   ngAfterViewInit() {
     setTimeout(() => {
       const container = document.getElementById('map');
@@ -76,7 +186,77 @@ setView(view: 'list' | 'map') {
     if (this.map) this.map.remove();
   }
 
-  initMap() {
+selectNearestZone(userLat: number, userLng: number) {
+    if (!this.map || !this.filteredZones.length) return;
+
+    let insideZone: any = null;
+
+    this.filteredZones.forEach((feature: any) => {
+      if (feature.geometry?.type === 'Polygon') {
+        const coords = feature.geometry.coordinates[0];
+        if (this.isPointInPolygon(userLat, userLng, coords)) {
+          insideZone = feature;
+        }
+      }
+    });
+
+    if (insideZone) {
+      this.selectedZone = insideZone.properties;
+
+      const featureId = insideZone.id as string | number;
+      if (featureId !== undefined && featureId !== null) {
+        if (this.clickedZoneId !== null) {
+          this.map.setFeatureState(
+            { source: 'parking-zones-source', id: this.clickedZoneId as any },
+            { clicked: false }
+          );
+        }
+        this.clickedZoneId = featureId;
+        this.map.setFeatureState(
+          { source: 'parking-zones-source', id: this.clickedZoneId as any },
+          { clicked: true }
+        );
+      }
+
+      this.cdr.detectChanges();
+    }
+}
+
+isPointInPolygon(lat: number, lng: number, polygon: number[][]): boolean {
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      const xi = polygon[i][1], yi = polygon[i][0];
+      const xj = polygon[j][1], yj = polygon[j][0];
+
+      const intersect = ((yi > lng) !== (yj > lng))
+          && (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
+
+
+  detectCity(lat: number, lng: number): string | null {
+    const cities = [
+      { name: 'Budapest', lat: 47.497, lng: 19.040, radius: 0.15 },
+      { name: 'Pécs', lat: 46.072, lng: 18.233, radius: 0.25 },
+      { name: 'Debrecen', lat: 47.531, lng: 21.625, radius: 0.10 },
+      { name: 'Győr',     lat: 47.687, lng: 17.634, radius: 0.08 }
+    ];
+
+    for (const city of cities) {
+      const distance = Math.sqrt(
+        Math.pow(lat - city.lat, 2) + Math.pow(lng - city.lng, 2)
+      );
+      if (distance < city.radius) {
+        return city.name;
+      }
+    }
+    return null;
+}
+
+initMap() {
     try {
       this.map = new maplibregl.Map({
         container: 'map',
@@ -91,32 +271,61 @@ setView(view: 'list' | 'map') {
         this.map.addControl(new maplibregl.NavigationControl(), 'top-right');
         if (this.rawGeoJson) {
           this.renderMapData();
+
+          this.route.queryParams.subscribe(params => {
+            if (params['type']) {
+              const type = params['type'].toUpperCase() as 'COVERED' | 'OUTDOOR';
+              if (type === 'COVERED' || type === 'OUTDOOR') {
+                this.setFilter(type);
+              }
+            }
+          });
         }
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const userLng = position.coords.longitude;
-      const userLat = position.coords.latitude;
 
-      const el = document.createElement('div');
-      el.style.width = '16px';
-      el.style.height = '16px';
-      el.style.borderRadius = '50%';
-      el.style.backgroundColor = '#4285F4';
-      el.style.border = '3px solid white';
-      el.style.boxShadow = '0 0 8px rgba(66,133,244,0.5)';
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const userLng = position.coords.longitude;
+              const userLat = position.coords.latitude;
 
-      new maplibregl.Marker({ element: el })
-        .setLngLat([userLng, userLat])
-        .addTo(this.map);
+              const el = document.createElement('div');
+              el.style.width = '16px';
+              el.style.height = '16px';
+              el.style.borderRadius = '50%';
+              el.style.backgroundColor = '#4285F4';
+              el.style.border = '3px solid white';
+              el.style.boxShadow = '0 0 8px rgba(66,133,244,0.5)';
 
-      this.map.flyTo({ center: [userLng, userLat], zoom: 14 });
-    },
-    (error) => {
-      console.log('Geolokáció nem elérhető:', error.message);
-    }
-  );
-}
+              new maplibregl.Marker({ element: el })
+                .setLngLat([userLng, userLat])
+                .addTo(this.map);
+
+              this.map.flyTo({ center: [userLng, userLat], zoom: 14 });
+
+              const detectedCity = this.detectCity(userLat, userLng);
+              if (detectedCity) {
+                this.parkingService.searchByCityName(detectedCity).subscribe(data => {
+                  if (data.length > 0) {
+                    this.parkingSpots = data;
+                    this.allSpots = data;
+                  }
+                });
+              }
+
+              setTimeout(() => {
+                this.selectNearestZone(userLat, userLng);
+              }, 1000);
+            },
+            (error) => {
+              console.log('Geolokáció nem elérhető:', error.message);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0
+            }
+          );
+        }
       });
 
       this.map.on('click', (e) => {
@@ -130,38 +339,48 @@ if (navigator.geolocation) {
         }
       });
     } catch (error) {
-      console.error('Térkép hiba:', error);
     }
-  }
+}
 
-
-  loadMapData() {
+ loadMapData() {
     this.isLoading = true;
     this.mapService.getMapData().subscribe({
       next: (geoJson) => {
         this.rawGeoJson = geoJson;
         this.parkingZones = geoJson.features || [];
+        this.filteredZones = [...this.parkingZones]; 
         this.isLoading = false;
+
+        this.route.queryParams.subscribe(params => {
+          if (params['type']) {
+            const type = params['type'].toUpperCase();
+            if (type === 'COVERED' || type === 'OUTDOOR') {
+              this.setFilter(type);
+            }
+          }
+        });
 
         if (this.map && this.map.loaded()) {
           this.renderMapData();
         }
       },
       error: (err) => {
-        console.error('Térkép adat betöltési hiba:', err);
         this.isLoading = false;
       }
     });
-  }
+}
 
   renderMapData() {
     if (!this.map.getSource('parking-zones-source')) {
       this.map.addSource('parking-zones-source', {
         type: 'geojson',
-        data: this.rawGeoJson
+        data: {
+          ...this.rawGeoJson,
+          features: this.filteredZones 
+        }
       });
 
-      this.map.addLayer({
+     this.map.addLayer({
         id: 'zones-fill',
         type: 'fill',
         source: 'parking-zones-source',
@@ -170,13 +389,13 @@ if (navigator.geolocation) {
             'case',
             ['boolean', ['feature-state', 'clicked'], false],
             '#f59e0b',
-            '#8b5cf6'
+            '#26b1cc'   
           ],
           'fill-opacity': [
             'case',
             ['boolean', ['feature-state', 'clicked'], false],
-            0.7,
-            0.3
+            0.6,       
+            0.3         
           ]
         },
         filter: ['==', '$type', 'Polygon']
@@ -190,20 +409,67 @@ if (navigator.geolocation) {
           'line-color': [
             'case',
             ['boolean', ['feature-state', 'clicked'], false],
-            '#d97706',
-            '#7c3aed'
+            '#d97706', 
+            '#1a8b9e'  
           ],
           'line-width': [
             'case',
             ['boolean', ['feature-state', 'clicked'], false],
             3,
-            1.5
+            2           
           ]
         },
         filter: ['==', '$type', 'Polygon']
       });
 
-  
+const size = 30;
+const canvas = document.createElement('canvas');
+canvas.width = size;
+canvas.height = size;
+const ctx = canvas.getContext('2d');
+
+if (ctx) {
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  ctx.strokeStyle = '#1a8b9e'; 
+  ctx.lineWidth = 2; 
+  ctx.stroke();
+
+  if (!this.map.hasImage('zone-circle')) {
+  if (!this.map.hasImage('zone-circle')) {
+    const imageData = ctx.getImageData(0, 0, size, size);
+    
+    this.map.addImage('zone-circle', imageData);
+  }
+  }
+}
+
+
+this.map.addLayer({
+    id: 'zones-label',
+    type: 'symbol',
+    source: 'parking-zones-source',
+    layout: {
+      'icon-image': 'zone-circle', 
+      'icon-allow-overlap': true,
+      
+      'text-field': ['get', 'zoneCode'],
+      'text-size': 14,
+      'text-font': ['Open Sans Bold'],
+      'text-allow-overlap': true,
+      
+      'text-anchor': 'center',
+      'icon-text-fit': 'none' 
+    },
+    paint: {
+      'text-color': '#1a8b9e', 
+     
+    },
+    filter: ['==', '$type', 'Polygon']
+});
+
       this.map.on('click', 'zones-fill', (e) => {
         if (e.features && e.features.length > 0) {
           const feature = e.features[0];
@@ -237,19 +503,26 @@ if (navigator.geolocation) {
 
     } else {
       (this.map.getSource('parking-zones-source') as maplibregl.GeoJSONSource)
-        .setData(this.rawGeoJson);
+        .setData({
+          ...this.rawGeoJson,
+          features: this.filteredZones 
+        });
     }
 
     this.addMarkersToMap();
   }
 
-
   addMarkersToMap() {
-    if (!this.parkingZones.length) return;
+    if (!this.filteredZones.length) {
+      this.markers.forEach(m => m.remove());
+      this.markers = [];
+      return;
+    }
+
     this.markers.forEach(m => m.remove());
     this.markers = [];
 
-    this.parkingZones.forEach((feature) => {
+    this.filteredZones.forEach((feature) => {
       const kind = feature.properties?.featureKind;
       if (kind !== 'spot') return;
 
@@ -258,9 +531,11 @@ if (navigator.geolocation) {
         const lat = feature.geometry.coordinates[1];
         if (lng === 0 && lat === 0) return;
 
+        const isCovered = feature.properties?.parking_type === 'COVERED';
+
         const el = document.createElement('div');
-        el.className = 'custom-marker covered-marker';
-        el.innerHTML = `<span>P</span>`;
+        el.className = `custom-marker ${isCovered ? 'marker-covered' : 'marker-outdoor'}`;
+        el.innerHTML = isCovered ? '<i class="bi bi-house-door-fill"></i>' : '<span>P</span>';
 
         el.addEventListener('click', (e) => {
           e.stopPropagation();

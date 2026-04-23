@@ -1,107 +1,88 @@
 <div class="booking-card" [ngClass]="liveStatus.toLowerCase()">
-  <div class="card-left">
-    <div class="location-icon">
-      <i class="bi bi-geo-alt" ></i>
+  
+  <div class="bc-sidebar">
+    <div class="bc-icon-wrapper" [ngClass]="liveStatus.toLowerCase()">
+      <i class="bi bi-geo-alt"></i>
     </div>
-    <div class="status-indicator"></div>
+    <div class="bc-status-pill" [ngClass]="liveStatus.toLowerCase()">
+      {{ statusLabel }}
+    </div>
   </div>
 
-  <div class="card-main">
-    <div class="card-header">
-      <div class="header-left">
-        <h3 class="parking-name">{{ booking.parkingSpotName }}</h3>
-        <p class="parking-address">{{ booking.parkingSpotAddress }}</p>
+  <div class="bc-content">
+    
+    <div class="bc-header-row">
+      <h3 class="bc-title">{{ booking.parkingSpotName }}</h3>
+      <span class="bc-price">{{ booking.totalPrice | number }} Ft</span>
+    </div>
+
+    <div class="bc-subheader-row">
+      <div class="bc-address">
+        <i class="bi bi-geo-alt"></i> {{ booking.parkingSpotAddress }}
       </div>
-      <span class="status-badge" [ngClass]="liveStatus.toLowerCase()">
-        {{ statusLabel }}
+      <div class="bc-time-left" *ngIf="booking.hours">
+        <i class="bi bi-clock-history"></i> {{ booking.hours }} óra időtartam
+      </div>
+      <div class="bc-time-left text-primary" *ngIf="!booking.hours">
+        <i class="bi bi-stopwatch"></i> Perc alapú parkolás
+      </div>
+    </div>
+
+    <div class="bc-meta-row">
+      <span class="bc-meta-item text-muted">
+        Gépjármű: <strong>{{ booking.licensePlate }}</strong> ({{ booking.carBrand }})
+      </span>
+      <span class="bc-meta-item text-muted" *ngIf="booking.accessCode">
+        &nbsp;•&nbsp; Belépési kód: <strong>{{ booking.accessCode }}</strong>
       </span>
     </div>
 
-    <div class="card-body">
-      <div class="info-row">
-        <div class="car-info">
-          <span class="label">Gépjármű</span>
-          <strong>{{ booking.carBrand }} {{ booking.carModel }}</strong>
-          <span class="plate">{{ booking.licensePlate }}</span>
+    <div class="bc-dates-row">
+      <div class="bc-date-box">
+        <span class="bc-date-label">Kezdés</span>
+        <div class="bc-date-value">
+          <i class="bi bi-calendar3"></i> 
+          {{ booking.startTime | date:'yyyy. MMM. dd. HH:mm' }}
         </div>
-
-        <div class="time-info">
-          <span class="label">Időpont</span>
-          <div class="time-details">
-            <div class="time-item">
-              <span class="time-label">Kezdés</span>
-              <p class="time-value">
-                📅 {{ booking.startTime | date:'yyyy. MM. dd.' }}
-                 {{ booking.startTime | date:'HH:mm' }}
-              </p>
-            </div>
-            <div class="time-separator">→</div>
-          <div class="time-item">
-           <span class="time-label">Befejezés</span>
-            <p class="time-value">
-            {{ (booking.checkOutTime || booking.endTime) | date:'yyyy. MM. dd.' }}
-            {{ (booking.checkOutTime || booking.endTime) | date:'HH:mm' }}
-         </p>
-        </div>
-          </div>
-        </div>
-
-    <div class="duration-info">
-       <span class="label">Időtartam</span>
-      <strong *ngIf="booking.hours">{{ booking.hours }} óra</strong>
-     <strong *ngIf="!booking.hours" class="text-primary">Perc alapú</strong>
       </div>
-   </div>
-
-      <div class="card-footer">
-        <div class="price-section">
-          <span class="price-label">Fizetendő összeg</span>
-          <span class="price-value">{{ booking.totalPrice | number }} Ft</span>
-        </div>
+      <div class="bc-date-box">
+        <span class="bc-date-label">Befejezés</span>
         
-        <div class="access-code" *ngIf="booking.accessCode">
-          <span class="code-label">Belépési kód</span>
-          <span class="code-value">{{ booking.accessCode }}</span>
+        <div class="bc-date-value" *ngIf="showEndTime">
+          <i class="bi bi-calendar3"></i> 
+          {{ finalEndTime | date:'yyyy. MMM. dd. HH:mm' }}
         </div>
-        
-        <div class="card-actions">
-          
 
-          <div *ngIf="booking.status === 'IN_PROGRESS'" class="timer-section w-100 mb-3 text-center p-3" style="background-color: #f8f9fa; border-radius: 8px; border: 2px solid #dc3545;">
-  <span style="font-size: 14px; color: #6c757d; text-transform: uppercase; font-weight: bold;">Eltelt idő</span>
-  <h2 style="font-size: 2.5rem; font-weight: 800; color: #dc3545; margin: 10px 0; font-family: monospace;">
-    {{ parkingTimer }}
-  </h2>
-  <button 
-    class="btn btn-danger btn-lg w-100 font-weight-bold" 
-    style="font-size: 1.1rem; padding: 12px;"
-    (click)="stopOnDemandParking()">
-     Parkolás Leállítása és Fizetés
-  </button>
-</div>
-
-          <button 
-            class="btn-extend" 
-            (click)="extendBooking(booking)"
-            *ngIf="canExtend(booking)"
-            [disabled]="isExtending">
-            ⏱ Időpont hosszabbítás
-          </button>
-          
-          <button 
-            class="btn-details" 
-            (click)="viewDetails(booking)">
-            Részletek
-          </button>
-          
-          <button 
-            class="btn-cancel" 
-            (click)="cancelBooking(booking)"
-            *ngIf="canCancel(booking)">
-            🗑️ Törlés
-          </button>
+        <div class="bc-date-value text-muted" *ngIf="!showEndTime" style="font-style: italic;">
+          <i class="bi bi-hourglass-split"></i> Folyamatban...
         </div>
       </div>
     </div>
-  </div>
-</div>
+
+    <div class="qr-section" *ngIf="booking.qrCode && (liveStatus === 'ACTIVE' || liveStatus === 'UPCOMING')">
+      <div class="qr-wrapper">
+        <img [src]="'data:image/png;base64,' + booking.qrCode" alt="QR kód" class="qr-image">
+        <p class="qr-label">Mutassa be a QR kódot a parkolóház bejáratánál</p>
+      </div>
+    </div>
+
+    <div *ngIf="booking.status === 'IN_PROGRESS'" class="timer-section text-center p-3 mt-3">
+      <span class="timer-label">Eltelt idő</span>
+      <h2 class="timer-value">{{ parkingTimer }}</h2>
+      <button class="btn btn-danger btn-lg w-100 font-weight-bold" (click)="stopOnDemandParking()">
+        Parkolás Leállítása és Fizetés
+      </button>
+    </div>
+    
+    <div class="bc-actions mt-3">
+      <button class="btn-extend" (click)="extendBooking(booking)" *ngIf="canExtend(booking)" [disabled]="isExtending">
+        <i class="bi bi-clock"></i> Időpont hosszabbítás
+      </button>
+      
+      <button class="btn-cancel" (click)="cancelBooking(booking)" *ngIf="canCancel(booking)">
+        <i class="bi bi-trash"></i> Törlés
+      </button>
+    </div>
+
+  </div> </div> ```
+

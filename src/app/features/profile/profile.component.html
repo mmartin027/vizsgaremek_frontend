@@ -1,12 +1,109 @@
 <app-header></app-header>
 
-<div *ngIf="!isLoading && userData">
-  <p><strong>Keresztnév:</strong> {{ userData.firstName }}</p>
-  <p><strong>Vezetéknév:</strong> {{ userData.lastName }}</p>
-  <p><strong>E-mail cím:</strong> {{ userData.email }}</p>
-  <p><strong>Felhasználó azonosító:</strong> user-{{ userData.id }}</p>
+<div class="d-flex flex-column justify-content-center align-items-center vh-100" *ngIf="isLoading">
+  <div class="spinner-border text-info mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+  <p class="text-muted">Adataid betöltése folyamatban...</p>
 </div>
 
-<div *ngIf="isLoading">
-  <p>Adataid betöltése folyamatban... </p>
+<div class="container py-5" *ngIf="!isLoading && userData">
+  
+  <div class="row mb-5 text-center">
+    <div class="col-12">
+      <h1 class="fw-bold mb-3">A Profilom</h1>
+      <p class="text-muted mx-auto" style="max-width: 600px;">
+        Kezelje fiókjának személyes adatait. Frissítse információit és állítsa be a parkolási preferenciáit a legjobb élmény érdekében.
+      </p>
+    </div>
+  </div>
+
+  <div class="row gy-5">
+    <div class="col-12 col-md-8 col-lg-9 mx-auto">
+      
+      <div class="bg-white p-4 p-md-5 rounded shadow-sm border mb-4">
+        <h2 class="h5 fw-bold mb-4 text-dark">Fiók Profil</h2>
+        <form class="row g-4">
+          <div class="col-12">
+            <label class="form-label text-muted text-uppercase fw-bold" style="font-size: 12px;">Keresztnév</label>
+            <div class="d-flex align-items-center border-bottom pb-2">
+              <input type="text" class="form-control border-0 bg-transparent p-0 shadow-none fs-6" [value]="userData.firstName" readonly>
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label text-muted text-uppercase fw-bold" style="font-size: 12px;">Vezetéknév</label>
+            <div class="d-flex align-items-center border-bottom pb-2">
+              <input type="text" class="form-control border-0 bg-transparent p-0 shadow-none fs-6" [value]="userData.lastName" readonly>
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label text-muted text-uppercase fw-bold" style="font-size: 12px;">E-mail cím</label>
+            <div class="d-flex align-items-center border-bottom pb-2">
+              <input type="email" class="form-control border-0 bg-transparent p-0 shadow-none fs-6" [value]="userData.email" readonly>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="bg-white p-4 p-md-5 rounded shadow-sm border">
+        <h2 class="h5 fw-bold mb-4 text-dark">Járműveim</h2>
+        <p class="text-muted mb-4">Az alapértelmezett jármű adatai automatikusan kitöltődnek foglalásnál.</p>
+
+        <div *ngFor="let vehicle of vehicles" class="d-flex align-items-center justify-content-between p-3 mb-3 rounded border"
+             [style.border-color]="vehicle.isDefault ? '#26B9D1' : '#dee2e6'"
+             [style.background-color]="vehicle.isDefault ? '#f0fbfd' : 'white'">
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-car-front-fill fs-4" [style.color]="vehicle.isDefault ? '#26B9D1' : '#6c757d'"></i>
+            <div>
+              <strong>{{ vehicle.brand }} {{ vehicle.model }}</strong>
+              <span class="badge bg-dark ms-2">{{ vehicle.licensePlate }}</span>
+              <span *ngIf="vehicle.color" class="text-muted ms-2">{{ vehicle.color }}</span>
+              <span *ngIf="vehicle.isDefault" class="badge ms-2" style="background-color: #26B9D1;">Alapértelmezett</span>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <button *ngIf="!vehicle.isDefault" class="btn btn-sm btn-outline-info" (click)="setDefaultVehicle(vehicle.id)">
+              Alapértelmezett
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteVehicle(vehicle.id)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="vehicles.length === 0" class="text-center py-4 text-muted">
+          <i class="bi bi-car-front fs-1 d-block mb-2"></i>
+          <p>Még nincs mentett járműved.</p>
+        </div>
+
+        <div class="mt-4 p-4 rounded border bg-light" *ngIf="showAddForm">
+          <h6 class="fw-bold mb-3">Új jármű hozzáadása</h6>
+          <div class="row g-3">
+         <div class="col-12 col-md-6">
+  <input type="text" class="form-control" placeholder="Rendszám (pl: ABC-123 vagy AABB-123)" 
+         [(ngModel)]="newVehicle.licensePlate"
+         (input)="formatPlate()">
+  <small class="text-muted">Formátum: ABC-1234 vagy AABB-1234</small>
+</div>
+            <div class="col-12 col-md-6">
+              <input type="text" class="form-control" placeholder="Márka (pl: Toyota)" [(ngModel)]="newVehicle.brand">
+            </div>
+            <div class="col-12 col-md-6">
+              <input type="text" class="form-control" placeholder="Típus (pl: Corolla)" [(ngModel)]="newVehicle.model">
+            </div>
+            <div class="col-12 col-md-6">
+              <input type="text" class="form-control" placeholder="Szín (pl: Fekete)" [(ngModel)]="newVehicle.color">
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button class="btn text-white fw-bold px-4" style="background-color: #26B9D1;" (click)="addVehicle()">Mentés</button>
+              <button class="btn btn-outline-secondary" (click)="showAddForm = false">Mégse</button>
+            </div>
+          </div>
+        </div>
+
+        <button *ngIf="!showAddForm" class="btn btn-outline-info mt-3 w-100" (click)="showAddForm = true">
+          <i class="bi bi-plus-lg me-2"></i>Új jármű hozzáadása
+        </button>
+      </div>
+
+    </div>
+  </div>
 </div>

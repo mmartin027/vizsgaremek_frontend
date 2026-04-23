@@ -1,24 +1,23 @@
 <header class="header">
   
+  <button class="hamburger-btn" (click)="toggleMenu()">
+    <i class="bi bi-list"></i>
+  </button>
 
-  <input type="checkbox" id="menu-toggle" class="menu-checkbox">
-  
-  <label for="menu-toggle" class="hamburger">☰</label>
 
-  <nav class="nav-links">
-    
+  <nav class="desktop-nav">
     <a routerLink="/fooldal" routerLinkActive="active">Főoldal</a>
     <a routerLink="/parkolo-kereses" routerLinkActive="active">Parkolókeresés</a>
     
     <ng-container *ngIf="authService.isLoggedIn()">
       <a routerLink="/user-bookings" routerLinkActive="active">Foglalásaim</a>
       <a routerLink="/user-profile" routerLinkActive="active">Profilom</a>
+      <a routerLink="/contact" routerLinkActive="active">kapcsolat</a>
     </ng-container>
 
     <div class="auth-buttons">
       <ng-container *ngIf="!authService.isLoggedIn()">
-        <a routerLink="/login" class="auth-btn login-btn">Bejelentkezés</a>
-        <a routerLink="/register" class="auth-btn register-btn">Regisztráció</a>
+        <a routerLink="/login" class="auth-btn login-btn">Bejelentkezés / Regisztráció</a>
       </ng-container>
 
       <ng-container *ngIf="authService.isLoggedIn()">
@@ -26,6 +25,55 @@
         <button (click)="logout()" class="logout-btn">Kijelentkezés</button>
       </ng-container>
     </div>
-
   </nav>
 </header>
+
+<div class="menu-overlay" [class.active]="isMenuOpen" (click)="closeMenu()"></div>
+
+<div class="sidebar-menu" [class.active]="isMenuOpen">
+  
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Netparkoló</div>
+    <button class="close-btn" (click)="closeMenu()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a routerLink="/fooldal" routerLinkActive="active" (click)="closeMenu()">
+      <i class="bi bi-house-door"></i> Főoldal
+    </a>
+    <a routerLink="/parkolo-kereses" routerLinkActive="active" (click)="closeMenu()">
+      <i class="bi bi-search"></i> Parkolókeresés
+    </a>
+    
+ <a routerLink="/contact" routerLinkActive="active" (click)="closeMenu()">
+      <i class="bi bi-envelope"></i> kapcsolat
+    </a>
+
+    <ng-container *ngIf="authService.isLoggedIn()">
+      <a routerLink="/user-bookings" routerLinkActive="active" (click)="closeMenu()">
+        <i class="bi bi-calendar-event"></i> Foglalásaim
+      </a>
+      <a routerLink="/user-profile" routerLinkActive="active" (click)="closeMenu()">
+        <i class="bi bi-person"></i> Profil
+      </a>
+      <a *ngIf="authService.isAdmin()" routerLink="/admin" routerLinkActive="active" (click)="closeMenu()">
+        <i class="bi bi-gear"></i> Admin Panel
+      </a>
+    </ng-container>
+    
+    <ng-container *ngIf="!authService.isLoggedIn()">
+      <a routerLink="/login" routerLinkActive="active" (click)="closeMenu()">
+        <i class="bi bi-person-plus"></i> Bejelentkezés / Regisztráció
+      </a>
+    </ng-container>
+  </nav>
+
+  <div class="sidebar-footer" *ngIf="authService.isLoggedIn()">
+    <a href="#" class="logout-link" (click)="logout(); $event.preventDefault()">
+      <i class="bi bi-box-arrow-right"></i> Kijelentkezés
+    </a>
+  </div>
+
+</div>

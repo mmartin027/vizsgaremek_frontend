@@ -1,8 +1,74 @@
 @import "maplibre-gl/dist/maplibre-gl.css";
-
 @import "tailwindcss";
-
 
 * {
   font-family: 'Sora', sans-serif;
+}
+
+.form-control.ng-invalid.ng-touched,
+input.ng-invalid.ng-touched {
+  border-color: #dc3545 !important;
+}
+
+
+
+.custom-swal-popup {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+  padding: 30px 20px !important;
+  border: none !important;
+  font-family: 'Sora', sans-serif !important; 
+}
+
+.custom-swal-title {
+  font-weight: 700 !important;
+  color: #333 !important;
+  font-size: 24px !important;
+  margin-top: 10px !important;
+}
+
+.custom-swal-text {
+  color: #666 !important;
+  font-size: 15px !important;
+  margin-bottom: 10px !important;
+}
+
+.custom-swal-btn {
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  border: none !important;
+  cursor: pointer !important;
+  margin: 0 8px !important;
+  transition: all 0.2s ease-in-out !important;
+  font-family: 'Sora', sans-serif !important;
+}
+
+.custom-swal-confirm {
+  background-color: #26b1cc !important;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(38, 177, 204, 0.3) !important;
+}
+
+.custom-swal-confirm:hover {
+  background-color: #1a8b9e !important;
+  transform: translateY(-2px);
+}
+
+.custom-swal-cancel {
+  background-color: #dc3545 !important;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3) !important;
+}
+
+.custom-swal-cancel:hover {
+  background-color: #c82333 !important;
+  transform: translateY(-2px);
+}
+
+.custom-toast-popup {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  font-family: 'Sora', sans-serif !important;
 }

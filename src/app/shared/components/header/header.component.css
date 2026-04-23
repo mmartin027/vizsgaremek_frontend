@@ -15,36 +15,33 @@
   text-decoration: none;
 }
 
-.menu-checkbox {
+.hamburger-btn {
   display: none;
-}
-
-.hamburger {
-  display: none;
+  background: none;
+  border: none;
   color: white;
   font-size: 32px;
   cursor: pointer;
-  user-select: none;
 }
 
-.nav-links {
+.desktop-nav {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
-.nav-links a {
+.desktop-nav a {
   color: #fff;
   text-decoration: none;
   font-size: 16px;
   transition: 0.3s;
 }
 
-.nav-links a:hover {
+.desktop-nav a:hover {
   text-decoration: underline;
 }
 
-.nav-links .active {
+.desktop-nav .active {
   font-weight: bold;
 }
 
@@ -61,6 +58,7 @@
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: bold;
+  border: 1px solid white;
   transition: all 0.3s ease;
 }
 
@@ -74,14 +72,9 @@
   color: #26B9D1;
 }
 
-.register-btn {
-  color: #fafdfd;
-  background: #26B9D1;
-}
-
 .admin-btn {
-  background-color: #26B9D1;
-  color: #ffffff !important;
+  background-color: white;
+  color: #26B9D1 !important;
   font-weight: bold;
   padding: 8px 15px;
   border-radius: 5px;
@@ -98,39 +91,129 @@
   cursor: pointer;
 }
 
+.menu-overlay, .sidebar-menu {
+  display: none;
+}
+
+
 
 @media (max-width: 900px) {
   
-  .hamburger {
-    display: block; /
+  .header {
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 0 20px;
   }
 
-  .nav-links {
-    display: none; 
-    flex-direction: column;
-    position: absolute;
-    top: 70px; 
+  .hamburger-btn { display: block; }
+  .desktop-nav { display: none; } 
+
+  .menu-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
     left: 0;
-    width: 100%;
-    background-color: #26B9D1;
-    padding: 20px 0;
-    z-index: 1000;
-    box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 998;
   }
 
-  .nav-links a {
-    margin: 10px 0;
-    font-size: 18px;
+  .menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
   }
 
-  .auth-buttons {
-    flex-direction: column;
-    margin-left: 0;
-    margin-top: 15px;
-    width: 100%;
-  }
-
-  .menu-checkbox:checked ~ .nav-links {
+  .sidebar-menu {
     display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: -300px; 
+    width: 280px;
+    height: 100vh;
+    background-color: #ffffff;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    z-index: 999;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar-menu.active {
+    left: 0; 
+  }
+
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 20px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .sidebar-logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #26B9D1;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6b7280;
+    cursor: pointer;
+  }
+
+  .sidebar-nav {
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    color: #4b5563;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+  }
+
+  .sidebar-nav a i {
+    font-size: 20px;
+    color: #9ca3af;
+  }
+
+  .sidebar-nav a.active {
+    background: #e0f7fa; 
+    color: #26B9D1;
+    border-left: 4px solid #26B9D1;
+  }
+
+  .sidebar-nav a.active i {
+    color: #26B9D1;
+  }
+
+  .sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid #f3f4f6;
+    margin-top: auto; 
+  }
+
+  .logout-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #dc2626;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
   }
 }

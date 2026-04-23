@@ -14,16 +14,51 @@
 
 <div class="map-layout-wrapper" [ngClass]="'mobile-view-' + activeMobileView">
   
-  <div class="cards-container">
-    @for (spot of parkingSpots; track spot.id) {
+ <div class="cards-container">
+    <div class="search-box p-2">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="text" 
+               class="form-control border-start-0" 
+               placeholder="Parkoló keresése..."
+               [value]="searchQuery"
+               (input)="onSearchChange($any($event.target).value)">
+      </div>
+      <div class="mt-2 px-1">
+        <small class="text-muted fw-semibold">{{ filteredSpots.length }} parkolóhely</small>
+      </div>
+    </div>
+
+  @for (spot of parkingSpots; track spot.id)  {
       <app-map-cards
         [spot]="spot"
-        (viewDetails)="handleViewDetails($event)">
+        (focusSpot)="focusOnSpot($event)"
+        (bookSpot)="handleViewDetails($event)">
       </app-map-cards>
     }
-  </div>
+
+    <div *ngIf="filteredSpots.length === 0 && searchQuery" class="text-center p-4 text-muted">
+      <i class="bi bi-search fs-3 d-block mb-2"></i>
+      <p>Nincs találat: "{{ searchQuery }}"</p>
+    </div>
+</div>
 
   <div class="map-container-relative">
+
+    <div class="map-filters">
+      <button class="filter-btn" [class.active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">
+        Összes
+      </button>
+      <button class="filter-btn" [class.active]="activeFilter === 'OUTDOOR'" (click)="setFilter('OUTDOOR')">
+        <i class="bi bi-sun"></i> Kültéri
+      </button>
+      <button class="filter-btn" [class.active]="activeFilter === 'COVERED'" (click)="setFilter('COVERED')">
+        <i class="bi bi-house-door"></i> Fedett
+      </button>
+    </div>
+
     <div id="map" class="map-canvas"></div>
 
     <div class="loading-overlay" *ngIf="isLoading">
@@ -39,34 +74,41 @@
         
         <div class="image-wrapper">
           <img [src]="selectedZone.imageUrl || 'assets/no-image-parking.jpg'" class="card-img">
-          <div class="status-badge" [ngClass]="selectedZone.availableSpaces > 0 ? 'available' : 'full'">
-            {{ selectedZone.availableSpaces > 0 ? 'Elérhető' : 'Tele' }}
+          <div class="status-badge" [ngClass]="(selectedZone.parking_type === 'COVERED' && selectedZone.availableSpaces <= 0) ? 'full' : 'available'">
+            {{ (selectedZone.parking_type === 'COVERED' && selectedZone.availableSpaces <= 0) ? 'Tele' : 'Elérhető' }}
           </div>
         </div>
 
-        <div class="card-content">
-          <div class="header-row">
-            <h2>{{ selectedZone.name || 'Zóna neve' }}</h2>
-            <span class="price-tag">{{ selectedZone.hourlyRate | number }} Ft/ó</span>
-          </div>
-          <p class="address"> {{ selectedZone.address || 'Cím nem elérhető' }}</p>
-          
-          <div class="capacity-info">
-            <div class="capacity-text">
-              <span>Szabad: <b>{{ selectedZone.availableSpaces }}</b> / {{ selectedZone.capacity }}</span>
-            </div>
-            <div class="progress-bg">
-              <div class="progress-fill" 
-                   [style.width.%]="(selectedZone.availableSpaces / selectedZone.capacity) * 100"
-                   [style.background-color]="getProgressBarColor()">
-              </div>
-            </div>
-          </div>
+       <div class="card-content">
+  <div class="header-row">
+    <h2>{{ selectedZone.name || 'Zóna neve' }}</h2>
+    <span class="price-tag">{{ selectedZone.hourlyRate | number }} Ft/ó</span>
+  </div>
+  <p class="address"> {{ selectedZone.address || 'Cím nem elérhető' }}</p>
+  
+  <div class="capacity-info" *ngIf="selectedZone.capacity > 0">
+    <div class="capacity-text">
+      <span>Szabad: <b>{{ selectedZone.availableSpaces }}</b> / {{ selectedZone.capacity }}</span>
+    </div>
+    <div class="progress-bg">
+      <div class="progress-fill" 
+           [style.width.%]="(selectedZone.availableSpaces / selectedZone.capacity) * 100"
+           [style.background-color]="getProgressBarColor()">
+      </div>
+    </div>
+  </div>
 
-          <button class="action-button" [disabled]="selectedZone.availableSpaces <= 0" (click)="onBook(selectedZone.id)">
-            {{ selectedZone.availableSpaces > 0 ? 'Részletek & Foglalás' : 'Sajnos megtelt' }}
-          </button>
-        </div>
+  <div class="zone-info" *ngIf="!selectedZone.capacity || selectedZone.capacity === 0" style="margin-bottom: 20px; color: #059669; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+    <i class="bi bi-ticket-perforated"></i> Utcai zóna - Jegyváltás elérhető
+  </div>
+
+<button class="action-button" 
+        [disabled]="selectedZone.capacity > 0 && selectedZone.availableSpaces <= 0" 
+        (click)="onBook(selectedZone.spot_id || selectedZone.id)">
+  {{ (selectedZone.capacity > 0 && selectedZone.availableSpaces <= 0) ? 'Sajnos megtelt' : 'Részletek & Foglalás' }}
+</button>
+</div>
+
       </div>
     </div>
 

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { BookingService } from '../../../core/services/booking.service';
 import { StripeService } from '../../../core/services/stripe.service';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { AlertService } from '../../../core/services/alert';
 
 @Component({
   selector: 'app-booking-update',
@@ -19,38 +20,38 @@ export class BookingUpdateComponent implements OnInit {
   isLoading = true;
   
   additionalHours = 4; 
+  additionalMinutes: number | null = null; 
   quickSelectHours = [1, 2, 3, 4]; 
   
-  get additionalMinutes(): number {
-    return this.additionalHours * 60;
+  get totalExtensionMinutes(): number {
+    return (this.additionalHours * 60) + (this.additionalMinutes || 0);
   }
   
   get newEndTime(): Date | null {
     if (!this.booking) return null;
     const endTime = new Date(this.booking.endTime);
-    endTime.setHours(endTime.getHours() + this.additionalHours);
+    endTime.setMinutes(endTime.getMinutes() + this.totalExtensionMinutes);
     return endTime;
   }
-  
-
 
   get newTotalHours(): number {
     if (!this.booking) return 0;
-    return this.booking.hours + this.additionalHours;
+    return this.booking.hours + (this.totalExtensionMinutes / 60);
+  }
+
+  // Tiszta, nullával-osztás-mentes óradíj számítás
+  get currentHourlyRate(): number {
+    if (!this.booking) return 0;
+    
+    if (this.booking.parkingSpot && this.booking.parkingSpot.hourlyRate) {
+        return this.booking.parkingSpot.hourlyRate;
+    } 
+    const validHours = this.booking.hours > 0 ? this.booking.hours : 1; 
+    return this.booking.totalPrice / validHours;
   }
   
-get additionalPrice(): number {
-    if (!this.booking) return 0;
-
-    if (this.booking.parkingSpot && this.booking.parkingSpot.hourlyRate) {
-        return this.additionalHours * this.booking.parkingSpot.hourlyRate;
-    }
-    
-    
-    const validHours = this.booking.hours > 0 ? this.booking.hours : 1; 
-    const calculatedHourlyRate = this.booking.totalPrice / validHours;
-    
-    return this.additionalHours * calculatedHourlyRate;
+  get additionalPrice(): number {
+    return (this.totalExtensionMinutes / 60) * this.currentHourlyRate;
   }
   
   get newTotalPrice(): number {
@@ -58,9 +59,6 @@ get additionalPrice(): number {
     return this.booking.totalPrice + this.additionalPrice;
   }
 
-
-
-  
   get remainingTime(): string {
     if (!this.booking) return '';
     const now = new Date();
@@ -78,14 +76,15 @@ get additionalPrice(): number {
     private route: ActivatedRoute,
     private router: Router,
     private bookingService: BookingService,
-    private stripeService: StripeService
+    private stripeService: StripeService,
+    private alertService: AlertService 
   ) {}
 
   ngOnInit() {
     this.bookingId = Number(this.route.snapshot.paramMap.get('id'));
     
     if (!this.bookingId) {
-      alert('Hibás foglalás azonosító!');
+      this.alertService.error('Hiba', 'Hibás foglalás azonosító!');
       this.router.navigate(['/foglalasaim']);
       return;
     }
@@ -93,31 +92,22 @@ get additionalPrice(): number {
     this.loadBooking();
   }
 
-
   loadBooking() {
     this.isLoading = true;
     
     this.bookingService.getBookingById(this.bookingId).subscribe({
       next: (booking) => {
-        console.log('--- FOGLALÁS ADATOK A BACKENDRŐL ---');
-        console.log('Teljes objektum:', booking);
-        console.log('Kezdési idő mező (startTime):', booking.startTime);
-        console.log('Kezdési idő mező (startDate):', booking.startDate);
-        console.log('Befejezési idő mező (endTime):', booking.endTime);
-        console.log('-----------------------------------');
-        
         this.booking = booking;
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Hiba a foglalás betöltésekor:', err);
-        alert('Nem sikerült betölteni a foglalást!');
+        this.alertService.error('Hiba', 'Nem sikerült betölteni a foglalást!');
         this.router.navigate(['/foglalasaim']);
       }
     });
   }
 
- get statusInfo(): string {
+  get statusInfo(): string {
     if (!this.booking || !this.booking.startTime || !this.booking.endTime) {
       return '';
     }
@@ -138,51 +128,70 @@ get additionalPrice(): number {
   }
 
   decreaseHours() {
-    if (this.additionalHours > 1) {
+    if (this.additionalHours > 0) { 
       this.additionalHours--;
     }
   }
 
- 
   increaseHours() {
     if (this.additionalHours < 24) {
       this.additionalHours++;
     }
   }
 
-
   selectQuickHours(hours: number) {
     this.additionalHours = hours;
+    this.additionalMinutes = null; 
   }
 
-
-  
- async confirmExtension() {
-  if (!this.booking) return;
-
-  const confirmMsg = `Biztosan hosszabbítod a foglalást ${this.additionalHours} órával?\n\nExtra díj: ${this.additionalPrice} Ft`;
-  
-  if (!confirm(confirmMsg)) return;
-
-  console.log(' Hosszabbítás indítása...');
-
-  this.bookingService.createExtensionSession(this.bookingId, this.additionalMinutes).subscribe({
-    next: (response: any) => {
-      console.log(' Extension session:', response);
-      
-      if (response.url) {
-        console.log(' Átirányítás Stripe-ra');
-        window.location.href = response.url;
-      } else {
-        alert('Hiba: Nincs fizetési URL');
+  validateMinutes() {
+    if (this.additionalMinutes !== null) {
+      if (this.additionalMinutes > 59) {
+        this.additionalMinutes = 59;
+      } else if (this.additionalMinutes < 0) {
+        this.additionalMinutes = 0;
       }
-    },
-    error: (err) => {
-      console.error(' Hiba:', err);
-      alert('Hiba: ' + (err.error?.error || err.message));
     }
-  });
-}
+  }
+
+  async confirmExtension(): Promise<void> {
+    if (!this.booking) return;
+    
+    if (this.totalExtensionMinutes <= 0) {
+      this.alertService.error('Hiba', 'Kérlek adj meg egy érvényes hosszabbítási időt!');
+      return;
+    }
+
+    let timeString = '';
+    if (this.additionalHours > 0) timeString += `${this.additionalHours} órával `;
+    if (this.additionalMinutes && this.additionalMinutes > 0) {
+      if (this.additionalHours > 0) timeString += 'és ';
+      timeString += `${this.additionalMinutes} perccel`;
+    }
+
+    const confirmMsg = `Biztosan hosszabbítod a foglalást ${timeString.trim()}? Extra díj: <b>${Math.round(this.additionalPrice)} Ft</b>`;
+    
+    const isConfirmed = await this.alertService.confirm(
+      'Hosszabbítás', 
+      confirmMsg, 
+      'Fizetés és megerősítés'
+    );
+
+    if (isConfirmed) {
+      this.bookingService.createExtensionSession(this.bookingId, this.totalExtensionMinutes).subscribe({
+        next: (response: any) => {
+          if (response.url) {
+            window.location.href = response.url;
+          } else {
+            this.alertService.error('Hiba', 'Nincs fizetési URL');
+          }
+        },
+        error: (err) => {
+          this.alertService.error('Szerver hiba', err.error?.error || err.message);
+        }
+      });
+    }
+  }
   
   cancel() {
     this.router.navigate(['/foglalasaim']);

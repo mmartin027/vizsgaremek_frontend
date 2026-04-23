@@ -1,0 +1,28 @@
+.error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 6px;
+  margin-left: 12px;
+}
+
+.error-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.error-text {
+  line-height: 1.4;
+}

@@ -31,16 +31,26 @@
     }
 
    
-    sendEmail() {
-      const email = this.emailForm.value.email;
-      this.authService.verifyEmail(email).subscribe({
-        next: () => {
-          this.emailForReset = email;
-          this.step = 2;
-        },
-        error: () => alert("Hiba: Nincs ilyen email a rendszerben!")
-      });
+  sendEmail() {
+  const email = this.emailForm.value.email;
+  this.authService.verifyEmail(email).subscribe({
+    next: (res) => {
+      console.log("Siker:", res);
+      this.emailForReset = email;
+      this.step = 2;
+    },
+    error: (err) => {
+      
+      if (err.status === 200) {
+       
+        this.emailForReset = email;
+        this.step = 2;
+      } else {
+        alert("Hiba: Nincs ilyen email a rendszerben vagy szerverhiba!");
+      }
     }
+  });
+}
 
     
     verifyOtp() {

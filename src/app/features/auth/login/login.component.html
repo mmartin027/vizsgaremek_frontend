@@ -1,38 +1,48 @@
-<div class="login-wrapper">
-  <!-- Bal oldal: Kép + szöveg (mobilon rejtett) -->
-  <div class="left-panel">
-    <img src="assets/Image-Parkolo-felulnezet.png" alt="Parkoló felülnézet" class="bg-image">
-    <div class="overlay-content">
-      <h2 class="logo-text">ParkEasy</h2>
-      <h1>Csatlakozzon hozzánk</h1>
-      <p>A kapcsolat fenntartásához kérjük,<br>jelentkezzen be személyes<br>adataival</p>
-      <button routerLink="/register" class="ghost-btn">Regisztráció</button>
-    </div>
-  </div>
- 
-  <div class="right-panel">
-    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
-      <div class="google-button">
-      </div>
- 
-      <h2 class="form-title">BEJELENTKEZÉS</h2>
-      <button type="button" (click)="continueWithGoogle()" class="google-btn">
-          <img src="assets/google-icon-logo-symbol-free-png.png" alt="Google">
+<app-header></app-header>
+
+<div class="login-wrapper d-flex align-items-center justify-content-center">
+  <div class="container d-flex justify-content-center px-3">
+    
+    <div class="card login-card border-0 shadow-lg p-4 p-md-5">
+      
+      <h2 class="text-center fw-bold mb-4 login-title">BEJELENTKEZÉS</h2>
+
+      <div class="text-center mb-4">
+        <button type="button" class="btn btn-google rounded-circle shadow-sm" (click)="continueWithGoogle()">
+          <span class="fw-bold fs-4 google-text">G</span>
         </button>
-      <p class="form-subtitle">Vagy használja az e-mail fiókját:</p>
- 
-      <input type="text" formControlName="username" placeholder="Felhasználónév">
-      <input type="password" id="password" formControlName="password" placeholder="Jelszó">
- 
-      <div class="forgot-password-link">
-        <a routerLink="/forgot-password">Elfelejtette a jelszavát?</a>
       </div>
- 
-      <button class="sign-in-button" type="submit">Bejelentkezés</button>
- 
-      <div class="mobile-register-link">
-        <p>Nincs még fiókja? <a routerLink="/register">Regisztráció</a></p>
-      </div>
-    </form>
+
+      <p class="text-center text-muted mb-4 small">Vagy használja az e-mail fiókját:</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        
+        <div class="mb-3">
+          <input type="text" formControlName="username" class="form-control custom-input" placeholder="Felhasználónév">
+        </div>
+        
+        <div class="mb-3">
+          <input type="password" formControlName="password" class="form-control custom-input" placeholder="Jelszó">
+        </div>
+
+        <div class="text-end mb-4">
+          <a routerLink="/forgot-password" class="text-muted text-decoration-none small forgot-link">
+            Elfelejtette a jelszavát?
+          </a>
+        </div>
+
+        <button type="submit" class="btn w-100 btn-primary-custom rounded-pill py-3 fw-bold mb-4" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Bejelentkezés</span>
+          <span *ngIf="isLoading">Bejelentkezés folyamatban...</span>
+          Bejelentkezés
+        </button>
+
+        <div class="text-center">
+          <span class="text-muted small">Nincs még fiókja? </span>
+          <a routerLink="/register" class="fw-bold text-decoration-none register-link">Regisztráció</a>
+        </div>
+      </form>
+
+    </div>
   </div>
 </div>

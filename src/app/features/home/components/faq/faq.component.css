@@ -1,0 +1,17 @@
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f8fdff;
+    color: #26B9D1;
+}
+
+.accordion-button::after {
+    transition: transform 0.2s ease-in-out;
+}
+
+.accordion-item {
+    border: 1px solid #eee !important;
+}

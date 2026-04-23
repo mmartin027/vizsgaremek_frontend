@@ -10,23 +10,22 @@ export class LoginSuccessComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    this.route.fragment.subscribe(fragment => {
+    this.route.queryParams.subscribe(params => {
       
-      if (fragment) {
-       
-        const urlParams = new URLSearchParams(fragment);
-        const token = urlParams.get('token');
+      const token = params['token'];
+      const refreshToken = params['refreshToken'];
 
-        if (token) {
-          console.log(' Sikeresen elkapva a token a hash-ből!');
-          
-          localStorage.setItem('token', token);
-          
-          this.router.navigate(['/home']); 
-        } else {
-          console.error('Nincs token a hash-ben!');
-          this.router.navigate(['/login']);
-        }
+      if (token && refreshToken) {
+        
+        localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', refreshToken);
+        
+        this.router.navigate(['/home']); 
+      } else if (token) {
+        localStorage.setItem('token', token);
+        this.router.navigate(['/home']);
+      } else {
+        this.router.navigate(['/login']);
       }
     });
   }

@@ -1,0 +1,49 @@
+.font-sans {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.sidebar-bg {
+  background-color: #26b1cc;
+}
+
+.text-parkeasy {
+  color: #26b1cc !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.transition-hover {
+  transition: background-color 0.2s ease-in-out, transform 0.1s;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.active-tab {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  font-weight: bold;
+}
+
+.map-container {
+  width: 100%;
+  height: 350px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  background-color: #e9ecef; 
+}
+
+#admin-map-spots {
+  height: 300px;
+}
+
+.card {
+  overflow: hidden; 
+}
+
+.table th, .table td {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}

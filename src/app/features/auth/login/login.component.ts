@@ -4,11 +4,13 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
 import { ErrorService } from '../../../core/services/error-service';
 import { environment } from '../../../core/enviroment';
+import { FormErrorComponent } from '../../form-error/form-error.component';
+import { HeaderComponent } from '../../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink,FormErrorComponent,HeaderComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -46,7 +48,6 @@ continueWithGoogle() {
           this.router.navigate(['/home']);
         },
         error: (err) => {
-          console.error("Login hiba:", err);
           this.isLoading = false;
           
           const msg = err.error?.message || "Hibás felhasználónév vagy jelszó! Kérlek, próbáld újra.";

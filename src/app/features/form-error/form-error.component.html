@@ -1,0 +1,15 @@
+<div class="error-message" *ngIf="control?.invalid && control?.touched">
+  <span class="error-icon">!</span>
+  <div class="error-text">
+    <span *ngIf="control?.errors?.['required']">{{ fieldName }} megadása kötelező</span>
+    <span *ngIf="control?.errors?.['email']">Érvényes email címet adj meg</span>
+    <span *ngIf="control?.errors?.['minlength']">
+      A {{ fieldName.toLowerCase() }}nak legalább {{ control?.errors?.['minlength'].requiredLength }} karakter hosszúnak kell lennie
+    </span>
+    <span *ngIf="control?.errors?.['maxlength']">
+      A {{ fieldName.toLowerCase() }} maximum {{ control?.errors?.['maxlength'].requiredLength }} karakter lehet
+    </span>
+    <span *ngIf="control?.errors?.['pattern']">Érvénytelen formátum</span>
+    <span *ngIf="customMessage">{{ customMessage }}</span>
+  </div>
+</div>

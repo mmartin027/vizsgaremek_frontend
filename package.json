@@ -36,6 +36,7 @@
     "maplibre-gl": "^5.18.0",
     "rxjs": "~7.8.0",
     "stripe-angular": "^1.9.3",
+    "sweetalert2": "^11.26.24",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },

@@ -1,10 +1,71 @@
+.pre-footer-cta {
+  background-color: #ffffff;
+  border-top: 1px solid #f0f0f0;
+}
+
+.pre-footer-cta h3 {
+  color: #1f2937;
+}
+
+.btn-search-outline {
+  color: #26B9D1;
+  background-color: transparent;
+  border: 1px solid #e5e7eb; 
+  border-radius: 8px; 
+  transition: all 0.3s ease;
+}
+
+.btn-search-outline:hover {
+  background-color: #26B9D1;
+  color: white;
+  border-color: #26B9D1;
+}
+
 .footer {
   background-color: #26B9D1;
-  padding: 0 30px;
-  height: 350px;
-  display: flex;
-  color:white;
-  justify-content: space-between;
-  align-items: center;
-  position: relative; 
+  color: white;
+  padding: 60px 0 30px 0; 
+}
+
+.footer-brand {
+  font-family: inherit;
+}
+
+.footer-desc {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+.footer-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.85); 
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease, padding-left 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.footer-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 0;
+  opacity: 1;
+}
+
+.copyright-text {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
 }

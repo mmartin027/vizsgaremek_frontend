@@ -1,1 +1,56 @@
-<p>extension-success works!</p>
+<div class="payment-status-container">
+      
+      <div *ngIf="isLoading" class="status-card loading-state">
+        <div class="spinner"></div>
+        <h2>Hosszabbítás feldolgozása...</h2>
+        <p>Kérjük várjon, a fizetés ellenőrzése folyamatban van.</p>
+      </div>
+      
+<div *ngIf="!isLoading && isSuccess" class="status-card success-card">        <div class="header-section">
+          <div class="checkmark-circle">
+            <i class="bi bi-clock-history"></i> </div>
+          <h1>Sikeres hosszabbítás!</h1>
+          <p class="subtitle">A parkolási időt sikeresen meghosszabbítottuk.</p>
+        </div>
+
+        <div class="details-section">
+          <div class="detail-row">
+            <span class="label">Új befejezés:</span>
+            <span class="value highlight-time">{{ booking.endTime | date:'yyyy. MM. dd. HH:mm' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Összesített időtartam:</span>
+            <span class="value">{{ booking.hours }} óra</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Új végösszeg:</span>
+            <span class="value">{{ booking.totalPrice | number }} Ft</span>
+          </div>
+          
+          <div class="divider"></div>
+
+          <div class="info-box">
+            <i class="bi bi-info-circle-fill"></i>
+            <p>
+              A meglévő hozzáférési kódja vagy rendszáma továbbra is érvényes a kilépéshez.
+            </p>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <button class="btn-action" (click)="goToBookings()">
+            Vissza a foglalásokhoz
+          </button>
+        </div>
+      </div>
+      
+      <div *ngIf="error" class="status-card error-card">
+        <div class="error-circle">
+          <i class="bi bi-exclamation-lg"></i>
+        </div>
+        <h2>Hiba történt</h2>
+        <p class="error-message">{{ error }}</p>
+        <button class="btn-action btn-retry" (click)="goToBookings()">Vissza</button>
+      </div>
+
+    </div>
