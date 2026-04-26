@@ -1,59 +1,37 @@
-# Vizsgaremek
+# Netparkoló – Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.8.
+Ez a könyvtár tartalmazza a Netparkoló alkalmazás kliensoldali felületét. A rendszer egy modern, egyoldalas webalkalmazás Angular keretrendszerre építve, amely gyors és interaktív felhasználói élményt nyújt a parkolóhelyek kereséséhez, foglalásához és kezeléséhez.
 
-## Development server
+## Használt Technológiák
 
-To start a local development server, run:
+- Angular 21
+- TypeScript
+- Bootstrap
+- MapLibre GL és MapTiler a térképes megjelenítéshez
+- Stripe.js a biztonságos kártyás fizetéshez
 
-```bash
-ng serve
-```
+## Főbb Funkciók
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+1. Térképes parkolókereső:
+   - A felhasználók valós időben böngészhetnek a szabad parkolók és utcai zónák között egy interaktív térképen.
+2. Felhasználói felület:
+   - Regisztráció, bejelentkezés, profilkezelés, saját járművek hozzáadása és korábbi foglalások áttekintése.
+3. Foglalási és fizetési folyamat:
+   - Dinamikus árkalkuláció percalapon és zökkenőmentes bankkártyás fizetés a Stripe rendszerén keresztül.
+4. Adminisztrációs felület:
+   - Megfelelő jogosultsággal rendelkező felhasználók kezelhetik a parkolókat, zónákat, foglalásokat és a regisztrált ügyfeleket.
+5. Reszponzív dizájn:
+   - Az alkalmazás asztali számítógépeken, tableteken és mobiltelefonokon is hibátlanul használható.
 
-## Code scaffolding
+## Telepítés és Futtatás Helyi Környezetben
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Előfeltételek
+- Node.js
+- npm csomagkezelő
+- Angular CLI
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### 1. Függőségek telepítése
+Nyiss egy terminált a frontend projekt gyökérmappájában, és futtasd az alábbi parancsot a szükséges csomagok letöltéséhez:
 
 ```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+npm install
