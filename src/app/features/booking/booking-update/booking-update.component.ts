@@ -39,7 +39,6 @@ export class BookingUpdateComponent implements OnInit {
     return this.booking.hours + (this.totalExtensionMinutes / 60);
   }
 
-  // Tiszta, nullával-osztás-mentes óradíj számítás
   get currentHourlyRate(): number {
     if (!this.booking) return 0;
     

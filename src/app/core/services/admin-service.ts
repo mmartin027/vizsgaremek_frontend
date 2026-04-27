@@ -56,12 +56,31 @@ export class AdminService {
     return this.http.put(`${this.apiUrl}/zones/${zoneId}/features`, { features });
   }
 
-  deleteZone(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/zones/${id}`);
-  }
+deleteZone(id: number): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/zones/${id}`, { responseType: 'text' });
+}
 
   updateUserRole(userId: number, role: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/users/${userId}/role`, { role: role }, { responseType: 'text' });
   }
 
+
+  uploadSpotImage(id: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}/parking-spots/${id}/image`, formData);
+  }
+
+  uploadZoneImage(id: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}/zones/${id}/image`, formData);
+  }
+updateSpotPrice(id: number, price: number) {
+  return this.http.put(`${this.apiUrl}/parking-spots/${id}/price?price=${price}`, {});
+}
+
+updateZonePrice(id: number, price: number) {
+  return this.http.put(`${this.apiUrl}/zones/${id}/price?price=${price}`, {});
+}
 }

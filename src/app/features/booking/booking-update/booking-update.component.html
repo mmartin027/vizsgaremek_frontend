@@ -2,102 +2,99 @@
   <app-header></app-header>
 </header>
 
-<div class="d-flex flex-column justify-content-center align-items-center vh-100" *ngIf="isLoading">
-  <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-  <p class="text-muted">Foglalás betöltése...</p>
+<div class="d-flex flex-column justify-content-center align-items-center loading-screen" *ngIf="isLoading">
+  <div class="custom-spinner" role="status"></div>
+  <p class="loading-text">Foglalás betöltése...</p>
 </div>
 
-<div class="container py-5" *ngIf="!isLoading && booking">
+<div class="container main-container" *ngIf="!isLoading && booking">
   
-  <div class="row mb-4">
+  <div class="row header-row">
     <div class="col-12">
-      <button class="btn btn-link text-secondary text-decoration-none p-0 mb-3 d-flex align-items-center gap-2" (click)="cancel()">
+      <button class="back-btn d-flex align-items-center" (click)="cancel()">
         <i class="bi bi-arrow-left"></i> Vissza a foglalásokhoz
       </button>
-      <h1 class="fw-bold mb-2">Időpont hosszabbítás</h1>
-      <p class="text-muted mb-0">Add hozzá a szükséges extra időt a foglalásodhoz</p>
+      <h1 class="page-title">Időpont hosszabbítás</h1>
+      <p class="page-subtitle">Add hozzá a szükséges extra időt a foglalásodhoz</p>
     </div>
   </div>
 
-  <div class="row gy-4">
+  <div class="row content-row">
     
-    <div class="col-12 col-lg-7 col-xl-8 d-flex flex-column gap-4">
+    <div class="col-12 col-lg-7 col-xl-8 d-flex flex-column left-column">
       
-      <div class="bg-white p-4 rounded-4 shadow-sm border">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start mb-4 gap-3">
-          <div class="d-flex gap-3">
-            <div class="bg-primary bg-opacity-10 text-primary rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px;">
-              <i class="bi bi-geo-alt fs-4"></i>
+      <div class="custom-card spot-info-card">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start card-header-row">
+          <div class="d-flex info-group">
+            <div class="icon-box d-flex align-items-center justify-content-center">
+              <i class="bi bi-geo-alt"></i>
             </div>
-            <div>
-              <h2 class="h5 fw-bold mb-1">{{ booking.parkingSpotName || 'Parkoló' }}</h2>
-              <p class="text-muted mb-1 small">{{ booking.parkingSpotAddress || 'Cím nem elérhető' }}</p>
-              <p class="text-muted mb-0 small">Parkolóhely: {{ booking.accessCode }}</p>
+            <div class="info-text">
+              <h2 class="spot-name">{{ booking.parkingSpotName || 'Parkoló' }}</h2>
+              <p class="spot-address">{{ booking.parkingSpotAddress || 'Cím nem elérhető' }}</p>
+              <p class="spot-code">Parkolóhely: <span>{{ booking.accessCode }}</span></p>
             </div>
           </div>
-          <span class="badge rounded-pill px-3 py-2 align-self-start" 
+          <span class="status-badge align-self-start align-self-md-center" 
                 [ngClass]="{
-                  'bg-danger': statusInfo === 'Lejárt',
-                  'bg-success': statusInfo === 'Aktív',
-                  'bg-warning text-dark': statusInfo === 'Még hátra van'
+                  'badge-danger': statusInfo === 'Lejárt',
+                  'badge-success': statusInfo === 'Aktív',
+                  'badge-warning': statusInfo === 'Még hátra van'
                 }">
             {{ statusInfo || 'Aktív' }}
           </span>
         </div>
 
-        <div class="row border-top pt-4 mt-2">
-          <div class="col-12 col-md-6 mb-3 mb-md-0 border-end-md">
-            <span class="text-muted small d-block mb-2">Jelenlegi befejezés</span>
-            <div class="d-flex gap-3 fw-medium text-dark">
-              <span><i class="bi bi-calendar-event text-muted me-1"></i> {{ booking.endTime | date:'yyyy. MMM. dd.' }}</span>
-              <span><i class="bi bi-clock text-muted me-1"></i> {{ booking.endTime | date:'HH:mm' }}</span>
+        <div class="row time-details-row">
+          <div class="col-12 col-md-6 current-end-col">
+            <span class="label-text">Jelenlegi befejezés</span>
+            <div class="d-flex date-time-box">
+              <span><i class="bi bi-calendar-event"></i> {{ booking.endTime | date:'yyyy. MMM. dd.' }}</span>
+              <span><i class="bi bi-clock"></i> {{ booking.endTime | date:'HH:mm' }}</span>
             </div>
           </div>
-          <div class="col-12 col-md-6 ps-md-4">
-            <span class="text-muted small d-block mb-2">Hátralévő idő</span>
-            <div class="d-inline-flex bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-3">
-              <i class="bi bi-stopwatch me-2"></i> {{ remainingTime }}
+          <div class="col-12 col-md-6 remaining-time-col">
+            <span class="label-text">Hátralévő idő</span>
+            <div class="remaining-box d-inline-flex">
+              <i class="bi bi-stopwatch"></i> {{ remainingTime }}
             </div>
           </div>
         </div>
       </div>
 
-      <div class="bg-white p-4 rounded-4 shadow-sm border">
-        <h3 class="h5 fw-bold mb-4 text-center text-md-start">Mennyi idővel szeretnéd meghosszabbítani?</h3>
+      <div class="custom-card time-extension-card">
+        <h3 class="card-title text-center text-md-start">Mennyi idővel szeretnéd meghosszabbítani?</h3>
         
-        <div class="d-flex flex-wrap align-items-center justify-content-center gap-3 gap-md-5 mb-4">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-center time-controls-wrapper">
           
-          <div class="d-flex align-items-center gap-3">
-            <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" (click)="decreaseHours()" [disabled]="additionalHours <= 0">−</button>
-            <div class="text-center">
-              <span class="d-block fw-bolder text-primary lh-1" style="font-size: 56px;">{{ additionalHours }}</span>
-              <span class="text-muted fs-6">óra</span>
+          <div class="d-flex align-items-center hour-controls">
+            <button class="circle-btn d-flex align-items-center justify-content-center" (click)="decreaseHours()" [disabled]="additionalHours <= 0">−</button>
+            <div class="time-display">
+              <span class="time-value">{{ additionalHours }}</span>
+              <span class="time-unit">óra</span>
             </div>
-            <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" (click)="increaseHours()" [disabled]="additionalHours >= 24">+</button>
+            <button class="circle-btn d-flex align-items-center justify-content-center" (click)="increaseHours()" [disabled]="additionalHours >= 24">+</button>
           </div>
 
-          <div class="fs-1 text-muted fw-light d-none d-md-block mb-4">:</div>
+          <div class="time-separator d-none d-md-block">:</div>
 
-          <div class="d-flex align-items-center gap-3">
-            <div class="text-center">
-              <input type="number" 
-                     class="form-control text-center fw-bolder text-primary lh-1 border-0 bg-light rounded-4 px-0 mx-auto" 
-                     style="font-size: 56px; width: 100px; height: 75px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);"
-                     [(ngModel)]="additionalMinutes" 
-                     (change)="validateMinutes()"
-                     (blur)="validateMinutes()"
-                     min="0" max="59"
-                     placeholder="0">
-              <span class="text-muted fs-6 mt-1 d-block">perc</span>
-            </div>
+          <div class="minute-controls">
+            <input type="number" 
+                   class="minute-input" 
+                   [(ngModel)]="additionalMinutes" 
+                   (change)="validateMinutes()"
+                   (blur)="validateMinutes()"
+                   min="0" max="59"
+                   placeholder="0">
+            <span class="time-unit d-block">perc</span>
           </div>
 
         </div>
 
-        <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <div class="d-flex justify-content-center flex-wrap quick-buttons-wrapper">
           <button *ngFor="let h of quickSelectHours" 
-                  class="btn rounded-pill px-4"
-                  [ngClass]="additionalHours === h && !additionalMinutes ? 'btn-primary' : 'btn-outline-primary'"
+                  class="quick-btn"
+                  [ngClass]="additionalHours === h && !additionalMinutes ? 'quick-btn-active' : 'quick-btn-outline'"
                   (click)="selectQuickHours(h)">
             {{ h }} óra
           </button>
@@ -105,50 +102,47 @@
       </div>
     </div>
 
-    <div class="col-12 col-lg-5 col-xl-4">
-      <div class="bg-white p-4 rounded-4 shadow-sm border sticky-top" style="top: 100px;">
-        <h3 class="h5 fw-bold mb-4">Összesítő</h3>
+    <div class="col-12 col-lg-5 col-xl-4 right-column">
+      <div class="custom-card summary-card sticky-md-top">
+        <h3 class="card-title">Összesítő</h3>
 
-        <div class="d-flex justify-content-between py-3 border-bottom">
-          <span class="text-muted">Óradíj</span>
-          <span class="fw-semibold">{{ currentHourlyRate | number:'1.0-0' }} Ft</span>
+        <div class="d-flex justify-content-between summary-row">
+          <span class="summary-label">Óradíj</span>
+          <span class="summary-value">{{ currentHourlyRate | number:'1.0-0' }} Ft</span>
         </div>
 
-        <div class="d-flex justify-content-between py-3 border-bottom">
-          <span class="text-muted">Extra idő</span>
-          <span class="fw-semibold">
+        <div class="d-flex justify-content-between summary-row">
+          <span class="summary-label">Extra idő</span>
+          <span class="summary-value text-end">
             <span *ngIf="additionalHours > 0">{{ additionalHours }} óra </span>
             <span *ngIf="additionalMinutes">{{ additionalMinutes }} perc</span>
             <span *ngIf="additionalHours === 0 && !additionalMinutes">0 perc</span>
           </span>
         </div>
 
-        <div class="d-flex justify-content-between py-3 border-bottom">
-          <span class="text-muted fw-bold">Végösszeg</span>
-          <span class="fw-bold fs-4" style="color: #2CB8D7;">{{ additionalPrice | number:'1.0-0' }} Ft</span>
+        <div class="d-flex justify-content-between summary-total-row">
+          <span class="total-label">Végösszeg</span>
+          <span class="total-value">{{ additionalPrice | number:'1.0-0' }} Ft</span>
         </div>
 
-        <hr>
-
-        <div class="mb-3">
-          <span class="text-muted small d-block mb-2">Fizetési mód</span>
-          <div class="d-flex align-items-center gap-2 p-2 border rounded-3">
-            <i class="bi bi-credit-card fs-5 text-primary"></i>
-            <div>
-              <span class="fw-medium d-block small">Bankkártya</span>
-              <span class="text-muted small">Stripe fizetés</span>
+        <div class="payment-method-box">
+          <span class="label-text">Fizetési mód</span>
+          <div class="d-flex align-items-center payment-card">
+            <i class="bi bi-credit-card"></i>
+            <div class="payment-text">
+              <span class="payment-title">Bankkártya</span>
+              <span class="payment-subtitle">Biztonságos Stripe fizetés</span>
             </div>
           </div>
         </div>
 
-        <button class="btn w-100 py-3 fw-bold text-white rounded-3 mb-2" 
-                style="background-color: #2CB8D7;"
+        <button class="action-btn primary-btn w-100" 
                 [disabled]="totalExtensionMinutes <= 0"
                 (click)="confirmExtension()">
           Fizetés és megerősítés
         </button>
 
-        <button class="btn btn-outline-secondary w-100 py-2 rounded-3" (click)="cancel()">
+        <button class="action-btn secondary-btn w-100" (click)="cancel()">
           Mégse
         </button>
       </div>

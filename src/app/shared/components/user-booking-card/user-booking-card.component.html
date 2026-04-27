@@ -61,8 +61,17 @@
 
     <div class="qr-section" *ngIf="booking.qrCode && (liveStatus === 'ACTIVE' || liveStatus === 'UPCOMING')">
       <div class="qr-wrapper">
-        <img [src]="'data:image/png;base64,' + booking.qrCode" alt="QR kód" class="qr-image">
-        <p class="qr-label">Mutassa be a QR kódot a parkolóház bejáratánál</p>
+        <img [src]="'data:image/png;base64,' + booking.qrCode" 
+             alt="QR kód" 
+             class="qr-image" 
+             style="cursor: pointer; transition: transform 0.2s;"
+             (click)="openQrModal()">
+        <p class="qr-label">
+          Mutassa be a QR kódot a parkolóház bejáratánál.<br>
+          <span class="text-primary fw-bold" style="cursor: pointer;" (click)="openQrModal()">
+            <i class="bi bi-zoom-in"></i> Kattints a nagyításhoz
+          </span>
+        </p>
       </div>
     </div>
 
@@ -84,5 +93,19 @@
       </button>
     </div>
 
-  </div> </div> ```
-
+  </div> </div> <div class="qr-modal-overlay" *ngIf="isQrExpanded" (click)="closeQrModal()">
+  <div class="qr-modal-content shadow-lg" (click)="$event.stopPropagation()">
+    <button class="btn btn-light rounded-circle btn-close-qr shadow-sm" (click)="closeQrModal()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+    
+    <h4 class="text-center mb-3 fw-bold">Belépési QR kód</h4>
+    
+    <img [src]="'data:image/png;base64,' + booking.qrCode" alt="QR kód nagyítva" class="qr-image-expanded w-100">
+    
+    <div class="text-center mt-3" *ngIf="booking.accessCode">
+      <span class="text-muted small d-block">Kézi kódmegadás:</span>
+      <span class="fs-4 fw-bolder tracking-widest">{{ booking.accessCode }}</span>
+    </div>
+  </div>
+</div>

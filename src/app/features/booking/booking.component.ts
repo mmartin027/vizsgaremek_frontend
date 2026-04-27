@@ -94,6 +94,27 @@ notLoggedIn: boolean = false;
     return this.durationInHours * hourlyRate;
   }
 
+
+  get parsedFeatures(): string[] {
+    if (!this.selectedSpot || !this.selectedSpot.features) return [];
+    
+    return this.selectedSpot.features
+      .split(',')
+      .map((f: string) => f.trim()) 
+      .filter((f: string) => f.length > 0); 
+  }
+
+  getFeatureIcon(feature: string): string {
+    const text = feature.toLowerCase();
+    if (text.includes('cctv') || text.includes('kamera')) return '📹';
+    if (text.includes('0-24')) return '🕒';
+    if (text.includes('töltő') || text.includes('elektromos')) return '⚡';
+    if (text.includes('őrzött') || text.includes('biztonság')) return '🛡️';
+    if (text.includes('mosó')) return '🚿';
+    if (text.includes('akadálymentes') || text.includes('mozgáskorlátozott')) return '♿';
+    return '✔️'; 
+  }
+
   isFormValid(): boolean {
     const isCarDataValid = !(this.plateCtrl?.invalid || this.brandCtrl?.invalid || this.modelCtrl?.invalid || this.colorCtrl?.invalid);
 

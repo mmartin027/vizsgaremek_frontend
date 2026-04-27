@@ -41,6 +41,7 @@ export class UserBookingCardComponent implements OnInit, OnDestroy {
   @Output() onCancel = new EventEmitter<BookingDto>();
   @Output() onViewDetails = new EventEmitter<BookingDto>();
   @Output() actionOccurred = new EventEmitter<void>(); 
+  isQrExpanded: boolean = false;
 
   isExtending = false;
   
@@ -214,6 +215,15 @@ export class UserBookingCardComponent implements OnInit, OnDestroy {
 
   viewDetails(booking: BookingDto): void {
     this.onViewDetails.emit(booking);
+  }
+  openQrModal() {
+    this.isQrExpanded = true;
+    document.body.style.overflow = 'hidden'; 
+  }
+
+  closeQrModal() {
+    this.isQrExpanded = false;
+    document.body.style.overflow = 'auto'; 
   }
 
   copyAccessCode(): void {

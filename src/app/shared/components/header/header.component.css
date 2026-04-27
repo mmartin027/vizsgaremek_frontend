@@ -217,3 +217,21 @@
     font-size: 16px;
   }
 }
+
+.offcanvas, .sidebar, .mobile-menu-container { 
+  z-index: 9999 !important; 
+  height: 100dvh !important; 
+  background-color: white !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.offcanvas-body, .sidebar-links {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.sidebar-footer {
+  flex-shrink: 0;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}

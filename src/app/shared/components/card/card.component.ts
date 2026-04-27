@@ -15,6 +15,7 @@ export interface ParkingSpotDto {
   occupiedSpaces: number;
   availableSpaces: number;
   parkingType?: string; 
+  cityId?: number;     
 }
 
 @Component({

@@ -27,7 +27,6 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-/* SIKER IKON STÍLUS */
 .checkmark-circle {
   width: 80px;
   height: 80px;
@@ -53,7 +52,6 @@
   margin-bottom: 30px;
 }
 
-/* ADATOK TÁBLÁZAT */
 .details-section {
   text-align: left;
   background-color: #fafafa;
@@ -110,7 +108,6 @@
   line-height: 1.4;
 }
 
-/* GOMB ÉS COUNTDOWN */
 .countdown-text {
   font-size: 13px;
   color: var(--text-muted);

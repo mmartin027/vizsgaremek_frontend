@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin-service';
 import * as maplibregl from 'maplibre-gl';
 import { BookingComponent } from '../../booking/booking.component';
-import { AlertService } from '../../../core/services/alert'; // Importáld be
+import { AlertService } from '../../../core/services/alert'; 
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -30,12 +30,15 @@ export class AdminDashboardComponent implements OnInit {
     { id: 4, name: 'Győr' }
   ];
 
-  newZone: any = { name: '', zoneCode: '', hourlyRate: 0, polygonData: '', features: '' };
-  newSpot: any = { name: '', address: '', hourlyRate: 0, capacity: 0, features: '', isActive: true, latitude: null, longitude: null, cityId: null };
+  newZone: any = { name: '', zoneCode: '', hourlyRate: 0, polygonData: '', features: '', cityId: null };
+newSpot: any = { name: '', address: '', hourlyRate: 0, capacity: 0, features: '', parkingType: 'COVERED', isActive: true, latitude: null, longitude: null, cityId: null };
+
+  newZoneFile: File | null = null;
+  newSpotFile: File | null = null;
 
   adminService = inject(AdminService);
   router = inject(Router);
-  alertService = inject(AlertService); // Injectáld be a szervizt
+  alertService = inject(AlertService); 
 
   map: any;
   marker?: maplibregl.Marker;
@@ -48,6 +51,11 @@ export class AdminDashboardComponent implements OnInit {
   editingFeatures: string = '';
   editingZoneId: number | null = null;
   editingZoneFeatures: string = '';
+  editingSpotPriceId: number | null = null;
+  editingSpotPriceValue: number = 0;
+  
+  editingZonePriceId: number | null = null;
+  editingZonePriceValue: number = 0;
 
   ngOnInit(): void {
     this.loadUsers();
@@ -166,11 +174,171 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+
+  onNewZoneFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) this.newZoneFile = file;
+  }
+
+  removeNewZoneFile(event: Event) {
+    event.stopPropagation();
+    this.newZoneFile = null;
+  }
+
+  onNewSpotFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) this.newSpotFile = file;
+  }
+
+  removeNewSpotFile(event: Event) {
+    event.stopPropagation();
+    this.newSpotFile = null;
+  }
+
+
+
+  addZone() {
+    if (!this.newZone.name || this.polygonCoords.length < 3) {
+      this.alertService.error('Hiba', 'Kérlek add meg a zóna nevét, és rajzolj egy legalább 3 pontból álló területet!');
+      return;
+    }
+    
+    this.newZone.polygonData = JSON.stringify(this.polygonCoords); 
+    
+    this.adminService.addZone(this.newZone).subscribe({
+      next: (createdZone: any) => {
+        if (this.newZoneFile && createdZone && createdZone.id) {
+          this.adminService.uploadZoneImage(createdZone.id, this.newZoneFile).subscribe({
+            next: () => {
+              this.alertService.success('Siker', 'Zóna és kép elmentve!');
+              this.resetZoneForm();
+            },
+            error: () => {
+              this.alertService.error('Részleges hiba', 'Zóna elmentve, de a képet nem sikerült feltölteni!');
+              this.resetZoneForm();
+            }
+          });
+        } else {
+          this.alertService.success('Siker', 'Zóna elmentve (Kép nélkül)!');
+          this.resetZoneForm();
+        }
+      },
+      error: (err) => this.alertService.error('Hiba', 'Nem sikerült elmenteni a zónát!')
+    });
+  }
+
+  resetZoneForm() {
+    this.newZone = { name: '', zoneCode: '', hourlyRate: 0, polygonData: '', features: '' };
+    this.newZoneFile = null;
+    this.clearPolygon();
+    this.loadZones();
+  }
+
+  addSpot() {
+    if (!this.newSpot.name || !this.newSpot.latitude || !this.newSpot.cityId) {
+      this.alertService.error('Hiányzó adatok', 'Kérlek töltsd ki a nevet, válaszd ki a várost, és tegyél le egy gombostűt a térképre!')
+      ;
+      return;
+    }
+
+    const payload = { ...this.newSpot, city: { id: Number(this.newSpot.cityId) } };
+
+    // 1. Parkoló mentése
+    this.adminService.addParkingSpot(payload).subscribe({
+      next: (createdSpot: any) => {
+        // 2. Kép feltöltése (ha van)
+        if (this.newSpotFile && createdSpot && createdSpot.id) {
+          this.adminService.uploadSpotImage(createdSpot.id, this.newSpotFile).subscribe({
+            next: () => {
+              this.alertService.success('Siker', 'Parkolóhely és kép elmentve!');
+              this.resetSpotForm();
+            },
+            error: () => {
+              this.alertService.error('Részleges hiba', 'Parkoló elmentve, de a képet nem sikerült feltölteni!');
+              this.resetSpotForm();
+            }
+          });
+        } else {
+          this.alertService.success('Siker', 'Parkolóhely hozzáadva (Kép nélkül)!');
+          this.resetSpotForm();
+        }
+      },
+      error: (err) => this.alertService.error('Hiba', 'Hiba történt a mentéskor!')
+    });
+  }
+
+  resetSpotForm() {
+    this.newSpot = { name: '', address: '', hourlyRate: 0, capacity: 0, features: '', isActive: true, latitude: null, longitude: null, cityId: null };
+    this.newSpotFile = null;
+    if (this.marker) { this.marker.remove(); this.marker = undefined; }
+    this.loadParkingSpots();
+  }
+
+
+  onZoneImageSelected(event: any, zoneId: number) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.adminService.uploadZoneImage(zoneId, file).subscribe({
+        next: () => {
+          this.alertService.success('Szuper!', 'A zóna képe sikeresen frissítve.');
+          this.loadZones();
+        },
+        error: () => this.alertService.error('Hiba', 'Hiba történt a képfeltöltés során!')
+      });
+    }
+  }
+
+  onSpotImageSelected(event: any, spotId: number) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.adminService.uploadSpotImage(spotId, file).subscribe({
+        next: () => {
+          this.alertService.success('Szuper!', 'A parkoló képe sikeresen frissítve.');
+          this.loadParkingSpots();
+        },
+        error: () => this.alertService.error('Hiba', 'Hiba történt a képfeltöltés során!')
+      });
+    }
+  }
+
+
   refreshSpotMarkers() {
     if (!this.map) return;
     this.renderedSpotMarkers.forEach(m => m.remove());
     this.renderedSpotMarkers = [];
     this.parkingSpots.forEach(spot => this.createSpotMarker(spot));
+  }
+
+  startEditSpotPrice(spot: any) {
+    this.editingSpotPriceId = spot.id;
+    this.editingSpotPriceValue = spot.hourlyRate;
+  }
+
+  saveSpotPrice(spotId: number) {
+    this.adminService.updateSpotPrice(spotId, this.editingSpotPriceValue).subscribe({
+      next: () => { 
+        this.alertService.success('Kész', 'Parkoló ára sikeresen frissítve!'); 
+        this.editingSpotPriceId = null;
+        this.loadParkingSpots(); 
+      },
+      error: () => this.alertService.error('Hiba', 'Sikertelen ármódosítás!')
+    });
+  }
+
+  startEditZonePrice(zone: any) {
+    this.editingZonePriceId = zone.id;
+    this.editingZonePriceValue = zone.hourlyRate;
+  }
+
+  saveZonePrice(zoneId: number) {
+    this.adminService.updateZonePrice(zoneId, this.editingZonePriceValue).subscribe({
+      next: () => { 
+        this.alertService.success('Kész', 'Zóna ára sikeresen frissítve!'); 
+        this.editingZonePriceId = null;
+        this.loadZones(); 
+      },
+      error: () => this.alertService.error('Hiba', 'Sikertelen ármódosítás!')
+    });
   }
 
   createSpotMarker(spot: any) {
@@ -242,50 +410,15 @@ export class AdminDashboardComponent implements OnInit {
     this.adminService.getAllZones().subscribe({ next: (data) => this.zones = data }); 
   }
 
-  addZone() {
-    if (!this.newZone.name || this.polygonCoords.length < 3) {
-      this.alertService.error('Hiba', 'Kérlek add meg a zóna nevét, és rajzolj egy legalább 3 pontból álló területet!');
-      return;
-    }
-    
-    this.newZone.polygonData = JSON.stringify(this.polygonCoords); 
-    
-    this.adminService.addZone(this.newZone).subscribe({
-      next: () => {
-        this.alertService.success('Siker', 'Zóna elmentve!');
-        this.loadZones();
-        this.newZone = { name: '', zoneCode: '', hourlyRate: 0, polygonData: '', features: '' };
-        this.clearPolygon();
-      },
-      error: (err) => this.alertService.error('Hiba', 'Nem sikerült elmenteni a zónát!')
-    });
-  }
-
-  addSpot() {
-    if (!this.newSpot.name || !this.newSpot.latitude || !this.newSpot.cityId) {
-      this.alertService.error('Hiányzó adatok', 'Kérlek töltsd ki a nevet, válaszd ki a várost, és tegyél le egy gombostűt a térképre!');
-      return;
-    }
-    this.adminService.addParkingSpot(this.newSpot).subscribe({
-      next: () => {
-        this.alertService.success('Siker', 'Parkolóhely hozzáadva!');
-        this.loadParkingSpots(); 
-        this.newSpot = { name: '', address: '', hourlyRate: 0, capacity: 0, features: '', isActive: true, latitude: null, longitude: null, cityId: null };
-        if (this.marker) { this.marker.remove(); this.marker = undefined; }
-      },
-      error: (err) => this.alertService.error('Hiba', 'Hiba történt a mentéskor!')
-    });
-  }
-
   async deleteSpot(id: number) {
     const isConfirmed = await this.alertService.confirm('Törlés', 'Biztosan törlöd ezt a parkolóhelyet?', 'Törlés');
     if (isConfirmed) {
       this.adminService.deleteParkingSpot(id).subscribe({
-        next: (msg) => { 
+        next: () => { 
           this.alertService.success('Törölve', 'A parkolóhely eltávolítva.');
           this.loadParkingSpots(); 
         },
-        error: (err) => this.alertService.error('Hiba', 'Nem sikerült a törlés!')
+        error: () => this.alertService.error('Hiba', 'Nem sikerült a törlés!')
       });
     }
   }
@@ -298,7 +431,7 @@ export class AdminDashboardComponent implements OnInit {
           this.alertService.success('Siker', 'Zóna törölve.');
           this.loadZones(); 
         },
-        error: (err) => this.alertService.error('Hiba', 'Hiba a zóna törlésekor!')
+        error: () => this.alertService.error('Hiba', 'Hiba a zóna törlésekor!')
       });
     }
   }
@@ -327,7 +460,7 @@ export class AdminDashboardComponent implements OnInit {
           this.alertService.success('Siker', 'Jogosultság módosítva!');
           this.loadUsers();
         },
-        error: (err) => {
+        error: () => {
           this.alertService.error('Hiba', 'Nem sikerült a módosítás!');
           this.loadUsers(); 
         }
@@ -345,7 +478,7 @@ export class AdminDashboardComponent implements OnInit {
           this.alertService.success('Siker', 'Foglalás lemondva!');
           this.loadBookings(); 
         },
-        error: (err) => this.alertService.error('Hiba', 'Nem sikerült a lemondás!')
+        error: () => this.alertService.error('Hiba', 'Nem sikerült a lemondás!')
       });
     }
   }

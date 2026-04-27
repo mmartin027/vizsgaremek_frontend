@@ -8,6 +8,7 @@ import { CardComponent, ParkingSpotDto } from '../../shared/components/card/card
 import { ParkingService } from '../../core/services/parking';
 import { MapCardsComponent } from '../../shared/components/map-cards/map-cards.component';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
 
@@ -42,6 +43,22 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showMapOnMobile: boolean = true;
 
+selectedCityFilter: string = 'all';
+
+  cityToIdMap: { [key: string]: number } = {
+    'Budapest': 1,
+    'Pécs': 2,
+    'Debrecen': 3,
+    'Győr': 4,
+  };
+
+  cityCoordinates: { [key: string]: [number, number] } = {
+    'Budapest': [19.040, 47.497],
+    'Pécs': [18.233, 46.072],
+    'Debrecen': [21.625, 47.531],
+    'Győr': [17.634, 47.687],
+  };
+
   constructor(
     private mapService: MapService,
     private router: Router,
@@ -52,14 +69,39 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
 ngOnInit() {
-    this.loadMapData();
-    this.parkingService.searchByCity(1).subscribe(data => {
-      this.allSpots = data;
-      this.parkingSpots = data;
-      this.filteredSpots = data; 
-      this.cdr.detectChanges();
+    this.loadMapData(); 
+
+    this.onCityFilterChange();
+  }
+
+fetchAllSpots() {
+    const allCityIds = Object.values(this.cityToIdMap);
+    const requests = allCityIds.map(id => this.parkingService.searchByCity(id));
+
+    forkJoin(requests).subscribe({
+      next: (results) => {
+        const combinedSpots = results.flat(); 
+        
+        const uniqueIds = new Set();
+        const uniqueSpots = combinedSpots.filter(spot => {
+          if (uniqueIds.has(spot.id)) return false;
+          uniqueIds.add(spot.id);
+          return true;
+        });
+
+        this.allSpots = uniqueSpots;
+        this.parkingSpots = uniqueSpots;
+        this.filteredSpots = uniqueSpots;
+        this.cdr.detectChanges(); 
+      },
+      error: (err) => {
+        console.error('Hiba az összes parkoló betöltésekor:', err);
+      }
     });
-}
+  }
+
+
+  
 
 focusOnSpot(spotId: number) {
     const targetSpot = this.parkingSpots.find(s => s.id === spotId);
@@ -74,6 +116,33 @@ focusOnSpot(spotId: number) {
 
       if (window.innerWidth < 768) {
         this.setView('map');
+      }
+    }
+  }
+
+onCityFilterChange() {
+    if (this.selectedCityFilter === 'all') {
+      
+      if (this.map) {
+        this.map.flyTo({ center: [19.5, 47.1], zoom: 7 });
+      }
+      
+      this.fetchAllSpots();
+
+    } else {
+      const cityId = this.cityToIdMap[this.selectedCityFilter];
+      if (cityId) {
+        this.parkingService.searchByCity(cityId).subscribe(data => {
+          this.allSpots = data;
+          this.parkingSpots = data;
+          this.filteredSpots = data;
+          this.cdr.detectChanges();
+        });
+
+        const coords = this.cityCoordinates[this.selectedCityFilter];
+        if (coords && this.map) {
+          this.map.flyTo({ center: coords, zoom: 12, speed: 1.2 });
+        }
       }
     }
   }
@@ -235,7 +304,19 @@ isPointInPolygon(lat: number, lng: number, polygon: number[][]): boolean {
     return inside;
 }
 
+  calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371e3; 
+    const p1 = lat1 * Math.PI / 180;
+    const p2 = lat2 * Math.PI / 180;
+    const dp = (lat2 - lat1) * Math.PI / 180;
+    const dl = (lon2 - lon1) * Math.PI / 180;
 
+    const a = Math.sin(dp / 2) * Math.sin(dp / 2) +
+              Math.cos(p1) * Math.cos(p2) *
+              Math.sin(dl / 2) * Math.sin(dl / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; 
+  }
 
   detectCity(lat: number, lng: number): string | null {
     const cities = [
@@ -282,39 +363,70 @@ initMap() {
           });
         }
 
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
+  if (navigator.geolocation) {
+          let userMarker: maplibregl.Marker | null = null;
+          let bestAccuracy = 9999;
+          
+          let lastLat: number | null = null;
+          let lastLng: number | null = null;
+
+          const watchId = navigator.geolocation.watchPosition(
             (position) => {
               const userLng = position.coords.longitude;
               const userLat = position.coords.latitude;
+              const accuracy = position.coords.accuracy;
 
-              const el = document.createElement('div');
-              el.style.width = '16px';
-              el.style.height = '16px';
-              el.style.borderRadius = '50%';
-              el.style.backgroundColor = '#4285F4';
-              el.style.border = '3px solid white';
-              el.style.boxShadow = '0 0 8px rgba(66,133,244,0.5)';
-
-              new maplibregl.Marker({ element: el })
-                .setLngLat([userLng, userLat])
-                .addTo(this.map);
-
-              this.map.flyTo({ center: [userLng, userLat], zoom: 14 });
-
-              const detectedCity = this.detectCity(userLat, userLng);
-              if (detectedCity) {
-                this.parkingService.searchByCityName(detectedCity).subscribe(data => {
-                  if (data.length > 0) {
-                    this.parkingSpots = data;
-                    this.allSpots = data;
-                  }
-                });
+              let distanceMoved = 0;
+              if (lastLat !== null && lastLng !== null) {
+                distanceMoved = this.calculateDistance(lastLat, lastLng, userLat, userLng);
               }
 
-              setTimeout(() => {
-                this.selectNearestZone(userLat, userLng);
-              }, 1000);
+          
+              if (!userMarker || distanceMoved > 20 || accuracy < bestAccuracy - 20) {
+                
+                lastLat = userLat;
+                lastLng = userLng;
+                
+                if (accuracy < bestAccuracy) {
+                    bestAccuracy = accuracy;
+                }
+
+                if (!userMarker) {
+                  const el = document.createElement('div');
+                  el.style.width = '16px';
+                  el.style.height = '16px';
+                  el.style.borderRadius = '50%';
+                  el.style.backgroundColor = '#4285F4';
+                  el.style.border = '3px solid white';
+                  el.style.boxShadow = '0 0 8px rgba(66,133,244,0.5)';
+
+                  userMarker = new maplibregl.Marker({ element: el })
+                    .setLngLat([userLng, userLat])
+                    .addTo(this.map);
+                    
+                  this.map.flyTo({ center: [userLng, userLat], zoom: 14 });
+                } else {
+                  userMarker.setLngLat([userLng, userLat]);
+                }
+
+                const detectedCity = this.detectCity(userLat, userLng);
+                if (detectedCity) {
+                  this.parkingService.searchByCityName(detectedCity).subscribe(data => {
+                    if (data.length > 0) {
+                      this.parkingSpots = data;
+                      this.allSpots = data;
+                    }
+                  });
+                }
+
+                setTimeout(() => {
+                  this.selectNearestZone(userLat, userLng);
+                }, 1000);
+              }
+
+              if (accuracy <= 20) {
+                navigator.geolocation.clearWatch(watchId);
+              }
             },
             (error) => {
               console.log('Geolokáció nem elérhető:', error.message);
@@ -537,10 +649,16 @@ this.map.addLayer({
         el.className = `custom-marker ${isCovered ? 'marker-covered' : 'marker-outdoor'}`;
         el.innerHTML = isCovered ? '<i class="bi bi-house-door-fill"></i>' : '<span>P</span>';
 
-        el.addEventListener('click', (e) => {
+    el.addEventListener('click', (e) => {
           e.stopPropagation();
           this.closeSidebar();
-          this.selectedZone = feature.properties;
+          
+          const spotId = feature.id || feature.properties?.id;
+          
+          const fullSpotData = this.allSpots.find(s => Number(s.id) === Number(spotId));
+          
+          this.selectedZone = fullSpotData || feature.properties;
+          
           this.cdr.detectChanges();
           this.map.flyTo({ center: [lng, lat], zoom: 15 });
         });

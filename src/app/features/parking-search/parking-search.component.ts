@@ -24,12 +24,12 @@ export class ParkingSearchComponent implements OnInit {
   selectedTypeFilter: string = 'all';
   selectedCityFilter: string = 'all'; 
 
-  cityToIdMap: { [key: string]: number } = {
+ cityToIdMap: { [key: string]: number } = {
     'Budapest': 1,
-    'Debrecen': 2,
-    'Győr': 3,
-    'Pécs': 4,
-  };
+    'Pécs': 2,
+    'Debrecen': 3,
+    'Győr': 4,
+};
 
   constructor(
     private parkingService: ParkingService,
@@ -88,12 +88,20 @@ export class ParkingSearchComponent implements OnInit {
     let result = [...this.allSpots]; 
 
     
-    if (this.selectedCityFilter !== 'all') {
-      const cityLower = this.selectedCityFilter.toLowerCase();
-      result = result.filter(spot => 
-        (spot.address && spot.address.toLowerCase().includes(cityLower)) ||
-        (spot.name && spot.name.toLowerCase().includes(cityLower))
-      );
+if (this.selectedCityFilter !== 'all') {
+      const targetCityId = this.cityToIdMap[this.selectedCityFilter];
+
+      result = result.filter(spot => {
+        if (spot.cityId) {
+          return spot.cityId === targetCityId;
+        }
+
+        const cityLower = this.selectedCityFilter.toLowerCase();
+        const isCityMatch = spot.cityName && spot.cityName.toLowerCase() === cityLower;
+        const isAddressMatch = spot.address && spot.address.toLowerCase().includes(cityLower);
+        
+        return isCityMatch || isAddressMatch;
+      });
     }
 
     if (this.searchQuery && this.searchQuery.trim() !== '') {

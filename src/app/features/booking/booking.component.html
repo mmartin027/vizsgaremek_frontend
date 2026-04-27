@@ -133,7 +133,7 @@
     <div class="flex-fill p-3 rounded text-center" style="background: white; border: 2px solid #e0f2fe; cursor: pointer;" (click)="buySubscription('DAILY')">
       <h5 class="fw-bold mb-1" style="color: #0284c7;">Napi bérlet</h5>
        <p class="fs-4 fw-bold mb-0" style="color: #0284c7;">
-        {{ (selectedSpot?.dailyRate || 4000) | number }} Ft
+        {{ selectedSpot?.dailyRate | number }} Ft
        </p>
       <small class="text-muted">24 órás korlátlan parkolás</small>
     </div>
@@ -141,30 +141,38 @@
     <div class="flex-fill p-3 rounded text-center" style="background: white; border: 2px solid #e0f2fe; cursor: pointer;" (click)="buySubscription('MONTHLY')">
       <h5 class="fw-bold mb-1" style="color: #0284c7;">Havi bérlet</h5>
         <p class="fs-4 fw-bold mb-0" style="color: #0284c7;">
-          {{ (selectedSpot?.monthlyRate || 35000) | number }} Ft
+          {{ selectedSpot?.monthlyRate | number }} Ft
         </p>
       <small class="text-muted">30 napos korlátlan parkolás</small>
     </div>
   </div>
 </div>
 
-      <div class="info-section-card">
+   <div class="info-section-card">
         <h3>Szolgáltatások</h3>
         <div class="features-grid">
-          <div class="feature-item">
-            <span class="icon">🛡️</span>
-            <div>
-              <h4>0-24 Biztonság & CCTV</h4>
-              <p>Kamerás megfigyelés</p>
-            </div>
-          </div>
+          
           <div class="feature-item">
             <span class="icon">{{ selectedSpot.parkingType === 'COVERED' ? '🏢' : '🌳' }}</span>
             <div>
-              <h4>{{ selectedSpot.parkingType === 'COVERED' ? 'Fedett Parkolás' : 'Kültéri Parkolás' }}</h4>
-              <p>{{ selectedSpot.parkingType === 'COVERED' ? 'Védett, zárt parkolóház' : 'Flexibilis parkolás a zónán belül' }}</p>
+              <h4 style="margin-bottom: 0;">{{ selectedSpot.parkingType === 'COVERED' ? 'Fedett Parkoló' : 'Kültéri Parkoló' }}</h4>
             </div>
           </div>
+
+          <div class="feature-item" *ngFor="let feature of parsedFeatures">
+            <span class="icon">{{ getFeatureIcon(feature) }}</span>
+            <div>
+              <h4 style="margin-bottom: 0;">{{ feature }}</h4>
+            </div>
+          </div>
+
+          <div class="feature-item" *ngIf="parsedFeatures.length === 0">
+            <span class="icon">ℹ️</span>
+            <div>
+              <h4 style="margin-bottom: 0;">Alapfelszereltségű parkoló</h4>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

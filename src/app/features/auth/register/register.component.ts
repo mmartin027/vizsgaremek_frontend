@@ -3,14 +3,13 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { AuthService } from '../../../core/services/auth';
 import { Router, RouterLink } from '@angular/router'; 
 import { environment } from '../../../core/enviroment';
-import { FormErrorComponent } from '../../form-error/form-error.component';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { AlertService } from '../../../core/services/alert';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, FormErrorComponent, HeaderComponent], 
+  imports: [ReactiveFormsModule, RouterLink,  HeaderComponent], 
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })

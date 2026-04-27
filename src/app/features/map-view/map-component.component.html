@@ -1,116 +1,110 @@
-<app-header></app-header>
+<app-header class="flex-shrink-0"></app-header>
 <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
 
-<div class="mobile-toggle-header">
-  <div class="toggle-buttons">
-    <button [class.active]="activeMobileView === 'list'" (click)="setView('list')">
-      Lista nézet
-    </button>
-    <button [class.active]="activeMobileView === 'map'" (click)="setView('map')">
-      Térkép nézet
-    </button>
+<div class="d-flex flex-column vh-100 overflow-hidden">
+
+  <div class="d-md-none p-2 flex-shrink-0" style="background-color: #00bcd4;">
+    <div class="d-flex justify-content-center gap-2">
+      <button class="btn flex-grow-1 fw-bold" 
+              [ngClass]="activeMobileView === 'list' ? 'btn-light' : 'btn-outline-light border-0'" 
+              [style.color]="activeMobileView === 'list' ? '#00bcd4' : 'white'" 
+              (click)="setView('list')">
+        Lista nézet
+      </button>
+      <button class="btn flex-grow-1 fw-bold" 
+              [ngClass]="activeMobileView === 'map' ? 'btn-light' : 'btn-outline-light border-0'" 
+              [style.color]="activeMobileView === 'map' ? '#00bcd4' : 'white'" 
+              (click)="setView('map')">
+        Térkép nézet
+      </button>
+    </div>
   </div>
-</div>
 
-<div class="map-layout-wrapper" [ngClass]="'mobile-view-' + activeMobileView">
-  
- <div class="cards-container">
-    <div class="search-box p-2">
-      <div class="input-group">
-        <span class="input-group-text bg-white border-end-0">
-          <i class="bi bi-search text-muted"></i>
-        </span>
-        <input type="text" 
-               class="form-control border-start-0" 
-               placeholder="Parkoló keresése..."
-               [value]="searchQuery"
-               (input)="onSearchChange($any($event.target).value)">
+  <div class="d-flex flex-column flex-md-row flex-grow-1 overflow-hidden">
+    
+    <div class="col-12 col-md-5 col-lg-4 col-xl-3 bg-light flex-column overflow-y-auto p-2"
+         [ngClass]="activeMobileView === 'map' ? 'd-none d-md-flex' : 'd-flex'">
+      
+      <div class="p-2 bg-white border-bottom sticky-top z-1 rounded shadow-sm mb-2">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+          <input type="text" class="form-control border-start-0 shadow-none" placeholder="Parkoló keresése..." [value]="searchQuery" (input)="onSearchChange($any($event.target).value)">
+        </div>
+        <div class="mt-2 px-1">
+          <small class="text-muted fw-semibold">{{ filteredSpots.length }} parkolóhely</small>
+        </div>
       </div>
-      <div class="mt-2 px-1">
-        <small class="text-muted fw-semibold">{{ filteredSpots.length }} parkolóhely</small>
-      </div>
-    </div>
 
-  @for (spot of parkingSpots; track spot.id)  {
-      <app-map-cards
-        [spot]="spot"
-        (focusSpot)="focusOnSpot($event)"
-        (bookSpot)="handleViewDetails($event)">
-      </app-map-cards>
-    }
-
-    <div *ngIf="filteredSpots.length === 0 && searchQuery" class="text-center p-4 text-muted">
-      <i class="bi bi-search fs-3 d-block mb-2"></i>
-      <p>Nincs találat: "{{ searchQuery }}"</p>
-    </div>
-</div>
-
-  <div class="map-container-relative">
-
-    <div class="map-filters">
-      <button class="filter-btn" [class.active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">
-        Összes
-      </button>
-      <button class="filter-btn" [class.active]="activeFilter === 'OUTDOOR'" (click)="setFilter('OUTDOOR')">
-        <i class="bi bi-sun"></i> Kültéri
-      </button>
-      <button class="filter-btn" [class.active]="activeFilter === 'COVERED'" (click)="setFilter('COVERED')">
-        <i class="bi bi-house-door"></i> Fedett
-      </button>
-    </div>
-
-    <div id="map" class="map-canvas"></div>
-
-    <div class="loading-overlay" *ngIf="isLoading">
-      <div class="spinner-container">
-        <div class="spinner"></div>
-        <p>Betöltés...</p>
+      <div class="d-flex flex-column gap-2 cards-container">
+        @for (spot of parkingSpots; track spot.id) {
+          <app-map-cards [spot]="spot" (focusSpot)="focusOnSpot($event)" (bookSpot)="handleViewDetails($event)"></app-map-cards>
+        }
+        <div *ngIf="filteredSpots.length === 0 && searchQuery" class="text-center p-4 text-muted">
+          <i class="bi bi-search fs-3 d-block mb-2"></i>
+          <p>Nincs találat: "{{ searchQuery }}"</p>
+        </div>
       </div>
     </div>
 
-    <div class="zone-card-container" *ngIf="selectedZone">
-      <div class="floating-card">
-        <button class="close-x" (click)="closeSidebar()">✕</button>
-        
-        <div class="image-wrapper">
-          <img [src]="selectedZone.imageUrl || 'assets/no-image-parking.jpg'" class="card-img">
-          <div class="status-badge" [ngClass]="(selectedZone.parking_type === 'COVERED' && selectedZone.availableSpaces <= 0) ? 'full' : 'available'">
-            {{ (selectedZone.parking_type === 'COVERED' && selectedZone.availableSpaces <= 0) ? 'Tele' : 'Elérhető' }}
+    <div class="col-12 col-md-7 col-lg-8 col-xl-9 position-relative h-100 p-0"
+         [ngClass]="activeMobileView === 'list' ? 'd-none d-md-block' : 'd-block'">
+
+      <div id="map" class="w-100 h-100"></div>
+
+      <div class="position-absolute top-0 start-0 w-100 pe-none d-flex justify-content-center justify-content-md-start p-2 p-md-3 z-3">
+        <div class="bg-white p-1 rounded shadow-sm d-flex gap-1 pe-auto">
+          <button class="btn btn-sm fw-semibold" [ngClass]="activeFilter === 'ALL' ? 'btn-info text-white' : 'btn-light text-secondary'" (click)="setFilter('ALL')">Összes</button>
+          <button class="btn btn-sm fw-semibold" [ngClass]="activeFilter === 'OUTDOOR' ? 'btn-info text-white' : 'btn-light text-secondary'" (click)="setFilter('OUTDOOR')"><i class="bi bi-sun"></i> Kültéri</button>
+          <button class="btn btn-sm fw-semibold" [ngClass]="activeFilter === 'COVERED' ? 'btn-info text-white' : 'btn-light text-secondary'" (click)="setFilter('COVERED')"><i class="bi bi-house-door"></i> Fedett</button>
+        </div>
+      </div>
+
+      <div class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex flex-column justify-content-center align-items-center z-3" *ngIf="isLoading">
+        <div class="spinner-border text-info" role="status"></div>
+        <p class="mt-2 fw-semibold text-secondary">Betöltés...</p>
+      </div>
+
+      <div class="position-absolute top-0 start-0 w-100 h-100 pe-none d-flex flex-column justify-content-end align-items-center flex-md-row justify-content-md-end align-items-md-start p-3 z-3" *ngIf="selectedZone">
+        <div class="bg-white rounded-4 shadow overflow-hidden pe-auto position-relative mb-4 mb-md-0" style="width: 340px;">
+          <button class="btn btn-dark btn-sm position-absolute top-0 end-0 m-2 rounded-circle z-1 d-flex justify-content-center align-items-center" style="width: 30px; height: 30px;" (click)="closeSidebar()">✕</button>
+          
+          <div class="position-relative" style="height: 160px;">
+            <img [src]="selectedZone.imageUrl || 'assets/no-image-parking.jpg'" class="w-100 h-100 object-fit-cover">
+            <span class="badge position-absolute bottom-0 start-0 m-2 rounded-pill px-3 py-2" [ngClass]="(selectedZone.parking_type === 'COVERED' && selectedZone.availableSpaces <= 0) ? 'text-bg-danger' : 'text-bg-success'">
+              {{ (selectedZone.parking_type === 'COVERED' && selectedZone.availableSpaces <= 0) ? 'Tele' : 'Elérhető' }}
+            </span>
+          </div>
+
+          <div class="p-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <h5 class="mb-0 text-dark fw-bold text-truncate">{{ selectedZone.name || 'Zóna neve' }}</h5>
+              <span class="text-primary fw-bold fs-5">{{ selectedZone.hourlyRate | number }} Ft/ó</span>
+            </div>
+            <p class="text-secondary small mb-3">{{ selectedZone.address || 'Cím nem elérhető' }}</p>
+            
+            <div *ngIf="selectedZone.capacity > 0" class="mb-3">
+              <div class="d-flex justify-content-between small text-dark mb-1">
+                <span>Szabad: <b class="fw-bold">{{ selectedZone.availableSpaces }}</b> / {{ selectedZone.capacity }}</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar" [style.width.%]="(selectedZone.availableSpaces / selectedZone.capacity) * 100" [style.background-color]="getProgressBarColor()"></div>
+              </div>
+            </div>
+
+            <div *ngIf="!selectedZone.capacity || selectedZone.capacity === 0" class="d-flex align-items-center gap-2 text-success small fw-semibold mb-3">
+              <i class="bi bi-ticket-perforated"></i> Utcai zóna - Jegyváltás elérhető
+            </div>
+
+            <button class="btn w-100 fw-bold py-2" 
+                    [ngClass]="(selectedZone.capacity > 0 && selectedZone.availableSpaces <= 0) ? 'btn-secondary' : 'btn-info text-white'" 
+                    [disabled]="selectedZone.capacity > 0 && selectedZone.availableSpaces <= 0" 
+                    (click)="onBook(selectedZone.spot_id || selectedZone.id)">
+              {{ (selectedZone.capacity > 0 && selectedZone.availableSpaces <= 0) ? 'Sajnos megtelt' : 'Részletek & Foglalás' }}
+            </button>
           </div>
         </div>
-
-       <div class="card-content">
-  <div class="header-row">
-    <h2>{{ selectedZone.name || 'Zóna neve' }}</h2>
-    <span class="price-tag">{{ selectedZone.hourlyRate | number }} Ft/ó</span>
-  </div>
-  <p class="address"> {{ selectedZone.address || 'Cím nem elérhető' }}</p>
-  
-  <div class="capacity-info" *ngIf="selectedZone.capacity > 0">
-    <div class="capacity-text">
-      <span>Szabad: <b>{{ selectedZone.availableSpaces }}</b> / {{ selectedZone.capacity }}</span>
-    </div>
-    <div class="progress-bg">
-      <div class="progress-fill" 
-           [style.width.%]="(selectedZone.availableSpaces / selectedZone.capacity) * 100"
-           [style.background-color]="getProgressBarColor()">
       </div>
+
     </div>
-  </div>
-
-  <div class="zone-info" *ngIf="!selectedZone.capacity || selectedZone.capacity === 0" style="margin-bottom: 20px; color: #059669; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px;">
-    <i class="bi bi-ticket-perforated"></i> Utcai zóna - Jegyváltás elérhető
-  </div>
-
-<button class="action-button" 
-        [disabled]="selectedZone.capacity > 0 && selectedZone.availableSpaces <= 0" 
-        (click)="onBook(selectedZone.spot_id || selectedZone.id)">
-  {{ (selectedZone.capacity > 0 && selectedZone.availableSpaces <= 0) ? 'Sajnos megtelt' : 'Részletek & Foglalás' }}
-</button>
-</div>
-
-      </div>
-    </div>
-
   </div>
 </div>

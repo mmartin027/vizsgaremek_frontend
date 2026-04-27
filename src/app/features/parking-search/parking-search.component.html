@@ -8,11 +8,11 @@
         Találatok: <span style="color: #26b1cc;">{{ selectedCityFilter === 'all' ? 'Összes város' : selectedCityFilter }}</span>
       </h2>
 
-      <select class="custom-select" [(ngModel)]="selectedCityFilter" (change)="onCityFilterChange()">
+   <select class="custom-select" [(ngModel)]="selectedCityFilter" (change)="onCityFilterChange()">
         <option value="all">Minden város</option>
         <option value="Budapest">Budapest</option>
         <option value="Debrecen">Debrecen</option>
-        <option value="Györ">Szeged</option>
+        <option value="Győr">Győr</option>
         <option value="Pécs">Pécs</option>
       </select>
 

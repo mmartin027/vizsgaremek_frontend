@@ -1,11 +1,9 @@
-/* FONTOS: Feltételezem, hogy a Bootstrap Icons be van húzva a projektben (a.bi-envelope miatt) */
 
 .verify-page-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  /* Netparkoló sötétebb fejléc-színe, mint háttér */
   background-color: #1a8b9e;
   padding: 20px;
 }
@@ -16,10 +14,9 @@
   width: 100%;
   max-width: 500px;
   overflow: hidden;
-  font-family: 'Sora', sans-serif; /* A meglévő betűtípusodhoz igazítva */
+  font-family: 'Sora', sans-serif; 
 }
 
-/* KÁRTYA FEJLÉC ÉS IKON */
 .card-header-visual {
   background-color: #f7f9fc;
   padding: 30px;
@@ -40,10 +37,9 @@
 
 .mail-icon {
   font-size: 60px;
-  color: #26b1cc; /* Netparkoló türkiz szín */
+  color: #26b1cc; 
 }
 
-/* TARTALMI RÉSZ */
 .verify-content {
   padding: 40px 30px;
   text-align: center;
@@ -73,7 +69,6 @@
   text-align: left;
 }
 
-/* EGYEDI BEMENETI MEZŐK */
 .custom-input {
   width: 100%;
   padding: 15px 20px;
@@ -94,7 +89,6 @@
   border-color: #dc3545;
 }
 
-/* OTP BEVITEL MEZŐ */
 .otp-wrapper {
   text-align: center;
 }
@@ -107,7 +101,6 @@
   padding: 15px;
 }
 
-/* NETPARKOLÓ GOMB (Türkiz) */
 .netparkolo-btn {
   padding: 15px 25px;
   border-radius: 8px;
@@ -133,7 +126,6 @@
   transform: translateY(-2px);
 }
 
-/* LÁBLÉC LINKEK */
 .footer-links {
   display: flex;
   justify-content: center;
